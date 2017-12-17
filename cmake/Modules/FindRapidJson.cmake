@@ -47,7 +47,7 @@ foreach(opt RAPIDJSON_INCLUDEDIR RAPIDJSON_USE_SSE2 RAPIDJSON_USE_SSE42)
     set(${opt} "$ENV{${opt}}")
   endif()
 endforeach()
-MESSAGE(STATE "UM....")
+MESSAGE(STATUS " UM....")
 find_path(
   RAPIDJSON_INCLUDE_DIRS
   NAMES rapidjson/rapidjson.h
