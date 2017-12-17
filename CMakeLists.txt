@@ -20,6 +20,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MT")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+FIND_PACKAGE( RapidJson REQUIRED)
+
 add_subdirectory(Shared)
 add_subdirectory(Server)
 add_subdirectory(Client)

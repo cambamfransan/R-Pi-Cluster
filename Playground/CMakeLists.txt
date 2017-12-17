@@ -1,6 +1,5 @@
 set(exe_name Playground)
 
-FIND_PACKAGE( RapidJson REQUIRED)
 set(${exe_name}_deps)
 
 
