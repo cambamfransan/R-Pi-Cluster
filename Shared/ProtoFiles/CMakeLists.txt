@@ -34,4 +34,4 @@ MESSAGE(STATUS "Dir: " ${Protobuf_INCLUDE_DIR})
 MESSAGE(STATUS "Libs: " ${Protobuf_LIBRARIES})
 
 set_property(TARGET ${lib_name} PROPERTY FOLDER ${folder})
-#add_subdirectory(test)
+add_subdirectory(test)
