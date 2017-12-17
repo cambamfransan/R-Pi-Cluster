@@ -9,7 +9,6 @@ set(main_srcs
 
 source_group("" FILES ${main_srcs})
 
-MESSAGE(STATUS "RapidJson" ${RAPIDJSON_INCLUDE_DIRS})
 include_directories(${RAPIDJSON_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")
 add_executable(${exe_name} ${main_srcs})
