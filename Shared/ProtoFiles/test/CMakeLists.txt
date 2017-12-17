@@ -5,8 +5,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS Core Test REQUIRED)
-
 set(${lib_name}_deps ProtoFiles)
 
 set(ProtobufTest_srcs

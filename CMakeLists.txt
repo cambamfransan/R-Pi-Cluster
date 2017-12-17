@@ -20,6 +20,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MT")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+FIND_PACKAGE( RapidJson REQUIRED)
+FIND_PACKAGE( Protobuf REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Test REQUIRED)
+
 add_subdirectory(Shared)
 add_subdirectory(Server)
 add_subdirectory(Client)

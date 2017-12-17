@@ -1,10 +1,9 @@
 #include <iostream>
-//#include <boost/filesystem/path.hpp>
+#include <rapidjson/document.h>
 
 int main()
 {
+  rapidjson::Document document;
   std::cout << "Hello World" << std::endl;
-//  boost::filesystem::path path("myFile.txt");
-//  std::cout << path.string() << std::endl;
   return 0;
 }
