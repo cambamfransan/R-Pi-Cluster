@@ -22,6 +22,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FIND_PACKAGE( RapidJson REQUIRED)
+FIND_PACKAGE( Protobuf REQUIRED)
 
 add_subdirectory(Shared)
 add_subdirectory(Server)

@@ -1,7 +1,5 @@
 set(lib_name ProtoFiles)
 
-FIND_PACKAGE( Protobuf REQUIRED)
-
 set(${lib_name}_deps ${Protobuf_LIBRARIES})
 
 MESSAGE(STATUS "Libs: " ${Protobuf_LIBRARIES})
