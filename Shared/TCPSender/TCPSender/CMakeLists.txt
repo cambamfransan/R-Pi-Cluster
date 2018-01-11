@@ -12,8 +12,6 @@ set(${lib_name}_deps ProtoFiles Logger)
 set(${lib_name}_srcs
 	TCPSender.cpp
 	TCPSender.hpp
-  Listener.cpp
-  Listener.hpp
   )
 
 source_group("" FILES ${${lib_name}_srcs})

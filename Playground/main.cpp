@@ -1,15 +1,17 @@
+#include "TCPSender/TCPSender.hpp"
+#include <QApplication>
 #include <iostream>
 #include <thread>
-#include "TCPSender/TCPSender.hpp"
-#include "TCPSender/Listener.hpp"
-#include <QApplication>
 
 int main(int argc, char* argv[])
 {
   QApplication a(argc, argv);
 
-  TCPListener tSocket1(QHostAddress("127.0.0.1"), 5000);
+  std::cout << "What port would you like to run on?" << std::endl;
+  std::string s;
+  std::cin >> s;
 
-  std::cout << "Hello World" << std::endl;
+  TCPSender tSocket1(QHostAddress("127.0.0.1"), std::stoi(s));
+
   return a.exec();
 }

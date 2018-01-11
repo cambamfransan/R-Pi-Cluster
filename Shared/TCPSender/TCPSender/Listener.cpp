@@ -1,7 +1,7 @@
 #include "Listener.hpp"
 #include <iostream>
 
-TCPListener::TCPListener(QHostAddress ip, qint16 port)
+TCPListener::TCPListener(QHostAddress ip)
   :QObject(nullptr)
 {
   m_pSocket = new QTcpSocket(this);
@@ -25,8 +25,10 @@ void TCPListener::connection()
 
 void TCPListener::readStream()
 {
+  auto s = m_pSocket->readAll();
+  emit msgReceived(s.toStdString(), m_pSocket->peerAddress(), m_pSocket->peerPort());
   std::cout << "This is one step closer." << std::endl;
-  std::cout << m_pSocket->readAll().toStdString() << std::endl;
+  std::cout << s.toStdString() << std::endl;
 }
 
 

@@ -1,3 +1,6 @@
+#ifndef TCPLISTENER_H
+#define TCPLISTENER_H
+
 #include <qtcpserver.h>
 #include <qtcpsocket.h>
 #include <qdatastream.h>
@@ -9,7 +12,7 @@ class TCPListener : public QObject
   void msgReceived(std::string, QHostAddress, qint16);
 
 public:
-  TCPListener(QHostAddress ip, qint16 port);
+  TCPListener(QHostAddress ip);
   ~TCPListener();
 
   void connection();
@@ -21,3 +24,5 @@ private:
   private slots:
   void readStream();
 };
+
+#endif
