@@ -3,7 +3,10 @@ set(lib_name ProtoFiles)
 set(${lib_name}_deps ${Protobuf_LIBRARIES})
 
 set(${lib_name}_srcs
-	addressbook.proto
+	Backup.proto
+	BasicMsg.proto
+	TaskMsg.proto
+	MsgToSend.proto
   )
 
 source_group(Messages FILES ${${lib_name}_srcs})

@@ -1,9 +1,15 @@
 #include <iostream>
-#include <rapidjson/document.h>
+#include <thread>
+#include "TCPSender/TCPSender.hpp"
+#include "TCPSender/Listener.hpp"
+#include <QApplication>
 
-int main()
+int main(int argc, char* argv[])
 {
-  rapidjson::Document document;
+  QApplication a(argc, argv);
+
+  TCPListener tSocket1(QHostAddress("127.0.0.1"), 5000);
+
   std::cout << "Hello World" << std::endl;
-  return 0;
+  return a.exec();
 }
