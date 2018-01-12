@@ -12,7 +12,7 @@ list(APPEND ${lib_name}_srcs ${server_srcs})
 ###########################################
 
 add_library(${lib_name} ${${lib_name}_srcs})
-target_link_libraries(${lib_name} ${${lib_name}_deps})
+target_link_libraries(${lib_name} ${${lib_name}_deps} Qt5::Core Qt5::Network)
 set_property(TARGET ${lib_name} PROPERTY FOLDER ${folder})
 qt5_use_modules(${lib_name} Widgets Core Network Test)
 

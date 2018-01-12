@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
   QApplication a(argc, argv);
   
-  Server server;
+  /*Server server;
 
   while (!server.isConnected())std::this_thread::yield();
 
@@ -20,6 +20,6 @@ int main(int argc, char* argv[])
     std::cin >> s;
     server.send(s);
   }
-
+*/
   return a.exec();
 }
