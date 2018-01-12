@@ -6,9 +6,8 @@
 #include <qtimer.h>
 
 TCPSender::TCPSender(QHostAddress ip, qint16 port)
-  : QObject(nullptr), m_pServer(new QTcpServer(this))
+  : QObject(nullptr), m_pServer(new QTcpServer(this)), connected(false)
 {
-  std::cout << "Constructing" << std::endl;
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
   if (ip == QHostAddress("0.0.0.0"))
@@ -62,6 +61,7 @@ qint64 TCPSender::send(std::string msg,
 void TCPSender::connection()
 {
   if(!m_pSocket) m_pSocket = m_pServer->nextPendingConnection();
+  connected = true;
   connect(m_pSocket, &QIODevice::readyRead, this, &TCPSender::readStream);
   connect(m_pSocket, &QTcpSocket::disconnected, this, &TCPSender::disconnected);
   std::cout << "Connection Successful" << std::endl;
@@ -82,6 +82,7 @@ void TCPSender::readStream()
 void TCPSender::disconnected()
 {
   std::cout << "lost connection" << std::endl;
+  emit lostConnection();
 }
 
 void TCPSender::update()
@@ -92,4 +93,9 @@ void TCPSender::update()
        false,
        QHostAddress("127.0.0.1"),
        0);
+}
+
+bool TCPSender::isConnected()
+{
+  return connected;
 }

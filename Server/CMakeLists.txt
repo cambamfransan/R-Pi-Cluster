@@ -1,6 +1,6 @@
 set(exe_name Server)
 
-set(${exe_name}_deps TCPSender)
+set(${exe_name}_deps ServerLib)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

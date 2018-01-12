@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include "TCPSender/TCPSender.hpp"
+#include "ServerLib/Server.hpp"
 #include <QApplication>
 #include <qtimer.h>
 
@@ -8,8 +9,17 @@ int main(int argc, char* argv[])
 {
   QApplication a(argc, argv);
   
-  TCPSender tSocket(QHostAddress("0.0.0.0"));
+  Server server;
 
-  std::cout << "Hello World" << std::endl;
+  while (!server.isConnected())std::this_thread::yield();
+
+  for (int i = 0; i < 5; i++)
+  {
+    std::cout << "What would you like to send?" << std::endl;
+    std::string s;
+    std::cin >> s;
+    server.send(s);
+  }
+
   return a.exec();
 }

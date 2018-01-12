@@ -20,6 +20,7 @@ public:
 
   signals:
     void msgReceived(std::string, QHostAddress, qint16);
+    void lostConnection();
 
 public:
   qint64 send(msg::MsgToSend msg, int convId, std::chrono::seconds timeout,
@@ -28,6 +29,7 @@ public:
   qint64 send(std::string msg, int convId, std::chrono::seconds timeout,
     bool requireResponse, QHostAddress receiver, quint16 port);
 
+  bool isConnected();
 
 private slots:
   void connection();
@@ -39,6 +41,7 @@ private:
   QTcpServer *m_pServer;
   QTcpSocket* m_pSocket;
   QTimer* m_timer;
+  bool connected;
 };
 
 #endif
