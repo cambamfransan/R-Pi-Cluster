@@ -6,7 +6,7 @@
 #include <qtimer.h>
 
 TCPSender::TCPSender(QHostAddress ip, qint16 port)
-  : QObject(nullptr), m_pServer(new QTcpServer(this)), connected(false)
+  : QObject(nullptr), m_pServer(new QTcpServer(this)), m_pSocket(nullptr), connected(false)
 {
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -60,7 +60,7 @@ qint64 TCPSender::send(std::string msg,
 
 void TCPSender::connection()
 {
-  if(!m_pSocket) m_pSocket = m_pServer->nextPendingConnection();
+  if (m_pSocket == nullptr) m_pSocket = m_pServer->nextPendingConnection();
   connected = true;
   connect(m_pSocket, &QIODevice::readyRead, this, &TCPSender::readStream);
   connect(m_pSocket, &QTcpSocket::disconnected, this, &TCPSender::disconnected);

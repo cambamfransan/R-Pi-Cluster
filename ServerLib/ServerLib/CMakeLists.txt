@@ -2,6 +2,11 @@ set(lib_name ServerLib)
 
 set(${lib_name}_deps TCPSender)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
 ###########################################
 set(server_srcs
   Server.cpp

@@ -9,17 +9,15 @@ int main(int argc, char* argv[])
 {
   QApplication a(argc, argv);
   
-  /*Server server;
+  Server server;
 
-  while (!server.isConnected())std::this_thread::yield();
+  //for (int i = 0; i < 5; i++)
+  //{
+  //  std::cout << "What would you like to send?" << std::endl;
+  //  std::string s;
+  //  std::cin >> s;
+  //  server.send(s);
+  //}
 
-  for (int i = 0; i < 5; i++)
-  {
-    std::cout << "What would you like to send?" << std::endl;
-    std::string s;
-    std::cin >> s;
-    server.send(s);
-  }
-*/
   return a.exec();
 }

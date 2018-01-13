@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
   std::cout << "What Port is would you like to run on?" << std::endl;
   std::string s;
   std::cin >> s;
-  //Client client(QHostAddress(addr.c_str()), std::stoi(s));
+  Client client(QHostAddress(addr.c_str()), std::stoi(s));
 
   return a.exec();
 }
