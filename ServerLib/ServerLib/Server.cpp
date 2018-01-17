@@ -15,8 +15,3 @@ void Server::send(std::string msg)
 {
   m_sender.send(msg, 1, std::chrono::seconds(1), false, QHostAddress("127.0.0.1"), 0);
 }
-
-bool Server::isConnected()
-{
-  return m_sender.isConnected();
-}

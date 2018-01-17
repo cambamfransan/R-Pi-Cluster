@@ -6,10 +6,9 @@
 #include <qtimer.h>
 
 TCPSender::TCPSender(QHostAddress ip, qint16 port)
-  : QObject(nullptr), m_pServer(new QTcpServer(this)), m_pSocket(nullptr), connected(false)
+  : QObject(nullptr), m_pServer(new QTcpServer(this)), m_pSocket(nullptr), m_pTimer(std::make_shared<QTimer>(this))
 {
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
+  connect(m_pTimer.get(), SIGNAL(timeout()), this, SLOT(update()));
   if (ip == QHostAddress("0.0.0.0"))
   {
     std::cout << "waiting for connection" << std::endl;
@@ -20,21 +19,20 @@ TCPSender::TCPSender(QHostAddress ip, qint16 port)
     }
     std::cout << "now running on port: " << m_pServer->serverPort()
               << std::endl;
-  connect(m_pServer, &QTcpServer::newConnection, this, &TCPSender::connection);
+  connect(m_pServer.get(), &QTcpServer::newConnection, this, &TCPSender::connection);
   }
   else
   {
     std::cout << "Waiting to connect" << std::endl;
-    m_pSocket = new QTcpSocket(this);
-    connect(m_pSocket, &QTcpSocket::connected, this, &TCPSender::connection);
+    m_pSocket = std::make_shared<QTcpSocket>(this);
+    connect(m_pSocket.get(), &QTcpSocket::connected, this, &TCPSender::connection);
     m_pSocket->connectToHost(ip, port);
-    m_timer->start(1000);
+    m_pTimer->start(1000);
   }
 }
 
 TCPSender::~TCPSender()
 {
-  delete m_pServer;
 }
 
 qint64 TCPSender::send(msg::MsgToSend msg,
@@ -60,10 +58,9 @@ qint64 TCPSender::send(std::string msg,
 
 void TCPSender::connection()
 {
-  if (m_pSocket == nullptr) m_pSocket = m_pServer->nextPendingConnection();
-  connected = true;
-  connect(m_pSocket, &QIODevice::readyRead, this, &TCPSender::readStream);
-  connect(m_pSocket, &QTcpSocket::disconnected, this, &TCPSender::disconnected);
+  if (m_pSocket == nullptr) m_pSocket = std::shared_ptr<QTcpSocket>(m_pServer->nextPendingConnection());
+  connect(m_pSocket.get(), &QIODevice::readyRead, this, &TCPSender::readStream);
+  connect(m_pSocket.get(), &QTcpSocket::disconnected, this, &TCPSender::disconnected);
   std::cout << "Connection Successful" << std::endl;
   int i = m_pSocket->write("YAY?");
   std::cout << "wrote " << std::to_string(i)
@@ -72,7 +69,7 @@ void TCPSender::connection()
 
 void TCPSender::readStream()
 {
-  m_timer->start(1000);
+  m_pTimer->start(1000);
   auto s = m_pSocket->readAll();
   std::cout << "This is one step closer." << std::endl;
   std::cout << s.toStdString() << std::endl;
@@ -93,9 +90,4 @@ void TCPSender::update()
        false,
        QHostAddress("127.0.0.1"),
        0);
-}
-
-bool TCPSender::isConnected()
-{
-  return connected;
 }

@@ -13,7 +13,6 @@ public:
   ~Server();
 
   void send(std::string msg);
-  bool isConnected();
 
 private:
   TCPSender m_sender;

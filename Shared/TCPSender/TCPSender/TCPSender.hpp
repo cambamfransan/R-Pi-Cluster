@@ -29,8 +29,6 @@ public:
   qint64 send(std::string msg, int convId, std::chrono::seconds timeout,
     bool requireResponse, QHostAddress receiver, quint16 port);
 
-  bool isConnected();
-
 private slots:
   void connection();
   void disconnected();
@@ -38,10 +36,10 @@ private slots:
   void update();
 
 private:
-  QTcpServer *m_pServer;
-  QTcpSocket* m_pSocket;
-  QTimer* m_timer;
-  bool connected;
+  std::shared_ptr<QTcpServer> m_pServer;
+  std::shared_ptr<QTcpSocket> m_pSocket;
+  std::shared_ptr<QTimer> m_pTimer;
+
 };
 
 #endif
