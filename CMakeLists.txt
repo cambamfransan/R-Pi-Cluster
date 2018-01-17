@@ -26,7 +26,9 @@ FIND_PACKAGE( Protobuf REQUIRED)
 find_package(Qt5 COMPONENTS Widgets Core Test REQUIRED)
 
 add_subdirectory(Shared)
+add_subdirectory(ServerLib/ServerLib)
 add_subdirectory(Server)
+add_subdirectory(ClientLib/ClientLib)
 add_subdirectory(Client)
 #add_subdirectory(Web) I don't think that we need this one...
 add_subdirectory(Playground)

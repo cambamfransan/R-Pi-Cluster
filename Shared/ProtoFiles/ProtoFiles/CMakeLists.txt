@@ -3,7 +3,10 @@ set(lib_name ProtoFiles)
 set(${lib_name}_deps ${Protobuf_LIBRARIES})
 
 set(${lib_name}_srcs
-	addressbook.proto
+	Backup.proto
+	BasicMsg.proto
+	TaskMsg.proto
+	MsgToSend.proto
   )
 
 source_group(Messages FILES ${${lib_name}_srcs})
@@ -23,7 +26,7 @@ endif()
 
 add_library(${lib_name} STATIC ${${lib_name}_cpp} ${${lib_name}_hpp} ${${lib_name}_srcs})
 target_link_libraries(${lib_name} ${${lib_name}_deps})
-target_include_directories(${lib_name} PUBLIC ${CMAKE_BINARY_DIR}/Shared ${Protobuf_INCLUDE_DIRS})
+target_include_directories(${lib_name} PUBLIC ${CMAKE_BINARY_DIR}/Shared/ProtoFiles ${Protobuf_INCLUDE_DIRS})
 
 set_property(TARGET ${lib_name} PROPERTY FOLDER ${folder})
 add_subdirectory(test)
