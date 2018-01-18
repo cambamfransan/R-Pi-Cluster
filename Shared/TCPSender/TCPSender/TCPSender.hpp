@@ -37,7 +37,8 @@ private slots:
 
 private:
   std::shared_ptr<QTcpServer> m_pServer;
-  std::shared_ptr<QTcpSocket> m_pSocket;
+  std::map<std::string, std::shared_ptr<QTcpSocket>> m_pSockets;
+  std::shared_ptr<QTcpSocket> m_connectingSocket;
   std::shared_ptr<QTimer> m_pTimer;
 
 };
