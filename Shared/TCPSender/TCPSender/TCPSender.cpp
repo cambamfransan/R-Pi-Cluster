@@ -99,6 +99,7 @@ void TCPSender::connection()
           this,
           &TCPSender::disconnected);
   std::cout << "Connection Successful" << std::endl;
+  //send id
   int i = m_connectingSocket->write("YAY?");
   std::cout << "wrote " << std::to_string(i) << std::endl;
   m_pSockets[qHostportToString(
