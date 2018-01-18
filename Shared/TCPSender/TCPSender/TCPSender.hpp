@@ -23,10 +23,10 @@ public:
     void lostConnection();
 
 public:
-  qint64 send(msg::MsgToSend msg, int convId, std::chrono::seconds timeout,
+  qint64 send(msg::MsgToSend msg, int msgId, std::chrono::seconds timeout,
               bool requireResponse, QHostAddress receiver, quint16 port);
 
-  qint64 send(std::string msg, int convId, std::chrono::seconds timeout,
+  qint64 send(std::string msg, int msgId, std::chrono::seconds timeout,
     bool requireResponse, QHostAddress receiver, quint16 port);
 
 private slots:
