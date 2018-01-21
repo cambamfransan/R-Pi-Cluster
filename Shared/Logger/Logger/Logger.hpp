@@ -7,7 +7,7 @@ class Logger
 {
 public:
   Logger();
-  static void init(std::string i);
+  static std::string init(const std::string& s);
   static void debug(std::string msg);
   static void info(std::string msg);
   static void error(std::string msg);

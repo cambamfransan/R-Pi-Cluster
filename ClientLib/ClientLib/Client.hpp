@@ -12,8 +12,12 @@ public:
   Client(QHostAddress addr, qint16 port);
   ~Client();
 
+private slots:
+  void newConnection(int);
+
 private:
-  TCPSender m_sender;
+  std::shared_ptr<TCPSender> m_pSender;
+  int m_serverId;
 };
 
 #endif

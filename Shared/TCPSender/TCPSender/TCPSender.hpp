@@ -9,7 +9,6 @@
 #include <qtcpserver.h>
 #include <string>
 #include <thread>
-#include <qtimer.h>
 
 class TCPSender : public QObject {
   Q_OBJECT
@@ -21,25 +20,28 @@ public:
   signals:
     void msgReceived(std::string, QHostAddress, qint16);
     void lostConnection();
+    void newConnection(int);
 
 public:
   qint64 send(msg::MsgToSend msg, int msgId, std::chrono::seconds timeout,
-              bool requireResponse, QHostAddress receiver, quint16 port);
+              bool requireResponse, int endpointId);
 
   qint64 send(std::string msg, int msgId, std::chrono::seconds timeout,
-    bool requireResponse, QHostAddress receiver, quint16 port);
+    bool requireResponse, int endpointId);
+
+  quint16 getServerPort();
 
 private slots:
   void connection();
   void disconnected();
   void readStream();
-  void update();
 
 private:
   std::shared_ptr<QTcpServer> m_pServer;
-  std::map<std::string, std::shared_ptr<QTcpSocket>> m_pSockets;
+  std::map<int, std::shared_ptr<QTcpSocket>> m_pSockets;
   std::shared_ptr<QTcpSocket> m_connectingSocket;
-  std::shared_ptr<QTimer> m_pTimer;
+  int m_nextId;
+  int m_myId;
 
 };
 

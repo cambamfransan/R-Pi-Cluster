@@ -11,13 +11,5 @@ int main(int argc, char* argv[])
   
   Server server;
 
-  //for (int i = 0; i < 5; i++)
-  //{
-  //  std::cout << "What would you like to send?" << std::endl;
-  //  std::string s;
-  //  std::cin >> s;
-  //  server.send(s);
-  //}
-
   return a.exec();
 }
