@@ -23,6 +23,8 @@ void Server::newConnection(int id)
 {
   std::cout << "Adding Connection" << std::endl;
   m_clientIds.push_back(id);
+  auto t = m_pSender->getSocket(id);
+  m_window->addConnection(t->peerAddress(), t->peerPort());
 }
 
 void Server::clicked(std::string msg)

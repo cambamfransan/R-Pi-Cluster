@@ -20,6 +20,20 @@ void MainWindow::setPort(quint16 port)
   ui->label_port->setText("Port: " + QString::number(port));
 }
 
+void MainWindow::addConnection(QHostAddress ip, quint16 port)
+{
+  m_connections.emplace_back(ip, port);
+  QString toOutput;
+  for (auto&& p : m_connections)
+  {
+    auto s = p.first.toString();
+    if (s.contains("::ffff:"))s=s.mid(7, s.size() - 7);
+    toOutput = toOutput + s + ": " + QString::number(p.second) + "\n";
+  }
+  ui->label_connected->setText(toOutput);
+}
+
+
 void MainWindow::onSendButton()
 {
   ui->label_connected->setText(QString("Clicked"));

@@ -30,8 +30,9 @@ public:
     bool requireResponse, int endpointId);
 
   quint16 getServerPort();
+  std::shared_ptr<QTcpSocket> getSocket(int id) { return (*m_pSockets.find(id)).second; }
 
-private slots:
+private slots: 
   void connection();
   void disconnected();
   void readStream();
