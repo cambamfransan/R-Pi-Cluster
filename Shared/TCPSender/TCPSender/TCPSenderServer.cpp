@@ -1,6 +1,8 @@
 #include "TCPSenderServer.hpp"
 #include "Logger/Logger.hpp"
+#include "MakeMsgs.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
+#include "TCPHelpers.hpp"
 
 #include <qbytearray.h>
 
@@ -9,12 +11,15 @@ TCPSenderServer::TCPSenderServer()
     m_pServer(new QTcpServer(this)),
     m_pSockets(),
     m_nextId(2),
-    m_myId(1)
+    m_myId(1),
+    m_outMessages(),
+    m_nextConvId(1),
+    m_inputMessages()
 {
-  std::cout << "waiting for connection" << std::endl;
+  Logger::info("waiting for connection");
   if (!m_pServer->listen())
   {
-    std::cout << "not listening" << std::endl;
+    Logger::info("not listening");
     return;
   }
   connect(m_pServer.get(),
@@ -25,41 +30,38 @@ TCPSenderServer::TCPSenderServer()
 
 TCPSenderServer::~TCPSenderServer() {}
 
-qint64 TCPSenderServer::send(msg::MsgToSend msg,
+qint64 TCPSenderServer::send(msg::MsgToSend* pMsg,
                              int convId,
                              std::chrono::seconds timeout,
                              bool requireResponse,
                              int endpointId)
 {
-  // In the future can remove this
-  auto t = m_pSockets.find(endpointId);
-  if (t != m_pSockets.end())
-    return t->second->write(QByteArray(
-      msg.SerializeAsString().c_str(), msg.SerializeAsString().size()));
-  else
+  Logger::info("Sending: " + pMsg->DebugString());
+  if (requireResponse)
   {
-    std::cout << "Endpoint Does not exist" << std::endl;
-    return 0;
+    m_outMessages[tcp::getMapId(m_myId, pMsg->basicmsg().convid())] =
+      Conversation{
+        pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
   }
+
+  return m_pSockets[endpointId]->write(
+    QByteArray(pMsg->SerializeAsString().c_str(),
+               static_cast<int>(pMsg->SerializeAsString().size())));
 }
 
+#ifdef TESTING
 qint64 TCPSenderServer::send(std::string msg,
                              int convId,
                              std::chrono::seconds timeout,
                              bool requireResponse,
                              int endpointId)
 {
-  // In the future can remove this
-  auto t = m_pSockets.find(endpointId);
-  if (t != m_pSockets.end())
-    return t->second->write(
-      QByteArray(msg.c_str(), static_cast<int>(msg.size())));
-  else
-  {
-    std::cout << "Endpoint Does not exist" << std::endl;
-    return 0;
-  }
+  auto pMsg = make_msgs::makeTestMsg(m_myId, endpointId, convId, msg);
+  Logger::info("Sending: " + pMsg->DebugString());
+  return m_pSockets[endpointId]->write(
+    QByteArray(pMsg->SerializeAsString().c_str(), static_cast<int>(pMsg->SerializeAsString().size())));
 }
+#endif
 
 quint16 TCPSenderServer::getServerPort()
 {
@@ -67,8 +69,13 @@ quint16 TCPSenderServer::getServerPort()
 }
 
 std::shared_ptr<QTcpSocket> TCPSenderServer::getSocket(int id)
-{ 
-  return (*m_pSockets.find(id)).second; 
+{
+  return (*m_pSockets.find(id)).second;
+}
+
+int TCPSenderServer::getNextConvId()
+{
+  return m_nextConvId++;
 }
 
 void TCPSenderServer::connection()
@@ -84,12 +91,12 @@ void TCPSenderServer::connection()
           &QTcpSocket::disconnected,
           this,
           &TCPSenderServer::disconnected);
-  std::cout << "Connection Successful" << std::endl;
+  Logger::info("Connection Successful, Id: " + std::to_string(m_nextId));
   // send id
-  std::cout << "Id: " << m_nextId << std::endl;
-  int i = connectingSocket->write("Id:" + QByteArray::number(m_nextId));
-  std::cout << "wrote " << std::to_string(i) << std::endl;
-  std::cout << "Adding to TCPSenderServer" << std::endl;
+  msg::MsgToSend* pMsg = make_msgs::makeBasicMsgToSend(
+    m_myId, m_nextId, msg::ProtoType::ID_MSG, m_nextConvId++);
+  Logger::info("Send: " + pMsg->DebugString());
+  connectingSocket->write(QByteArray::fromStdString(pMsg->SerializeAsString()));
   m_pSockets[m_nextId] = connectingSocket;
   emit newConnection(m_nextId);
 
@@ -99,27 +106,39 @@ void TCPSenderServer::connection()
 void TCPSenderServer::emitMessage()
 {
   QTcpSocket* readSocket = qobject_cast<QTcpSocket*>(sender());
-  auto s = readSocket->readAll();
-  std::cout << "This is one step closer." << std::endl;
-  std::cout << s.toStdString() << std::endl;
-  emit msgReceived(
-    s.toStdString(), readSocket->peerAddress(), readSocket->peerPort());
+  msg::MsgToSend* pMsg = new msg::MsgToSend();
+  pMsg->ParseFromString(readSocket->readAll().toStdString());
+  Logger::info("Received: " + pMsg->DebugString());
+  emit msgReceived(pMsg, readSocket->peerAddress(), readSocket->peerPort());
 }
 
 void TCPSenderServer::readStream()
 {
   auto readSocket =
     std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
-  auto s = readSocket->readAll();
-  std::cout << "Message Received." << std::endl;
-  std::cout << s.toStdString() << std::endl;
+  msg::MsgToSend* pReceived = new msg::MsgToSend();
+  pReceived->ParseFromString(readSocket->readAll().toStdString());
+  int id = tcp::getMapId(
+    pReceived->basicmsg().fromid(), pReceived->basicmsg().convid());
+  if (m_inputMessages.find(id) == m_inputMessages.end())
+    m_inputMessages[id] = std::chrono::steady_clock::now();
+  else
+    return;
+  if (auto itr = m_outMessages.find(tcp::getMapId(
+                   pReceived->basicmsg().toid(),
+                   pReceived->basicmsg().convid())) == m_outMessages.end())
+    m_outMessages.erase(itr);
+  Logger::info("Message Received: " + pReceived->DebugString());
   emit msgReceived(
-    s.toStdString(), readSocket->peerAddress(), readSocket->peerPort());
+    pReceived, readSocket->peerAddress(), readSocket->peerPort());
 }
 
 void TCPSenderServer::disconnected()
 {
-  // Remove from list
-  std::cout << "lost connection" << std::endl;
+  auto readSocket =
+    std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
+  //Todo
+//  m_pSockets.erase(m_pSockets.begin(), m_pSockets.end(), readSocket));
+  Logger::error("lost connection");
   emit lostConnection();
 }

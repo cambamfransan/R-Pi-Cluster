@@ -30,12 +30,14 @@ void Server::newConnection(int id)
 
 void Server::clicked(std::string msg)
 {
+  msg::MsgToSend* pMsg = new msg::MsgToSend();
+  pMsg->mutable_test()->add_teststring(msg);
   std::cout << "Sending" << std::endl;
   for(auto&& id : m_clientIds)
-    m_pSender->send(msg, 1, std::chrono::seconds(1), false, id);
+    m_pSender->send(pMsg, 1, std::chrono::seconds(1), false, id);
 }
 
-void Server::recieveMessage(std::string msg, QHostAddress ip, qint16 port)
+void Server::recieveMessage(msg::MsgToSend* msg, QHostAddress ip, qint16 port)
 {
-  m_window->receivedMsg(msg, ip, port);
+  m_window->receivedMsg(msg->DebugString(), ip, port);
 }

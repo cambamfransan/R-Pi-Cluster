@@ -16,7 +16,7 @@ public:
 private slots:
   void newConnection();
   void clicked(std::string s);
-  void recieveMessage(std::string, QHostAddress, qint16);
+  void recieveMessage(msg::MsgToSend* msg, QHostAddress, qint16);
 
 private:
   std::shared_ptr<TCPSenderClient> m_pSender;

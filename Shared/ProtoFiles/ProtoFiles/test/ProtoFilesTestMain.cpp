@@ -49,7 +49,6 @@ void ProtoFilesTest::basicMsg()
   pMsg->set_msgtype(3);
   pMsg->set_attempt(4);
   pMsg->set_convid(5);
-  pMsg->set_subid(6);
   std::string encrypted = pMsg->SerializeAsString();
   std::shared_ptr<msg::BasicMsg> pUnencrypted = std::make_shared<msg::BasicMsg>();
   pUnencrypted->ParseFromString(encrypted);
@@ -58,7 +57,6 @@ void ProtoFilesTest::basicMsg()
   QVERIFY(pUnencrypted->msgtype() == 3);
   QVERIFY(pUnencrypted->attempt() == 4);
   QVERIFY(pUnencrypted->convid() == 5);
-  QVERIFY(pUnencrypted->subid() == 6);
 }
 
 void ProtoFilesTest::taskMsg()

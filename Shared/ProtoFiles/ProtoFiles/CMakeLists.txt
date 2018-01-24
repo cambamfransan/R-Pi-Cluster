@@ -6,6 +6,7 @@ set(${lib_name}_srcs
 	Backup.proto
 	BasicMsg.proto
 	TaskMsg.proto
+  TestMsg.proto
 	MsgToSend.proto
   )
 

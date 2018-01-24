@@ -19,15 +19,19 @@ void Client::newConnection()
   m_window->setPort(m_pSender->getLocalPort());
   std::cout << "New Connection" << std::endl;
   m_window->addConnection(m_pSender->getPeerAddress(), m_pSender->getPeerPort());
+  std::cout << "Didn't Get here" << std::endl;
 }
 
-void Client::recieveMessage(std::string msg, QHostAddress ip, qint16 port)
+void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 {
-  m_window->receivedMsg(msg, ip, port);
+  std::cout << pMsg->DebugString() << std::endl;
+  m_window->receivedMsg(pMsg->DebugString(), ip, port);
 }
 
 void Client::clicked(std::string msg)
 {
+  msg::MsgToSend* pMsg = new msg::MsgToSend();
+  pMsg->mutable_test()->add_teststring(msg);
   std::cout << "Sending" << std::endl;
-  m_pSender->send(msg, 1, std::chrono::seconds(1), false);
+  m_pSender->send(pMsg, 1, std::chrono::seconds(1), false);
 }
