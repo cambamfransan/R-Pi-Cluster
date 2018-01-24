@@ -1,6 +1,6 @@
 set(lib_name ClientLib)
 
-set(${lib_name}_deps TCPSender)
+set(${lib_name}_deps TCPSender Gui)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

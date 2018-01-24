@@ -1,5 +1,5 @@
-#ifndef TCPSENDER_H
-#define TCPSENDER_H
+#ifndef TCPSENDER_CLIENT_H
+#define TCPSENDER_CLIENT_H
 
 #include "ProtoFiles/MsgToSend.pb.h"
 #include <chrono>
@@ -10,38 +10,37 @@
 #include <string>
 #include <thread>
 
-class TCPSender : public QObject {
+class TCPSenderClient : public QObject {
   Q_OBJECT
 
 public:
-  TCPSender(QHostAddress ip, qint16 port = 0);
-  ~TCPSender();
+  TCPSenderClient(QHostAddress ip, qint16 port = 0);
+  ~TCPSenderClient();
 
   signals:
     void msgReceived(std::string, QHostAddress, qint16);
     void lostConnection();
-    void newConnection(int);
+    void newConnection();
 
 public:
   qint64 send(msg::MsgToSend msg, int msgId, std::chrono::seconds timeout,
-              bool requireResponse, int endpointId);
+              bool requireResponse);
 
   qint64 send(std::string msg, int msgId, std::chrono::seconds timeout,
-    bool requireResponse, int endpointId);
+    bool requireResponse);
 
-  quint16 getServerPort();
-  std::shared_ptr<QTcpSocket> getSocket(int id) { return (*m_pSockets.find(id)).second; }
+  quint16 getLocalPort();
+  quint16 getPeerPort();
+  QHostAddress getPeerAddress();
 
 private slots: 
   void connection();
   void disconnected();
   void readStream();
+  void emitMessage();
 
 private:
-  std::shared_ptr<QTcpServer> m_pServer;
-  std::map<int, std::shared_ptr<QTcpSocket>> m_pSockets;
   std::shared_ptr<QTcpSocket> m_connectingSocket;
-  int m_nextId;
   int m_myId;
 
 };

@@ -33,9 +33,15 @@ void MainWindow::addConnection(QHostAddress ip, quint16 port)
   ui->label_connected->setText(toOutput);
 }
 
+void MainWindow::receivedMsg(std::string s, QHostAddress ip, quint16 port)
+{
+  auto t = ip.toString();
+  if (t.contains("::ffff:"))t = t.mid(7, s.size() - 7);
+  QString toOutput = t + ": " + QString::number(port) + "\n" + QString::fromStdString(s);
+  ui->label_received->setText(toOutput);
+}
 
 void MainWindow::onSendButton()
 {
-  ui->label_connected->setText(QString("Clicked"));
   emit signalClicked(ui->lineEdit_toSend->text().toStdString());
 }

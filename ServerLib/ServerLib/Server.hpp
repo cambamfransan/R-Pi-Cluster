@@ -1,7 +1,7 @@
 #ifndef SERVER_CLASS_H
 #define SERVER_CLASS_H
 
-#include "TCPSender/TCPSender.hpp"
+#include "TCPSender/TCPSenderServer.hpp"
 #include <qobject.h>
 #include <Gui/mainwindow.hpp>
 
@@ -18,9 +18,10 @@ public:
 private slots:
   void newConnection(int);
   void clicked(std::string s);
+  void recieveMessage(std::string, QHostAddress, qint16);
 
 private:
-  std::shared_ptr<TCPSender> m_pSender;
+  std::shared_ptr<TCPSenderServer> m_pSender;
   std::vector<int> m_clientIds;
   MainWindow* m_window;
 };

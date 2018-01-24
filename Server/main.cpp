@@ -1,6 +1,5 @@
 #include <iostream>
 #include <thread>
-#include "TCPSender/TCPSender.hpp"
 #include "ServerLib/Server.hpp"
 #include <QApplication>
 #include <qtimer.h>

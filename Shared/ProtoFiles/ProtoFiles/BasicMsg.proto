@@ -8,5 +8,4 @@ message BasicMsg {
   int32 MsgType = 3;
   int32 attempt = 4;
   int32 ConvId = 5;
-  int32 SubId = 6;
 }

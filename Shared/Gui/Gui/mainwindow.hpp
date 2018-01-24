@@ -22,6 +22,7 @@ public:
 
   void setPort(quint16 port);
   void addConnection(QHostAddress ip, quint16 port);
+  void receivedMsg(std::string s, QHostAddress ip, quint16 port);
 
 private slots:
   void onSendButton();

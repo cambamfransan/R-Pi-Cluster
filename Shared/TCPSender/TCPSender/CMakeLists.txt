@@ -10,8 +10,10 @@ find_package(Qt5 COMPONENTS Core Network REQUIRED)
 set(${lib_name}_deps ProtoFiles Logger)
 
 set(${lib_name}_srcs
-	TCPSender.cpp
-	TCPSender.hpp
+	TCPSenderClient.cpp
+	TCPSenderClient.hpp
+	TCPSenderServer.cpp
+	TCPSenderServer.hpp
   )
 
 source_group("" FILES ${${lib_name}_srcs})

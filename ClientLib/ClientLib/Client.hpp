@@ -1,8 +1,9 @@
 #ifndef CLIENT_CLASS_H
 #define CLIENT_CLASS_H
 
-#include "TCPSender/TCPSender.hpp"
+#include "TCPSender/TCPSenderClient.hpp"
 #include <qobject.h>
+#include <Gui/mainwindow.hpp>
 
 class Client : public QObject
 {
@@ -13,11 +14,15 @@ public:
   ~Client();
 
 private slots:
-  void newConnection(int);
+  void newConnection();
+  void clicked(std::string s);
+  void recieveMessage(std::string, QHostAddress, qint16);
 
 private:
-  std::shared_ptr<TCPSender> m_pSender;
+  std::shared_ptr<TCPSenderClient> m_pSender;
   int m_serverId;
+  MainWindow* m_window;
+
 };
 
 #endif
