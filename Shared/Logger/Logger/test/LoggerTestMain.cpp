@@ -2,7 +2,6 @@
 #include "Logger/Logger.hpp"
 #include <fstream>
 #include <cstdio>
-#include <filesystem>
 
 class LoggerTest : public QObject
 {
