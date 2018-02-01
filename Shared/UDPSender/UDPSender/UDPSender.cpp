@@ -24,9 +24,6 @@ UDPSender::~UDPSender()
 }
 
 qint64 UDPSender::send(std::string msg,
-  int convId,
-  std::chrono::seconds timeout,
-  bool requireResponse,
   QHostAddress receiver,
   quint16 port)
 {
