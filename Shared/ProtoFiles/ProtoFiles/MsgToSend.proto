@@ -1,0 +1,23 @@
+syntax = "proto3";
+import public "Backup.proto";
+import public "BasicMsg.proto";
+import public "TaskMsg.proto";
+import public "TestMsg.proto";
+
+package msg;
+
+enum ProtoType {
+  UNKNOWN = 0;
+  BASIC_MSG = 1;
+  BACKUP = 2;
+  TASK_MSG = 3;
+  TEST_MSG = 4;
+  ID_MSG = 5;
+}
+
+message MsgToSend {
+  BasicMsg basicMsg = 1;
+  Backup backup = 2;
+  TaskMsg task = 3;
+  TestMsg test = 4;
+}

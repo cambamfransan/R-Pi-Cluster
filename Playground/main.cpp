@@ -1,9 +1,10 @@
+#include <QApplication>
 #include <iostream>
-#include <rapidjson/document.h>
+#include <thread>
 
-int main()
+int main(int argc, char* argv[])
 {
-  rapidjson::Document document;
-  std::cout << "Hello World" << std::endl;
+  int a;
+  std::cin >> a;
   return 0;
 }

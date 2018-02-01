@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package msg;
+
+message BasicMsg {
+  int32 fromId = 1;
+  int32 toId = 2;
+  int32 MsgType = 3;
+  int32 attempt = 4;
+  int32 ConvId = 5;
+}
