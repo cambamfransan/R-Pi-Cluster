@@ -9,43 +9,6 @@
 #include <string>
 #include <thread>
 
-struct Conversation
-{
-  /* Vector of all of the messages in the conversation */
-  std::string msg;
-  /* The last time their was activity in the conversation */
-  std::chrono::steady_clock::time_point lastUsed;
-  /* How long till it needs to resend */
-  std::chrono::seconds timeout;
-  /* Address of who it was sent to*/
-  QHostAddress receive;
-  /* Port of who it was sent to*/
-  quint16 port;
-
-  Conversation()
-    : msg(),
-    lastUsed(std::chrono::steady_clock::now()),
-    timeout(std::chrono::seconds(0)),
-    receive("0.0.0.0"),
-    port(0)
-  {
-  }
-
-  Conversation(std::string msg,
-    std::chrono::seconds newTimeout,
-    bool requireAnswer,
-    QHostAddress ip,
-    quint16 p)
-    : msg(msg),
-    lastUsed(std::chrono::steady_clock::now()),
-    timeout(newTimeout),
-    receive(ip),
-    port(p)
-  {
-  }
-};
-
-
 class UDPSender : public QObject
 {
   Q_OBJECT

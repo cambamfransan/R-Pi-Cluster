@@ -44,7 +44,7 @@ void UDPSenderTest::testBytesSent()
   UDPSender* sender = new UDPSender();
   std::string msg = "This is a test";
   qint64 msgLen = (qint64)msg.size();
-  qint64 bytesSent = sender->send(msg, 1, std::chrono::seconds(5), false, QHostAddress("127.0.0.1"), 8080);
+  qint64 bytesSent = sender->send(msg, QHostAddress("127.0.0.1"), 8080);
   QVERIFY(msgLen == bytesSent);
   delete sender;
 }

@@ -24,6 +24,7 @@ UDPSender::~UDPSender()
 }
 
 qint64 UDPSender::send(std::string msg,
+  bool requireResponse,
   QHostAddress receiver,
   quint16 port)
 {
