@@ -9,7 +9,7 @@ project(RPi)
 include (version.cmake)
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX)

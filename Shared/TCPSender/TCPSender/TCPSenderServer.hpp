@@ -1,9 +1,8 @@
-#define TESTING
 #ifndef TCPSENDER_SERVER_H
 #define TCPSENDER_SERVER_H
 
 #include "ProtoFiles/MsgToSend.pb.h"
-#include "Conversation.hpp"
+#include "Messages/Conversation.hpp"
 #include <chrono>
 #include <qhostaddress.h>
 #include <qtcpsocket.h>
@@ -19,17 +18,11 @@ public:
 
   signals:
     void msgReceived(msg::MsgToSend*, QHostAddress, qint16);
-    void lostConnection();
+    void lostConnection(int);
     void newConnection(int);
 
 public:
-  qint64 send(msg::MsgToSend* pMsg, int msgId, std::chrono::seconds timeout,
-              bool requireResponse, int endpointId);
-
-#ifdef TESTING
-  qint64 send(std::string msg, int msgId, std::chrono::seconds timeout,
-    bool requireResponse, int endpointId);
-#endif
+  qint64 send(msg::MsgToSend* pMsg, int endpointId);
 
   quint16 getServerPort();
   std::shared_ptr<QTcpSocket> getSocket(int id);
@@ -47,8 +40,6 @@ private:
   int m_nextId;
   int m_myId;
   int m_nextConvId;
-  std::map<int, Conversation> m_outMessages;
-  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
 };
 
 #endif

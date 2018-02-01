@@ -57,7 +57,7 @@ public:
   UDPSender(qint16 port = 0);
   ~UDPSender();
 
-  qint64 send(msg::MsgToSend msg,
+  qint64 send(std::string msg,
     int convId,
     std::chrono::seconds timeout,
     bool requireResponse,

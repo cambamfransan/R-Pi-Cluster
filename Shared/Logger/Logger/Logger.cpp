@@ -14,7 +14,9 @@ namespace
   {
     auto in_time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::stringstream ss;
-    ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %I-%M-%S");
+    struct tm timeinfo;
+    localtime_s(&timeinfo, &in_time_t);
+    ss << std::put_time(&timeinfo, "%Y-%m-%d %I-%M-%S");
     return ss.str();
   }
   const std::string DEBUG = " [DEBUG]: ";

@@ -1,8 +1,8 @@
 #include "TCPSenderServer.hpp"
 #include "Logger/Logger.hpp"
-#include "MakeMsgs.hpp"
+#include "Messages/MakeMsgs.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
-#include "TCPHelpers.hpp"
+#include "Messages/MapHelpers.hpp"
 
 #include <qbytearray.h>
 
@@ -12,9 +12,7 @@ TCPSenderServer::TCPSenderServer()
     m_pSockets(),
     m_nextId(2),
     m_myId(1),
-    m_outMessages(),
-    m_nextConvId(1),
-    m_inputMessages()
+    m_nextConvId(1)
 {
   Logger::info("waiting for connection");
   if (!m_pServer->listen())
@@ -31,37 +29,19 @@ TCPSenderServer::TCPSenderServer()
 TCPSenderServer::~TCPSenderServer() {}
 
 qint64 TCPSenderServer::send(msg::MsgToSend* pMsg,
-                             int convId,
-                             std::chrono::seconds timeout,
-                             bool requireResponse,
-                             int endpointId)
+  int endpointId)
 {
   Logger::info("Sending: " + pMsg->DebugString());
-  if (requireResponse)
+
+  auto itr = m_pSockets.find(endpointId);
+  if (itr != m_pSockets.end() && itr->second != nullptr)
   {
-    m_outMessages[tcp::getMapId(m_myId, pMsg->basicmsg().convid())] =
-      Conversation{
-        pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
+    return m_pSockets[endpointId]->write(
+      QByteArray(pMsg->SerializeAsString().c_str(),
+        static_cast<int>(pMsg->SerializeAsString().size())));
   }
-
-  return m_pSockets[endpointId]->write(
-    QByteArray(pMsg->SerializeAsString().c_str(),
-               static_cast<int>(pMsg->SerializeAsString().size())));
+  return 0;
 }
-
-#ifdef TESTING
-qint64 TCPSenderServer::send(std::string msg,
-                             int convId,
-                             std::chrono::seconds timeout,
-                             bool requireResponse,
-                             int endpointId)
-{
-  auto pMsg = make_msgs::makeTestMsg(m_myId, endpointId, convId, msg);
-  Logger::info("Sending: " + pMsg->DebugString());
-  return m_pSockets[endpointId]->write(
-    QByteArray(pMsg->SerializeAsString().c_str(), static_cast<int>(pMsg->SerializeAsString().size())));
-}
-#endif
 
 quint16 TCPSenderServer::getServerPort()
 {
@@ -96,7 +76,7 @@ void TCPSenderServer::connection()
   msg::MsgToSend* pMsg = make_msgs::makeBasicMsgToSend(
     m_myId, m_nextId, msg::ProtoType::ID_MSG, m_nextConvId++);
   Logger::info("Send: " + pMsg->DebugString());
-  connectingSocket->write(QByteArray::fromStdString(pMsg->SerializeAsString()));
+  //connectingSocket->write(QByteArray::fromStdString(pMsg->SerializeAsString()));
   m_pSockets[m_nextId] = connectingSocket;
   emit newConnection(m_nextId);
 
@@ -118,16 +98,7 @@ void TCPSenderServer::readStream()
     std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
   msg::MsgToSend* pReceived = new msg::MsgToSend();
   pReceived->ParseFromString(readSocket->readAll().toStdString());
-  int id = tcp::getMapId(
-    pReceived->basicmsg().fromid(), pReceived->basicmsg().convid());
-  if (m_inputMessages.find(id) == m_inputMessages.end())
-    m_inputMessages[id] = std::chrono::steady_clock::now();
-  else
-    return;
-  if (auto itr = m_outMessages.find(tcp::getMapId(
-                   pReceived->basicmsg().toid(),
-                   pReceived->basicmsg().convid())) == m_outMessages.end())
-    m_outMessages.erase(itr);
+  
   Logger::info("Message Received: " + pReceived->DebugString());
   emit msgReceived(
     pReceived, readSocket->peerAddress(), readSocket->peerPort());
@@ -135,10 +106,18 @@ void TCPSenderServer::readStream()
 
 void TCPSenderServer::disconnected()
 {
-  auto readSocket =
-    std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
-  //Todo
-//  m_pSockets.erase(m_pSockets.begin(), m_pSockets.end(), readSocket));
-  Logger::error("lost connection");
-  emit lostConnection();
+  auto readSocket = qobject_cast<QTcpSocket*>(sender());
+  if (readSocket == nullptr)return;
+  auto itr =
+    std::find_if(m_pSockets.begin(),
+                 m_pSockets.end(),
+                 [readSocket](std::pair<int, std::shared_ptr<QTcpSocket>> rhs) {
+    if (rhs.second == nullptr)return false;
+                   return readSocket->localPort() == rhs.second->localPort();
+                 });
+  if (itr != m_pSockets.end())
+  {
+    emit lostConnection(itr->first);
+    itr->second == nullptr;
+  }
 }

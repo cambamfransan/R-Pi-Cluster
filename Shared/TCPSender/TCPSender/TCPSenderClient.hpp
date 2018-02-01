@@ -7,7 +7,7 @@
 #include <qtcpsocket.h>
 #include <qtcpserver.h>
 #include <string>
-#include "Conversation.hpp"
+#include "Messages/Conversation.hpp"
 
 class TCPSenderClient : public QObject {
   Q_OBJECT
@@ -22,13 +22,7 @@ public:
     void newConnection();
 
 public:
-  qint64 send(msg::MsgToSend* pMsg, int msgId, std::chrono::seconds timeout,
-              bool requireResponse);
-
-#ifdef TESTING
-  qint64 send(std::string msg, int msgId, std::chrono::seconds timeout,
-    bool requireResponse);
-#endif
+  qint64 send(msg::MsgToSend* pMsg);
 
   quint16 getLocalPort();
   quint16 getPeerPort();
@@ -46,8 +40,6 @@ private:
   int m_myId;
   int m_nextConvId;
   int m_serverId;
-  std::map<int, Conversation> m_outMessages;
-  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
 };
 
 #endif

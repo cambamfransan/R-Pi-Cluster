@@ -1,4 +1,4 @@
-set(exe_name UDPSenderTest)
+set(exe_name MessagesTest)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -7,10 +7,10 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets REQUIRED)
 
-set(${exe_name}_deps UDPSender)
+set(${exe_name}_deps Messages)
 
 set(srcs
-	UDPSenderTest.cpp
+	MessagesTestMain.cpp
 )
 
 source_group("" FILES ${srcs})

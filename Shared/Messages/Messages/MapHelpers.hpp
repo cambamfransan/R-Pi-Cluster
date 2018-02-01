@@ -4,11 +4,11 @@
 #include "ProtoFiles/MsgToSend.pb.h"
 #include <math.h>
 
-namespace tcp
+namespace make_msgs
 {
   inline int getMapId(int pId, int cId)
   {
-    return pId*log10(cId) + cId;
+    return pId *(pow(10, (trunc(log10(cId))+1))) + cId;
   }
 }
 

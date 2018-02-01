@@ -23,7 +23,7 @@ UDPSender::~UDPSender()
     delete m_pSocket;
 }
 
-qint64 UDPSender::send(msg::MsgToSend msg,
+qint64 UDPSender::send(std::string msg,
   int convId,
   std::chrono::seconds timeout,
   bool requireResponse,
@@ -31,7 +31,7 @@ qint64 UDPSender::send(msg::MsgToSend msg,
   quint16 port)
 {
   qint64 sent(m_pSocket->writeDatagram(
-    QByteArray(msg.SerializeAsString().c_str(), static_cast<int>(msg.SerializeAsString().size())), receiver, port));
+    QByteArray(msg.c_str(), static_cast<int>(msg.size())), receiver, port));
   Logger::info("Sent " + std::to_string(sent) + " bytes");
   return sent;
 }
