@@ -16,7 +16,7 @@ public:
   ~TCPSenderWeb();
 
   signals:
-    void msgReceived(std::string, QHostAddress, qint16);
+    void msgReceived(std::string);
     void lostConnection();
     void newConnection();
 

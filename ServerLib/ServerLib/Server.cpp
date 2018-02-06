@@ -118,7 +118,7 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 }
 
-void Server::receiveMessageWeb(std::string msg, QHostAddress ip, qint16 port)
+void Server::receiveMessageWeb(std::string msg)
 {
   rapidjson::Document doc;
   doc.Parse(msg.c_str());

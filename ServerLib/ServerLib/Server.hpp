@@ -30,7 +30,7 @@ private slots:
   void newWebConnection();
   void clicked(std::string s);
   void recieveMessage(msg::MsgToSend* pMsg, QHostAddress, qint16);
-  void receiveMessageWeb(std::string msg, QHostAddress, qint16);
+  void receiveMessageWeb(std::string msg);
   void lostConnection(int);
   void lostConnectionWeb();
 

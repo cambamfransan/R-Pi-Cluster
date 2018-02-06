@@ -68,7 +68,7 @@ void TCPSenderWeb::emitMessage()
 {
   QTcpSocket* readSocket = qobject_cast<QTcpSocket*>(sender());
   auto str = readSocket->readAll().toStdString();
-  emit msgReceived(str, readSocket->peerAddress(), readSocket->peerPort());
+  emit msgReceived(str);
 }
 
 void TCPSenderWeb::disconnected()
