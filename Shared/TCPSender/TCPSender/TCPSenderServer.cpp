@@ -76,7 +76,7 @@ void TCPSenderServer::connection()
   msg::MsgToSend* pMsg = make_msgs::makeBasicMsgToSend(
     m_myId, m_nextId, msg::ProtoType::ID_MSG, m_nextConvId++);
   Logger::info("Send: " + pMsg->DebugString());
-  //connectingSocket->write(QByteArray::fromStdString(pMsg->SerializeAsString()));
+  connectingSocket->write(QByteArray::fromStdString(pMsg->SerializeAsString()));
   m_pSockets[m_nextId] = connectingSocket;
   emit newConnection(m_nextId);
 
