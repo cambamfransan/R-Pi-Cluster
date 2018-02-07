@@ -30,7 +30,7 @@ Server::Server()
   std::cout << "Web Port: " << m_pWebSender->getServerPort() << std::endl;
   QString program = "node";
   QStringList arguments;
-  arguments << "../../src/Web/main.js" << QString::number(m_pWebSender->getServerPort());
+  arguments << "../../R-Pi-Cluster/Web/main.js" << QString::number(m_pWebSender->getServerPort());
 
   QProcess *myProcess = new QProcess(this);
   myProcess->startDetached(program, arguments);
