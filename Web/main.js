@@ -1,23 +1,46 @@
+const express = require('express');
+const app = express();
+// var bodyParser = require('body-parser');
 
-var http = require('http');
-var url = require('url');
-var fs = require("fs");
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
-var mainPage = function(response) {
-  return 'Main Page';
+// var router = express.Router(); 
+
+app.get('/', (req, res) => res.sendFile(__dirname + '/MainPage.html'));
+
+app.get('/pis', (req, res) => res.sendFile(__dirname + '/PiPage.html'));
+
+// app.get('/api/1', function(req, res) { // example api
+//   res.json({ message: 'hooray! welcome to our api!', value: 1 });   
+// });
+
+var net = require('net');
+
+var client = new net.Socket();
+client.connect(process.argv[2], '127.0.0.1', function() {
+	console.log('Connected');
+  client.write('Hello, server! Love, Client.');
+});
+
+client.on('data', function(data) {
+  var temp = JSON.parse(data.toString());
+switch(temp.type) {
+  case "Heartbeat":
+      break;
+  default:
+      console.log("bad message received");
 }
+});
 
-var piPage = function() {
-  return 'Raspberry pis';
-}
+client.on("error", function(err) {
+  console.log(err.stack)
+});
 
-var server = function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  var q = url.parse(req.url, true).query;
-  var txt;
-  if(req.url === '/')txt = mainPage(res);
-  else if(req.url == '/pi')txt = piPage();
-  res.end(txt);
-};
+client.on('close', function() {
+	console.log('Connection closed');
+});
 
-http.createServer(server).listen(8080); //the server object listens on port 8080
+app.listen(80);
