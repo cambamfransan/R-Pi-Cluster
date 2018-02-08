@@ -3,7 +3,9 @@
 mkdir ~/cluster
 cd ~/cluster
 git clone https://github.com/cambamfransan/R-Pi-Cluster.git
-git merge origin/python
+cd R-Pi-Cluster
+git merge origin/
+cd ../
 mkdir _bld
 cd _bld
 sudo apt-get update
