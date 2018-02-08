@@ -4,7 +4,7 @@ mkdir ~/cluster
 cd ~/cluster
 git clone https://github.com/cambamfransan/R-Pi-Cluster.git
 cd R-Pi-Cluster
-git merge origin/
+git merge origin/python
 cd ../
 mkdir _bld
 cd _bld
