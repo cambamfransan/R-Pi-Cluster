@@ -1,6 +1,7 @@
 #include "UDPSender.hpp"
 #include "Logger/Logger.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
+#include <iostream>
 
 namespace
 {
