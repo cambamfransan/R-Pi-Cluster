@@ -17,8 +17,11 @@ sudo apt-get install cmake -y
 sudo apt-get install protobuf-compiler -y
 sudo apt-get install libprotobuf10 -y
 sudo apt-get install libprotoc-dev -y
+sudo apt-get install fabric -y
 sudo apt-get install nodejs -y
 sudo apt-get install npm -y
+cd ../R-Pi-Cluster/Web
 sudo npm install express --save
+cd ../../_bld
 cmake ../R-Pi-Cluster
 make -j3 install
