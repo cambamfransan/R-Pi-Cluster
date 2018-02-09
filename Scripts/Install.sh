@@ -16,5 +16,5 @@ sudo apt-get install nodejs -y
 sudo apt-get install npm -y
 ls
 cd ./R-Pi-Cluster/Web && sudo npm install express --save
-cd ./_bld && cmake ../R-Pi-Cluster
-cd ./_bld && make -j3 install
+cd ./../../_bld && cmake ../R-Pi-Cluster
+make -j3 install
