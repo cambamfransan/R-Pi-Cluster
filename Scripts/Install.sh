@@ -1,7 +1,7 @@
 #!/bin/bash
 
+pwd
 cd .. 
-git merge origin/python
 cd ../
 mkdir _bld
 cd _bld
