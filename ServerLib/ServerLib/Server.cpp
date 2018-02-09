@@ -2,6 +2,7 @@
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
 #include <qprocess.h>
+#include <iostream>
 
 Server::Server()
   : m_pSender(std::make_shared<TCPSenderServer>()),
