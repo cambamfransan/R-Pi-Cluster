@@ -1,9 +1,6 @@
 #!/bin/bash
 
-mkdir ~/cluster
-cd ~/cluster
-git clone https://github.com/cambamfransan/R-Pi-Cluster.git
-cd R-Pi-Cluster
+cd .. 
 git merge origin/python
 cd ../
 mkdir _bld
