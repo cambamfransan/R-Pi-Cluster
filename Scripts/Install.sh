@@ -1,5 +1,6 @@
 #!/bin/bash
 
+pwd
 cd .. 
 git merge origin/python
 cd ../
