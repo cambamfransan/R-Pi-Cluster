@@ -1,10 +1,7 @@
 #!/bin/bash
 
 pwd
-cd .. 
-cd ../
-mkdir _bld
-cd _bld
+sudo mkdir _bld
 sudo apt-get update
 sudo apt-get update --fix-missing
 sudo apt-get install qt5-default -y
@@ -17,8 +14,7 @@ sudo apt-get install libprotoc-dev -y
 sudo apt-get install fabric -y
 sudo apt-get install nodejs -y
 sudo apt-get install npm -y
-cd ../R-Pi-Cluster/Web
-sudo npm install express --save
-cd ../../_bld
-cmake ../R-Pi-Cluster
-make -j3 install
+ls
+cd ./R-Pi-Cluster/Web && sudo npm install express --save
+cd ./_bld && cmake ../R-Pi-Cluster
+cd ./_bld && make -j3 install
