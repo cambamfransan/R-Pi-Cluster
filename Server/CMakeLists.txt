@@ -16,4 +16,7 @@ source_group("" FILES ${${exe_name}_srcs})
 add_executable(${exe_name} ${${exe_name}_srcs})
 target_link_libraries(${exe_name} ${${exe_name}_deps})
 install(TARGETS ${exe_name} DESTINATION bin)
+install(TARGETS ${exe_name} DESTINATION /usr/sbin)
+install(PROGRAMS ../Scripts/${exe_name}Service DESTINATION /etc/init.d/)
 qt5_use_modules(${exe_name} Widgets Core Network Test)
+

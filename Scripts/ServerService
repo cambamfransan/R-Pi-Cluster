@@ -1,0 +1,90 @@
+#!/bin/sh
+
+DESC="Start Server Service for Raspberry Pi Cluster"
+Name=ServerService
+
+# Variables
+PGREP=/usr/bin/pgrep
+ZERO=0
+
+do_start()
+{
+  echo "starting!";
+  $PGREP -f Server > /dev/null
+  VERIFIER=$?
+  if [ $ZERO = $VERIFIER ]
+    then 
+    #Run the service
+    /usr/sbin/Server > /dev/null 2>&1 &
+    sleep 10
+    $PGREP -f Server > /dev/null
+    VERIFIER=$?
+    if [ $ZERO = $VERIFIER ]
+    then 
+      echo "Service started"
+    else
+      echo "Failed to start service"
+    fi
+  else
+    echo "The service is already running"
+  fi
+  echo
+}
+
+do_stop()
+{
+  echo "stopping!";
+  $PGREP -f Server > /dev/null
+  VERIFIER=$?
+  if [ $ZERO != $VERIFIER ]
+  then
+    kill -0 $($PGREP -f Server)
+    sleep 10
+    $PGREP -f Server > /dev/null
+    VERIFIER=$?
+    if [ $ZERO = $VERIFIER ]
+    then
+      echo "Failed to stop service"
+    else
+      echo "Service Stopped"
+    fi
+  else
+    echo "Service is already stopped"
+  fi
+  echo
+}
+
+status() 
+{
+  echo "Checking status"
+  $PGREP -f Server > /dev/null
+  VERIFIER=$?
+  if [ $ZERO = $VERIFIER ]
+  then
+    echo "Service is running"
+  else
+    echo "Service is stopped"
+  fi
+}
+
+case "$1" in
+  start)
+    do_start
+    ;;
+  stop)
+    do_stop
+    ;;
+  status)
+    status
+    ;;
+  restart|reload)
+    stop
+    start
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload}"
+    exit 1
+esac
+
+exit 0
+
