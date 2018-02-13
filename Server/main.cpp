@@ -1,7 +1,15 @@
 #include <iostream>
+#include <thread>
+#include "ServerLib/Server.hpp"
+#include <QApplication>
+#include <qtimer.h>
+#include "Logger/Logger.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-  std::cout << "Hello World" << std::endl;
-  return 0;
+  QApplication a(argc, argv);
+  Logger::init("Server");
+  Server server;
+
+  return a.exec();
 }

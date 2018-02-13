@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Javascript
+Web/.vscode/*
+Web/node_modules/*
+
+# python
+*.pyc
+

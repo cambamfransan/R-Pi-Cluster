@@ -1,0 +1,18 @@
+header {
+    background-color:#5d4fdf;
+    width: 80%;
+    text-align: center;
+    font-size: 30px;
+}
+h1 {
+    margin-bottom: 0px;
+    color: black;
+}
+footer { 
+    margin-top: 0px; /*Need to fix this */
+    background-color:#5d4fdf;
+    width: 80%;
+    text-align: center;
+    display: block;
+    font-size: 20px;
+}
