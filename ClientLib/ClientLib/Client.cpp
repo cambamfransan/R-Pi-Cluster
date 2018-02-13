@@ -20,7 +20,10 @@ Client::Client(QHostAddress addr, qint16 port)
           &TCPSenderClient::msgReceived,
           this,
           &Client::recieveMessage);
-  connect(m_pSender.get(), &TCPSenderClient::lostConnection, this, &Client::lostConnection);
+  connect(m_pSender.get(),
+          &TCPSenderClient::lostConnection,
+          this,
+          &Client::lostConnection);
 }
 
 Client::~Client() {}
@@ -37,24 +40,30 @@ void Client::newConnection()
 void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 {
   std::cout << pMsg->DebugString() << std::endl;
-  int id = make_msgs::getMapId(
-    pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
+  int id =
+    make_msgs::getMapId(pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
   if (m_inputMessages.find(id) == m_inputMessages.end())
     m_inputMessages[id] = std::chrono::steady_clock::now();
   else
     return;
   if (auto itr = m_outMessages.find(make_msgs::getMapId(
-    pMsg->basicmsg().toid(),
-    pMsg->basicmsg().convid())) == m_outMessages.end())
+                   pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
+                 m_outMessages.end())
     m_outMessages.erase(itr);
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 
-  // This will be taken out sometime
+  int convId = pMsg->basicmsg().convid();
   switch (pMsg->basicmsg().msgtype())
   {
   case msg::ProtoType::ID_MSG:
     m_myId = pMsg->basicmsg().toid();
     m_serverId = pMsg->basicmsg().fromid();
+  case msg::ProtoType::HEART_BEAT_MSG:
+    send(make_msgs::makeBasicMsgToSend(
+           m_myId, m_serverId, msg::ProtoType::HEART_BEAT_MSG_ACK, convId),
+         convId,
+         std::chrono::seconds(1),
+         false);
   }
 }
 
@@ -74,7 +83,8 @@ void Client::send(msg::MsgToSend* pMsg,
 
 void Client::clicked(std::string msg)
 {
-  msg::MsgToSend* pMsg = make_msgs::makeTestMsg(m_myId, 1, m_pSender->getNextConvId(), msg);
+  msg::MsgToSend* pMsg =
+    make_msgs::makeTestMsg(m_myId, 1, m_pSender->getNextConvId(), msg);
   std::cout << "Sending" << std::endl;
   send(pMsg, 1, std::chrono::seconds(1), false);
 }

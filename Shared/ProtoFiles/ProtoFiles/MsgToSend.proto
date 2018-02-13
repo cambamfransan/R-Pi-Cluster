@@ -8,11 +8,12 @@ package msg;
 
 enum ProtoType {
   UNKNOWN = 0;
-  BASIC_MSG = 1;
-  BACKUP = 2;
-  TASK_MSG = 3;
-  TEST_MSG = 4;
-  ID_MSG = 5;
+  HEART_BEAT_MSG = 1;
+  HEART_BEAT_MSG_ACK = 2;
+  BACKUP = 3;
+  TASK_MSG = 4;
+  TEST_MSG = 5;
+  ID_MSG = 6;
 }
 
 message MsgToSend {
