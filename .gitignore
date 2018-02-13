@@ -34,3 +34,7 @@
 # Javascript
 Web/.vscode/*
 Web/node_modules/*
+
+# python
+*.pyc
+

@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
+#include <iostream>
 
 Client::Client(QHostAddress addr, qint16 port)
   : m_pSender(std::make_shared<TCPSenderClient>(addr, port)),

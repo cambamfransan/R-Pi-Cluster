@@ -6,6 +6,7 @@
 #include <qprocess.h>
 #include <qthreadpool.h>
 #include <qtimer.h>
+#include <iostream>
 
 Server::Server()
   : m_pSender(std::make_shared<TCPSenderServer>()),
