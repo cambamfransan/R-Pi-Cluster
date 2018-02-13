@@ -4,8 +4,10 @@
 #include "TCPSender/TCPSenderServer.hpp"
 #include "TCPSender/TCPSenderWeb.hpp"
 #include <qobject.h>
+#include <chrono>
 #include <Gui/mainwindow.hpp>
 #include <rapidjson/document.h>
+#include <mutex>
 
 class Server : public QObject
 {
@@ -33,15 +35,20 @@ private slots:
   void receiveMessageWeb(std::string msg);
   void lostConnection(int);
   void lostConnectionWeb();
+  void sendHeartBeats();
 
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
-  std::vector<int> m_clientIds;
+  std::shared_ptr<std::mutex> m_clientsMutex;
+  std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
   int m_myId;
   MainWindow* m_window;
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+
+  //Timers
+  QTimer* m_pHeartBeatTimer;
 };
 
 #endif

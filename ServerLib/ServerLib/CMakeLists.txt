@@ -15,6 +15,13 @@ set(server_srcs
 source_group("" FILES ${server_srcs})
 list(APPEND ${lib_name}_srcs ${server_srcs})
 ###########################################
+set(server_msgs_srcs
+  Msgs/ReceiveHeartBeat.cpp
+  Msgs/ReceiveHeartBeat.hpp
+  )
+source_group("Msgs" FILES ${server_msgs_srcs})
+list(APPEND ${lib_name}_srcs ${server_msgs_srcs})
+###########################################
 
 include_directories(${RAPIDJSON_INCLUDE_DIRS})
 add_library(${lib_name} ${${lib_name}_srcs})
