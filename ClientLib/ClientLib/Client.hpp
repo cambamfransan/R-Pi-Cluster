@@ -4,6 +4,7 @@
 #include "TCPSender/TCPSenderClient.hpp"
 #include <Gui/mainwindow.hpp>
 #include <qobject.h>
+#include "Messages/ClientInfo.hpp"
 
 class Client : public QObject
 {
@@ -22,14 +23,17 @@ private slots:
             std::chrono::seconds timeout,
             bool requireResponse);
   void lostConnection();
+  void recieveUpdate(msg::MsgToSend* pMsg, int convId);
 
 private:
   std::shared_ptr<TCPSenderClient> m_pSender;
   int m_serverId;
   int m_myId;
+  int m_myPriority;
   MainWindow* m_window;
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+  std::vector<ClientInfo> m_allClientsInfo;
 };
 
 #endif

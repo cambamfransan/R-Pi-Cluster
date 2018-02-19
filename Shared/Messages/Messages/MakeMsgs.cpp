@@ -36,3 +36,37 @@ msg::MsgToSend* make_msgs::makeBasicMsgToSend(int fromId, int toId, int msgType,
   pToReturn->set_allocated_basicmsg(makeBasicMsg(fromId, toId, msgType, convId));
   return pToReturn;
 }
+
+msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId, int toId, int msgType, int convId, std::vector<ClientInfo> clients)
+{
+  msg::MsgToSend* pToReturn = new msg::MsgToSend();
+  pToReturn->set_allocated_basicmsg(makeBasicMsg(fromId, toId, msgType, convId));
+  
+  for (auto&& c : clients)
+  {
+    auto pClient = pToReturn->mutable_update()->add_clients();
+    pClient->set_ipaddress(c.ipAddress);
+    pClient->set_port(c.port);
+    pClient->set_username(c.username);
+    pClient->set_password(c.password);
+    pClient->set_priority(c.priority);
+    pClient->set_clientid(c.clientId);
+  }
+  
+  return pToReturn;
+}
+
+msg::MsgToSend* make_msgs::makeIdMsg(int fromId,
+  int toId,
+  int convId,
+  std::string ipAddress,
+  int port)
+{
+  msg::MsgToSend* pToReturn = new msg::MsgToSend();
+  msg::IDMsg* pId = new msg::IDMsg;
+  pId->set_ipaddress(ipAddress);
+  pId->set_port(port);
+  pToReturn->set_allocated_basicmsg(makeBasicMsg(fromId, toId, msg::ProtoType::ID_MSG, convId));
+  pToReturn->set_allocated_newid(pId);
+  return pToReturn;
+}

@@ -3,11 +3,12 @@ set(lib_name ProtoFiles)
 set(${lib_name}_deps ${Protobuf_LIBRARIES})
 
 set(${lib_name}_srcs
-	Backup.proto
 	BasicMsg.proto
+  IDMsg.proto
 	TaskMsg.proto
   TestMsg.proto
 	MsgToSend.proto
+	Update.proto
   )
 
 source_group(Messages FILES ${${lib_name}_srcs})

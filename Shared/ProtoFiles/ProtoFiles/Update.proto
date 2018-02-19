@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package msg;
+
+message Client {
+  string ipAddress = 1;
+  int32 port = 2;
+  string username = 3;
+  string password = 4;
+  int32 priority = 5;
+  int32 clientId = 6;
+}
+
+message Update {
+  repeated Client clients = 1;  
+}

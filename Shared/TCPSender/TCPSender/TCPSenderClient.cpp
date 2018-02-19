@@ -1,24 +1,26 @@
 #include "TCPSenderClient.hpp"
 #include "Logger/Logger.hpp"
 #include "Messages/MakeMsgs.hpp"
-#include "ProtoFiles/MsgToSend.pb.h"
 #include "Messages/MapHelpers.hpp"
+#include "ProtoFiles/MsgToSend.pb.h"
 
 #include <qbytearray.h>
 
 TCPSenderClient::TCPSenderClient(QHostAddress ip, qint16 port)
   : QObject(nullptr),
-    m_connectingSocket(),
+    m_pServerSocket(std::make_shared<QTcpSocket>(this)),
+    m_pTcpServer(std::make_shared<QTcpServer>(this)),
+    m_pPreviousPriority(std::make_shared<QTcpSocket>(this)),
+    m_pNextPriority(std::make_shared<QTcpSocket>(this)),
     m_myId(0),
     m_nextConvId(1),
     m_serverId(1)
 {
-  m_connectingSocket = std::make_shared<QTcpSocket>(this);
-  connect(m_connectingSocket.get(),
+  connect(m_pServerSocket.get(),
           &QTcpSocket::connected,
           this,
           &TCPSenderClient::connection);
-  m_connectingSocket->connectToHost(ip, port);
+  m_pServerSocket->connectToHost(ip, port);
 }
 
 TCPSenderClient::~TCPSenderClient() {}
@@ -27,24 +29,23 @@ qint64 TCPSenderClient::send(msg::MsgToSend* pMsg)
 {
   Logger::info("Sending: " + pMsg->DebugString());
   auto str = pMsg->SerializeAsString();
-  return m_connectingSocket->write(
-    QByteArray(str.c_str(),
-               static_cast<int>(str.size())));
+  return m_pServerSocket->write(
+    QByteArray(str.c_str(), static_cast<int>(str.size())));
 }
 
 quint16 TCPSenderClient::getLocalPort()
 {
-  return m_connectingSocket->localPort();
+  return m_pServerSocket->localPort();
 }
 
 quint16 TCPSenderClient::getPeerPort()
 {
-  return m_connectingSocket->peerPort();
+  return m_pServerSocket->peerPort();
 }
 
 QHostAddress TCPSenderClient::getPeerAddress()
 {
-  return m_connectingSocket->peerAddress();
+  return m_pServerSocket->peerAddress();
 }
 
 int TCPSenderClient::getNextConvId()
@@ -54,11 +55,11 @@ int TCPSenderClient::getNextConvId()
 
 void TCPSenderClient::connection()
 {
-  connect(m_connectingSocket.get(),
+  connect(m_pServerSocket.get(),
           &QIODevice::readyRead,
           this,
           &TCPSenderClient::emitMessage);
-  connect(m_connectingSocket.get(),
+  connect(m_pServerSocket.get(),
           &QTcpSocket::disconnected,
           this,
           &TCPSenderClient::disconnected);
@@ -68,12 +69,12 @@ void TCPSenderClient::connection()
 
 void TCPSenderClient::emitMessage()
 {
-  QTcpSocket* m_connectingSocket = qobject_cast<QTcpSocket*>(sender());
+  QTcpSocket* m_pServerSocket = qobject_cast<QTcpSocket*>(sender());
   msg::MsgToSend* pMsg = new msg::MsgToSend();
-  pMsg->ParseFromString(m_connectingSocket->readAll().toStdString());
+  pMsg->ParseFromString(m_pServerSocket->readAll().toStdString());
   Logger::info("Message Received: " + pMsg->DebugString());
   emit msgReceived(
-    pMsg, m_connectingSocket->peerAddress(), m_connectingSocket->peerPort());
+    pMsg, m_pServerSocket->peerAddress(), m_pServerSocket->peerPort());
 }
 
 void TCPSenderClient::readStream()
@@ -83,11 +84,17 @@ void TCPSenderClient::readStream()
   msg::MsgToSend* pReceived = new msg::MsgToSend();
   pReceived->ParseFromString(readSocket->readAll().toStdString());
   Logger::info("Message Received: " + pReceived->DebugString());
-  emit msgReceived(pReceived, readSocket->peerAddress(), readSocket->peerPort());
+  emit msgReceived(
+    pReceived, readSocket->peerAddress(), readSocket->peerPort());
 }
 
 void TCPSenderClient::disconnected()
 {
   Logger::error("lost connection");
   emit lostConnection();
+}
+
+bool TCPSenderClient::connectPrevious(QHostAddress ip, qint16 port)
+{
+  m_pPreviousPriority->connectToHost(ip, port);
 }

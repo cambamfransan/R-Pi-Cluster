@@ -3,10 +3,10 @@
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
 #include "Msgs/ReceiveHeartBeat.hpp"
+#include <iostream>
 #include <qprocess.h>
 #include <qthreadpool.h>
 #include <qtimer.h>
-#include <iostream>
 
 Server::Server()
   : m_pSender(std::make_shared<TCPSenderServer>()),
@@ -14,11 +14,14 @@ Server::Server()
     m_clientsMutex(std::make_shared<std::mutex>()),
     m_clientIds(
       std::make_shared<std::map<int, std::chrono::steady_clock::time_point>>()),
+    m_clientInfos(),
     m_myId(1),
     m_window(new MainWindow()),
     m_outMessages(),
     m_inputMessages(),
-  m_pHeartBeatTimer(new QTimer(this))
+    m_pHeartBeatTimer(new QTimer(this)),
+    m_pUpdateTimer(new QTimer(this)),
+    m_pResendTimer(new QTimer(this))
 {
   m_window->show();
   connect(m_pSender.get(),
@@ -56,10 +59,14 @@ Server::Server()
           &TCPSenderWeb::lostConnection,
           this,
           &Server::lostConnectionWeb);
-  //connect Timer
-  connect(m_pHeartBeatTimer, &QTimer::timeout,
-    this, &Server::sendHeartBeats);
+  // connect Timer
+  connect(m_pHeartBeatTimer, &QTimer::timeout, this, &Server::sendHeartBeats);
+  m_pHeartBeatTimer->start(3000);
 
+  connect(m_pUpdateTimer, &QTimer::timeout, this, &Server::sendUpdates);
+  m_pHeartBeatTimer->start(3000);
+
+  connect(m_pResendTimer, &QTimer::timeout, this, &Server::resendMsgs);
   m_pHeartBeatTimer->start(3000);
 }
 
@@ -97,6 +104,33 @@ void Server::newConnection(int id)
   (*m_clientIds)[id] = std::chrono::steady_clock::now();
   auto t = m_pSender->getSocket(id);
   m_window->addConnection(t->peerAddress(), t->peerPort());
+  // this will move
+  ClientInfo info{t->peerAddress().toString().toStdString(),
+                  t->peerPort(),
+                  "pi",
+                  "PiCluster!",
+                  static_cast<int>(m_clientIds->size() + 1),
+                  id};
+  m_clientInfos.push_back(info);
+  if (m_clientInfos.size() > 1)
+  {
+    int id(0);
+    for (auto&& info : m_clientInfos)
+    {
+      if (info.priority == id - 1)
+      {
+        int nextConvId(m_pSender->getNextConvId());
+        send(make_msgs::makeIdMsg(
+               m_myId, info.clientId, nextConvId, info.ipAddress, info.port),
+             nextConvId,
+             std::chrono::seconds(1),
+             true,
+             id);
+        return;
+      }
+    }
+    Logger::error("No Id Msg Sent");
+  }
 }
 
 void Server::newWebConnection()
@@ -166,12 +200,47 @@ void Server::lostConnectionWeb()
 
 void Server::sendHeartBeats()
 {
-  auto pMsg = make_msgs::makeBasicMsgToSend(m_myId, 0, msg::ProtoType::HEART_BEAT_MSG, 0);
+  auto pMsg =
+    make_msgs::makeBasicMsgToSend(m_myId, 0, msg::ProtoType::HEART_BEAT_MSG, 0);
   std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
   for (auto&& id : *m_clientIds)
   {
     pMsg->mutable_basicmsg()->set_toid(id.first);
-    pMsg->mutable_basicmsg()->set_convid(m_pSender->getNextConvId());
-    send(pMsg, 1, std::chrono::seconds(1), false, id.first);
+    int nextConvId(m_pSender->getNextConvId());
+    pMsg->mutable_basicmsg()->set_convid(nextConvId);
+    send(pMsg, nextConvId, std::chrono::seconds(1), true, id.first);
+  }
+}
+
+void Server::sendUpdates()
+{
+  std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
+  int id(0);
+  for (auto&& info : m_clientInfos)
+  {
+    if (info.priority == 1)
+    {
+      id = info.clientId;
+      break;
+    }
+  }
+  int nextConvId(m_pSender->getNextConvId());
+  auto pMsg = make_msgs::makeUpdateMsg(
+    m_myId, id, msg::ProtoType::UPDATE, nextConvId, m_clientInfos);
+
+  send(pMsg, nextConvId, std::chrono::seconds(1), true, id);
+}
+
+void Server::resendMsgs()
+{
+  for (auto&& conv : m_outMessages)
+  {
+    if (conv.second.timeout + conv.second.timeSend >
+        std::chrono::steady_clock::now())
+    {
+      Logger::error("Resending message from conversation: " +
+                    conv.second.convId);
+      m_pSender->send(conv.second.msg, conv.second.endpointId);
+    }
   }
 }

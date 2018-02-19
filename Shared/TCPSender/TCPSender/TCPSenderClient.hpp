@@ -28,6 +28,7 @@ public:
   quint16 getPeerPort();
   QHostAddress getPeerAddress();
   int getNextConvId();
+  bool connectPrevious(QHostAddress ip, qint16 port);
 
 private slots: 
   void connection();
@@ -36,7 +37,10 @@ private slots:
   void emitMessage();
 
 private:
-  std::shared_ptr<QTcpSocket> m_connectingSocket;
+  std::shared_ptr<QTcpSocket> m_pServerSocket;
+  std::shared_ptr<QTcpServer> m_pTcpServer;
+  std::shared_ptr<QTcpSocket> m_pPreviousPriority;
+  std::shared_ptr<QTcpSocket> m_pNextPriority;
   int m_myId;
   int m_nextConvId;
   int m_serverId;

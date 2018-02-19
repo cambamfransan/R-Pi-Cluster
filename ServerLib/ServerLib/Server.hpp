@@ -8,6 +8,7 @@
 #include <Gui/mainwindow.hpp>
 #include <rapidjson/document.h>
 #include <mutex>
+#include "Messages/ClientInfo.hpp"
 
 class Server : public QObject
 {
@@ -36,12 +37,15 @@ private slots:
   void lostConnection(int);
   void lostConnectionWeb();
   void sendHeartBeats();
+  void sendUpdates();
+  void resendMsgs();
 
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
   std::shared_ptr<std::mutex> m_clientsMutex;
   std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
+  std::vector<ClientInfo> m_clientInfos;
   int m_myId;
   MainWindow* m_window;
   std::map<int, Conversation> m_outMessages;
@@ -49,6 +53,8 @@ private:
 
   //Timers
   QTimer* m_pHeartBeatTimer;
+  QTimer* m_pUpdateTimer;
+  QTimer* m_pResendTimer;
 };
 
 #endif

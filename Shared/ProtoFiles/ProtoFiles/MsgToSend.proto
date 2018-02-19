@@ -1,8 +1,9 @@
 syntax = "proto3";
-import public "Backup.proto";
+import public "Update.proto";
 import public "BasicMsg.proto";
 import public "TaskMsg.proto";
 import public "TestMsg.proto";
+import public "IDMsg.proto";
 
 package msg;
 
@@ -10,15 +11,17 @@ enum ProtoType {
   UNKNOWN = 0;
   HEART_BEAT_MSG = 1;
   HEART_BEAT_MSG_ACK = 2;
-  BACKUP = 3;
-  TASK_MSG = 4;
-  TEST_MSG = 5;
-  ID_MSG = 6;
+  UPDATE = 3;
+  UPDATE_ACK = 4;
+  TASK_MSG = 5;
+  TEST_MSG = 6;
+  ID_MSG = 7;
 }
 
 message MsgToSend {
   BasicMsg basicMsg = 1;
-  Backup backup = 2;
+  Update update = 2;
   TaskMsg task = 3;
   TestMsg test = 4;
+  IDMsg NewId = 5;
 }
