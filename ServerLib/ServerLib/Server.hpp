@@ -48,7 +48,8 @@ private:
   std::vector<ClientInfo> m_clientInfos;
   int m_myId;
   MainWindow* m_window;
-  std::map<int, Conversation> m_outMessages;
+  std::mutex m_outMessagesMutex;
+  std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
 
   //Timers

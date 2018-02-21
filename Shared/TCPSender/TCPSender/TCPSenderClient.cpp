@@ -20,7 +20,15 @@ TCPSenderClient::TCPSenderClient(QHostAddress ip, qint16 port)
           &QTcpSocket::connected,
           this,
           &TCPSenderClient::connection);
+  connect(m_pServerSocket.get(),
+          &QTcpSocket::connected,
+          this,
+          &TCPSenderClient::previousConnection);
   m_pServerSocket->connectToHost(ip, port);
+  connect(m_pTcpServer.get(),
+          &QTcpServer::newConnection,
+          this,
+          &TCPSenderClient::serverConnection);
 }
 
 TCPSenderClient::~TCPSenderClient() {}
@@ -67,6 +75,51 @@ void TCPSenderClient::connection()
   emit newConnection();
 }
 
+void TCPSenderClient::previousConnection()
+{
+  connect(m_pPreviousPriority.get(),
+          &QIODevice::readyRead,
+          this,
+          &TCPSenderClient::emitMessage);
+  connect(m_pPreviousPriority.get(),
+          &QTcpSocket::disconnected,
+          this,
+          &TCPSenderClient::disconnected);
+  Logger::info("Connection Successful to another client");
+}
+
+void TCPSenderClient::serverConnection()
+{
+  m_pNextPriority =
+    std::shared_ptr<QTcpSocket>(m_pTcpServer->nextPendingConnection());
+
+  connect(m_pNextPriority.get(),
+          &QIODevice::readyRead,
+          this,
+          &TCPSenderClient::emitMessage);
+  connect(m_pNextPriority.get(),
+          &QTcpSocket::disconnected,
+          this,
+          &TCPSenderClient::disconnected);
+  Logger::info("Connection Successful, connected to next client");
+}
+
+void TCPSenderClient::newPreviousConnection()
+{
+  m_pNextPriority =
+    std::shared_ptr<QTcpSocket>(m_pTcpServer->nextPendingConnection());
+
+  connect(m_pNextPriority.get(),
+          &QIODevice::readyRead,
+          this,
+          &TCPSenderClient::emitMessage);
+  connect(m_pNextPriority.get(),
+          &QTcpSocket::disconnected,
+          this,
+          &TCPSenderClient::disconnected);
+  Logger::info("Connection Successful, connected to next client");
+}
+
 void TCPSenderClient::emitMessage()
 {
   QTcpSocket* m_pServerSocket = qobject_cast<QTcpSocket*>(sender());
@@ -94,7 +147,38 @@ void TCPSenderClient::disconnected()
   emit lostConnection();
 }
 
-bool TCPSenderClient::connectPrevious(QHostAddress ip, qint16 port)
+void TCPSenderClient::connectPrevious(std::string ip, qint16 port)
 {
-  m_pPreviousPriority->connectToHost(ip, port);
+  m_pPreviousPriority->connectToHost(
+    QHostAddress(QString::fromStdString(ip)), port);
+  if (m_pTcpServer->listen())
+  {
+    Logger::info("Listening for next client");
+    connect(m_pNextPriority.get(),
+            &QTcpSocket::connected,
+            this,
+            &TCPSenderClient::connectNext);
+    return;
+  }
+}
+
+void TCPSenderClient::topPriority()
+{
+  m_pPreviousPriority = m_pServerSocket;
+}
+
+void TCPSenderClient::connectNext()
+{
+  m_pNextPriority =
+    std::shared_ptr<QTcpSocket>(m_pTcpServer->nextPendingConnection());
+
+  connect(m_pNextPriority.get(),
+          &QIODevice::readyRead,
+          this,
+          &TCPSenderClient::emitMessage);
+  connect(m_pNextPriority.get(),
+          &QTcpSocket::disconnected,
+          this,
+          &TCPSenderClient::disconnected);
+  Logger::info("Connection Successful, connected to next client");
 }

@@ -70,3 +70,12 @@ msg::MsgToSend* make_msgs::makeIdMsg(int fromId,
   pToReturn->set_allocated_newid(pId);
   return pToReturn;
 }
+
+msg::MsgToSend* make_msgs::makeIdMsgAck(int fromId,
+  int toId,
+  int convId)
+{
+  msg::MsgToSend* pToReturn = new msg::MsgToSend();
+  pToReturn->set_allocated_basicmsg(makeBasicMsg(fromId, toId, msg::ProtoType::ID_MSG_ACK, convId));
+  return pToReturn;
+}

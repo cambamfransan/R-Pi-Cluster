@@ -1,4 +1,5 @@
 #include "Client.hpp"
+#include "Logger/Logger.hpp"
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
 #include <iostream>
@@ -7,11 +8,11 @@ Client::Client(QHostAddress addr, qint16 port)
   : m_pSender(std::make_shared<TCPSenderClient>(addr, port)),
     m_serverId(1),
     m_myId(0),
-  m_myPriority(99),
+    m_myPriority(99),
     m_window(new MainWindow()),
     m_outMessages(),
     m_inputMessages(),
-  m_allClientsInfo()
+    m_allClientsInfo()
 {
   m_window->show();
   connect(m_pSender.get(),
@@ -56,14 +57,35 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 
   int convId = pMsg->basicmsg().convid();
+  std::string clientIp;
+  int clientPort;
   switch (pMsg->basicmsg().msgtype())
   {
   case msg::ProtoType::ID_MSG:
     m_myId = pMsg->basicmsg().toid();
     m_serverId = pMsg->basicmsg().fromid();
-    
+    clientIp = pMsg->newid().ipaddress();
+    clientPort = pMsg->newid().port();
+    Logger::info("IP: " + clientIp + " vs. " + ip.toString().toStdString());
+    Logger::info("Port: " + std::to_string(clientPort) + " vs " +
+                 std::to_string(port));
+    if (ip == QHostAddress(QString::fromStdString(clientIp)) &&
+        static_cast<int>(port) + 65536 == clientPort)
+    {
+      Logger::info("This client has top priority");
+      m_pSender->topPriority();
+      send(make_msgs::makeIdMsgAck(m_myId, m_serverId, convId),
+           convId,
+           std::chrono::seconds(1),
+           false);
+      return;
+    }
+    Logger::info("Connecting to client at: " + clientIp + ": " +
+                 std::to_string(port+65536));
+    m_pSender->connectPrevious(clientIp, clientPort);
     break;
   case msg::ProtoType::HEART_BEAT_MSG:
+    m_myId = pMsg->basicmsg().toid();
     send(make_msgs::makeBasicMsgToSend(
            m_myId, m_serverId, msg::ProtoType::HEART_BEAT_MSG_ACK, convId),
          convId,
@@ -106,35 +128,38 @@ void Client::lostConnection()
 void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 {
   std::vector<ClientInfo> infos;
-  for (size_t i = 0; i < pMsg->update().clients_size(); i++)
+  for (int i = 0; i < pMsg->update().clients_size(); i++)
   {
     auto client = pMsg->update().clients(i);
-    ClientInfo info{ client.ipaddress(),
-      client.port(),
-      client.username(),
-      client.password(),
-      client.priority(),
-      client.clientid() };
+    ClientInfo info{client.ipaddress(),
+                    client.port(),
+                    client.username(),
+                    client.password(),
+                    client.priority(),
+                    client.clientid()};
     if (info.clientId == m_myId) m_myPriority = info.priority;
     infos.push_back(info);
   }
   m_allClientsInfo = infos;
   send(make_msgs::makeBasicMsgToSend(
-    m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
-    convId,
-    std::chrono::seconds(1),
-    false);
+         m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
+       convId,
+       std::chrono::seconds(1),
+       false);
 
   for (auto&& info : m_allClientsInfo)
   {
     if (info.priority == info.priority + 1)
     {
       int nextConvId(m_pSender->getNextConvId());
-      send(make_msgs::makeUpdateMsg(
-        m_myId,info.clientId, msg::ProtoType::UPDATE, nextConvId, m_allClientsInfo),
-        nextConvId,
-        std::chrono::seconds(1),
-        false);
+      send(make_msgs::makeUpdateMsg(m_myId,
+                                    info.clientId,
+                                    msg::ProtoType::UPDATE,
+                                    nextConvId,
+                                    m_allClientsInfo),
+           nextConvId,
+           std::chrono::seconds(1),
+           false);
       break;
     }
   }

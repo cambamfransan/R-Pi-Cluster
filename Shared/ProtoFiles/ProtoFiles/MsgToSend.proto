@@ -16,6 +16,7 @@ enum ProtoType {
   TASK_MSG = 5;
   TEST_MSG = 6;
   ID_MSG = 7;
+  ID_MSG_ACK = 8;
 }
 
 message MsgToSend {

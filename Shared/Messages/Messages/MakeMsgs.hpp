@@ -36,6 +36,10 @@ namespace make_msgs
                             std::string ipAddress,
                             int port);
 
+  msg::MsgToSend* makeIdMsgAck(int fromId,
+    int toId,
+    int convId);
+
 } // namespace make_msgs
 
 #endif

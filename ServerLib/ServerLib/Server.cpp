@@ -17,6 +17,7 @@ Server::Server()
     m_clientInfos(),
     m_myId(1),
     m_window(new MainWindow()),
+    m_outMessagesMutex(),
     m_outMessages(),
     m_inputMessages(),
     m_pHeartBeatTimer(new QTimer(this)),
@@ -80,9 +81,11 @@ void Server::send(msg::MsgToSend* pMsg,
 {
   if (requireResponse)
   {
-    m_outMessages[make_msgs::getMapId(m_myId, pMsg->basicmsg().convid())] =
-      Conversation{
+    {
+      std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+      m_outMessages[m_myId][pMsg->basicmsg().convid()] = Conversation{
         pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
+    }
   }
   std::cout << "In Sending" << std::endl;
   m_pSender->send(pMsg, endpointId);
@@ -105,23 +108,22 @@ void Server::newConnection(int id)
   auto t = m_pSender->getSocket(id);
   m_window->addConnection(t->peerAddress(), t->peerPort());
   // this will move
-  ClientInfo info{t->peerAddress().toString().toStdString(),
-                  t->peerPort(),
-                  "pi",
-                  "PiCluster!",
-                  static_cast<int>(m_clientIds->size() + 1),
-                  id};
-  m_clientInfos.push_back(info);
+  ClientInfo infoToInsert{t->peerAddress().toString().toStdString(),
+                          t->peerPort(),
+                          "pi",
+                          "PiCluster!",
+                          static_cast<int>(m_clientIds->size() + 1),
+                          id};
+  m_clientInfos.push_back(infoToInsert);
   if (m_clientInfos.size() > 1)
   {
-    int id(0);
     for (auto&& info : m_clientInfos)
     {
       if (info.priority == id - 1)
       {
         int nextConvId(m_pSender->getNextConvId());
         send(make_msgs::makeIdMsg(
-               m_myId, info.clientId, nextConvId, info.ipAddress, info.port),
+               m_myId, id, nextConvId, info.ipAddress, info.port),
              nextConvId,
              std::chrono::seconds(1),
              true,
@@ -130,6 +132,19 @@ void Server::newConnection(int id)
       }
     }
     Logger::error("No Id Msg Sent");
+  }
+  else if (m_clientInfos.size() == 1)
+  {
+    int nextConvId(m_pSender->getNextConvId());
+    send(make_msgs::makeIdMsg(m_myId,
+                              infoToInsert.clientId,
+                              nextConvId,
+                              m_pSender->getServerIpAddress(),
+                              m_pSender->getServerPort()),
+         nextConvId,
+         std::chrono::seconds(1),
+         true,
+         id);
   }
 }
 
@@ -161,17 +176,20 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     Logger::error("Duplicate: " + pMsg->DebugString());
     return;
   }
-  if (auto itr = m_outMessages.find(make_msgs::getMapId(
-                   pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
-                 m_outMessages.end())
-    m_outMessages.erase(itr);
+  {
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    if (auto itr = m_outMessages.find(make_msgs::getMapId(
+                     pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
+                   m_outMessages.end())
+      m_outMessages.erase(itr);
+  }
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
   int msgId = pMsg->basicmsg().msgtype();
   if (msg::ProtoType::HEART_BEAT_MSG_ACK == msgId)
   {
-    receive_msgs::HeartBeatTask* hello =
+    receive_msgs::HeartBeatTask* heart =
       new receive_msgs::HeartBeatTask(*pMsg, m_clientsMutex, m_clientIds);
-    QThreadPool::globalInstance()->start(hello);
+    QThreadPool::globalInstance()->start(heart);
   }
   else if (1 == msgId)
   {
@@ -187,8 +205,14 @@ void Server::receiveMessageWeb(std::string msg)
 void Server::lostConnection(int id)
 {
   std::cout << "erased" << std::endl;
-  std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
-  m_clientIds->erase(m_clientIds->find(id));
+  {
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    m_outMessages.erase(m_outMessages.find(id));
+  }
+  {
+    std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
+    m_clientIds->erase(m_clientIds->find(id));
+  }
   std::cout << "erased successful" << std::endl;
 }
 
@@ -233,14 +257,18 @@ void Server::sendUpdates()
 
 void Server::resendMsgs()
 {
-  for (auto&& conv : m_outMessages)
+  std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+  for (auto&& client : m_outMessages)
   {
-    if (conv.second.timeout + conv.second.timeSend >
-        std::chrono::steady_clock::now())
+    for (auto&& conv : client.second)
     {
-      Logger::error("Resending message from conversation: " +
-                    conv.second.convId);
-      m_pSender->send(conv.second.msg, conv.second.endpointId);
+      if (conv.second.timeout + conv.second.timeSend >
+          std::chrono::steady_clock::now())
+      {
+        Logger::error("Resending message from conversation: " +
+                      conv.second.convId);
+        m_pSender->send(conv.second.msg, conv.second.endpointId);
+      }
     }
   }
 }

@@ -1,10 +1,11 @@
 #include "TCPSenderServer.hpp"
 #include "Logger/Logger.hpp"
 #include "Messages/MakeMsgs.hpp"
-#include "ProtoFiles/MsgToSend.pb.h"
 #include "Messages/MapHelpers.hpp"
+#include "ProtoFiles/MsgToSend.pb.h"
 
 #include <qbytearray.h>
+#include <qnetworkinterface.h>
 
 TCPSenderServer::TCPSenderServer()
   : QObject(nullptr),
@@ -15,7 +16,24 @@ TCPSenderServer::TCPSenderServer()
     m_nextConvId(1)
 {
   Logger::info("waiting for connection");
-  if (!m_pServer->listen())
+  QList<QHostAddress> allAddresses = QNetworkInterface::allAddresses();
+  QHostAddress ipAddress;
+
+  for (auto&& ip : allAddresses)  
+  {
+    if (ip.protocol() == QAbstractSocket::IPv4Protocol &&
+      ip != QHostAddress(QHostAddress::LocalHost))
+    {
+      if (ip.toString().toStdString().find("169.254.") == std::string::npos)
+      {
+        std::cout << ip.toString().toStdString() << std::endl;
+        ipAddress = ip;
+        break;
+      }
+    }
+  }
+
+  if (!m_pServer->listen(ipAddress))
   {
     Logger::info("not listening");
     return;
@@ -28,8 +46,7 @@ TCPSenderServer::TCPSenderServer()
 
 TCPSenderServer::~TCPSenderServer() {}
 
-qint64 TCPSenderServer::send(msg::MsgToSend* pMsg,
-  int endpointId)
+qint64 TCPSenderServer::send(msg::MsgToSend* pMsg, int endpointId)
 {
   Logger::info("Sending: " + pMsg->DebugString());
 
@@ -38,9 +55,14 @@ qint64 TCPSenderServer::send(msg::MsgToSend* pMsg,
   {
     return m_pSockets[endpointId]->write(
       QByteArray(pMsg->SerializeAsString().c_str(),
-        static_cast<int>(pMsg->SerializeAsString().size())));
+                 static_cast<int>(pMsg->SerializeAsString().size())));
   }
   return 0;
+}
+
+std::string TCPSenderServer::getServerIpAddress()
+{
+  return m_pServer->serverAddress().toString().toStdString();
 }
 
 quint16 TCPSenderServer::getServerPort()
@@ -94,7 +116,7 @@ void TCPSenderServer::readStream()
     std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
   msg::MsgToSend* pReceived = new msg::MsgToSend();
   pReceived->ParseFromString(readSocket->readAll().toStdString());
-  
+
   Logger::info("Message Received: " + pReceived->DebugString());
   emit msgReceived(
     pReceived, readSocket->peerAddress(), readSocket->peerPort());
@@ -103,12 +125,12 @@ void TCPSenderServer::readStream()
 void TCPSenderServer::disconnected()
 {
   auto readSocket = qobject_cast<QTcpSocket*>(sender());
-  if (readSocket == nullptr)return;
+  if (readSocket == nullptr) return;
   auto itr =
     std::find_if(m_pSockets.begin(),
                  m_pSockets.end(),
                  [readSocket](std::pair<int, std::shared_ptr<QTcpSocket>> rhs) {
-    if (rhs.second == nullptr)return false;
+                   if (rhs.second == nullptr) return false;
                    return readSocket->localPort() == rhs.second->localPort();
                  });
   if (itr != m_pSockets.end())
