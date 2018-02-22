@@ -45,12 +45,13 @@ private:
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
   std::shared_ptr<std::mutex> m_clientsMutex;
   std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
-  std::vector<ClientInfo> m_clientInfos;
+  std::map<int,ClientInfo> m_clientInfos;
   int m_myId;
   MainWindow* m_window;
   std::mutex m_outMessagesMutex;
   std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+  int m_nextPriority;
 
   //Timers
   QTimer* m_pHeartBeatTimer;

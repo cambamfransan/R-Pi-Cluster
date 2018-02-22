@@ -28,7 +28,7 @@ namespace make_msgs
                                 int toId,
                                 int msgType,
                                 int convId,
-                                std::vector<ClientInfo> clients);
+                                std::map<int,ClientInfo> clients);
 
   msg::MsgToSend* makeIdMsg(int fromId,
                             int toId,
@@ -38,7 +38,7 @@ namespace make_msgs
 
   msg::MsgToSend* makeIdMsgAck(int fromId,
     int toId,
-    int convId);
+    int convId, int port);
 
 } // namespace make_msgs
 

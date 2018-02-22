@@ -1,10 +1,10 @@
 #ifndef CLIENT_CLASS_H
 #define CLIENT_CLASS_H
 
+#include "Messages/ClientInfo.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
 #include <Gui/mainwindow.hpp>
 #include <qobject.h>
-#include "Messages/ClientInfo.hpp"
 
 class Client : public QObject
 {
@@ -22,6 +22,10 @@ private slots:
             int convId,
             std::chrono::seconds timeout,
             bool requireResponse);
+  void sendToNext(msg::MsgToSend* pMsg,
+                  int convId,
+                  std::chrono::seconds timeout,
+                  bool requireResponse);
   void lostConnection();
   void recieveUpdate(msg::MsgToSend* pMsg, int convId);
 
@@ -33,7 +37,7 @@ private:
   MainWindow* m_window;
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
-  std::vector<ClientInfo> m_allClientsInfo;
+  std::map<int, ClientInfo> m_allClientsInfo;
 };
 
 #endif

@@ -24,23 +24,23 @@ signals:
 
 public:
   qint64 send(msg::MsgToSend* pMsg);
+  qint64 sendToNext(msg::MsgToSend* pMsg);
 
   quint16 getLocalPort();
   quint16 getPeerPort();
   QHostAddress getPeerAddress();
   int getNextConvId();
-  void connectPrevious(std::string ip, qint16 port);
+  void connectPrevious(std::string ip, quint16 port);
   void topPriority();
+  int getLocalServerPort();
 
 private slots:
   void connection();
-  void previousConnection();
-  void serverConnection();
   void disconnected();
   void readStream();
   void emitMessage();
+  void newNextConnection();
   void newPreviousConnection();
-  void connectNext();
 
 private:
   std::shared_ptr<QTcpSocket> m_pServerSocket;
@@ -50,6 +50,7 @@ private:
   int m_myId;
   int m_nextConvId;
   int m_serverId;
+  QHostAddress m_myAddress;
 };
 
 #endif

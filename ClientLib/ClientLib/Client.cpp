@@ -35,10 +35,8 @@ Client::~Client() {}
 void Client::newConnection()
 {
   m_window->setPort(m_pSender->getLocalPort());
-  std::cout << "New Connection" << std::endl;
   m_window->addConnection(
     m_pSender->getPeerAddress(), m_pSender->getPeerPort());
-  std::cout << "Didn't Get here" << std::endl;
 }
 
 void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
@@ -66,23 +64,21 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     m_serverId = pMsg->basicmsg().fromid();
     clientIp = pMsg->newid().ipaddress();
     clientPort = pMsg->newid().port();
-    Logger::info("IP: " + clientIp + " vs. " + ip.toString().toStdString());
-    Logger::info("Port: " + std::to_string(clientPort) + " vs " +
-                 std::to_string(port));
     if (ip == QHostAddress(QString::fromStdString(clientIp)) &&
         static_cast<int>(port) + 65536 == clientPort)
     {
       Logger::info("This client has top priority");
       m_pSender->topPriority();
-      send(make_msgs::makeIdMsgAck(m_myId, m_serverId, convId),
-           convId,
-           std::chrono::seconds(1),
-           false);
-      return;
     }
-    Logger::info("Connecting to client at: " + clientIp + ": " +
-                 std::to_string(port+65536));
-    m_pSender->connectPrevious(clientIp, clientPort);
+    else
+    {
+      m_pSender->connectPrevious(clientIp, clientPort);
+    }
+    send(make_msgs::makeIdMsgAck(
+           m_myId, m_serverId, convId, m_pSender->getLocalServerPort()),
+         convId,
+         std::chrono::seconds(1),
+         false);
     break;
   case msg::ProtoType::HEART_BEAT_MSG:
     m_myId = pMsg->basicmsg().toid();
@@ -112,6 +108,20 @@ void Client::send(msg::MsgToSend* pMsg,
   m_pSender->send(pMsg);
 }
 
+void Client::sendToNext(msg::MsgToSend* pMsg,
+  int convId,
+  std::chrono::seconds timeout,
+  bool requireResponse)
+{
+  /*if (requireResponse) // Need to implement this
+  {
+    m_outMessages[make_msgs::getMapId(m_myId, pMsg->basicmsg().convid())] =
+      Conversation{
+      pMsg, convId, timeout, std::chrono::steady_clock::now(), m_serverId };
+  }*/
+  m_pSender->sendToNext(pMsg);
+}
+
 void Client::clicked(std::string msg)
 {
   msg::MsgToSend* pMsg =
@@ -127,7 +137,7 @@ void Client::lostConnection()
 
 void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 {
-  std::vector<ClientInfo> infos;
+  std::map<int, ClientInfo> infos;
   for (int i = 0; i < pMsg->update().clients_size(); i++)
   {
     auto client = pMsg->update().clients(i);
@@ -136,9 +146,10 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
                     client.username(),
                     client.password(),
                     client.priority(),
-                    client.clientid()};
+                    client.clientid(),
+                    client.serverport()};
     if (info.clientId == m_myId) m_myPriority = info.priority;
-    infos.push_back(info);
+    infos[client.clientid()] = info;
   }
   m_allClientsInfo = infos;
   send(make_msgs::makeBasicMsgToSend(
@@ -146,21 +157,22 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
        convId,
        std::chrono::seconds(1),
        false);
+  Logger::info("Tried to send update ack");
 
   for (auto&& info : m_allClientsInfo)
   {
-    if (info.priority == info.priority + 1)
+    if (info.second.priority == m_myPriority + 1)
     {
       int nextConvId(m_pSender->getNextConvId());
-      send(make_msgs::makeUpdateMsg(m_myId,
-                                    info.clientId,
-                                    msg::ProtoType::UPDATE,
-                                    nextConvId,
-                                    m_allClientsInfo),
+      pMsg->mutable_basicmsg()->set_convid(nextConvId);
+      pMsg->mutable_basicmsg()->set_fromid(m_myId);
+      pMsg->mutable_basicmsg()->set_convid(info.second.clientId);
+      sendToNext(pMsg,
            nextConvId,
            std::chrono::seconds(1),
-           false);
-      break;
+           true);
+      return;
     }
   }
+  Logger::info("Update Msg not sent");
 }

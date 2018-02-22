@@ -73,11 +73,16 @@ void MessagesTest::testUpdateMsgs()
 {
   auto first = make_msgs::makeUpdateMsg(1, 2, 3, 4, {});
   ClientInfo info{ "127.0.0.1", 51212, "pi", "PiCluster!", 1 };
+  std::map<int, ClientInfo> firstMap;
+  firstMap[1] = info;
   ClientInfo info2{ "127.0.0.1", 51212, "pi", "PiCluster!", 2 };
   ClientInfo info3{ "127.0.0.1", 51212, "pi", "PiCluster!", 3 };
   ClientInfo info4{ "127.0.0.1", 51212, "pi", "PiCluster!", 4 };
-  auto second = make_msgs::makeUpdateMsg(1, 2, 3, 4, {info});
-  auto third = make_msgs::makeUpdateMsg(1, 2, 3, 4, { info, info2, info3, info4 });
+  firstMap[2] = info2;
+  firstMap[3] = info3;
+  firstMap[4] = info4;
+  auto second = make_msgs::makeUpdateMsg(1, 2, 3, 4, firstMap);
+  auto third = make_msgs::makeUpdateMsg(1, 2, 3, 4, firstMap);
 
   third->update().clients(0).ipaddress();
 

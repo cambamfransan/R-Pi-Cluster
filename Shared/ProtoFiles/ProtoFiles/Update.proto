@@ -9,6 +9,7 @@ message Client {
   string password = 4;
   int32 priority = 5;
   int32 clientId = 6;
+  int32 serverPort = 7;
 }
 
 message Update {

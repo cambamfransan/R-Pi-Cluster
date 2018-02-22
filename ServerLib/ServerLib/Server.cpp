@@ -22,7 +22,8 @@ Server::Server()
     m_inputMessages(),
     m_pHeartBeatTimer(new QTimer(this)),
     m_pUpdateTimer(new QTimer(this)),
-    m_pResendTimer(new QTimer(this))
+    m_pResendTimer(new QTimer(this)),
+    m_nextPriority(1)
 {
   m_window->show();
   connect(m_pSender.get(),
@@ -65,10 +66,10 @@ Server::Server()
   m_pHeartBeatTimer->start(3000);
 
   connect(m_pUpdateTimer, &QTimer::timeout, this, &Server::sendUpdates);
-  m_pHeartBeatTimer->start(3000);
+  m_pUpdateTimer->start(3000);
 
   connect(m_pResendTimer, &QTimer::timeout, this, &Server::resendMsgs);
-  m_pHeartBeatTimer->start(3000);
+  //m_pResendTimer->start(3000);
 }
 
 Server::~Server() {}
@@ -112,18 +113,28 @@ void Server::newConnection(int id)
                           t->peerPort(),
                           "pi",
                           "PiCluster!",
-                          static_cast<int>(m_clientIds->size() + 1),
-                          id};
-  m_clientInfos.push_back(infoToInsert);
+                          m_nextPriority,
+                          id,
+                          0};
+  m_nextPriority++;
+  m_clientInfos[id] = infoToInsert;
   if (m_clientInfos.size() > 1)
   {
     for (auto&& info : m_clientInfos)
     {
-      if (info.priority == id - 1)
+      std::cout << info.second.clientId << ":" << info.second.priority << ":"
+                << info.second.serverPort << std::endl;
+    }
+    for (auto&& info : m_clientInfos)
+    {
+      if (info.second.priority == m_nextPriority - 2)
       {
         int nextConvId(m_pSender->getNextConvId());
-        send(make_msgs::makeIdMsg(
-               m_myId, id, nextConvId, info.ipAddress, info.port),
+        send(make_msgs::makeIdMsg(m_myId,
+                                  id,
+                                  nextConvId,
+                                  info.second.ipAddress,
+                                  info.second.serverPort),
              nextConvId,
              std::chrono::seconds(1),
              true,
@@ -191,8 +202,10 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
       new receive_msgs::HeartBeatTask(*pMsg, m_clientsMutex, m_clientIds);
     QThreadPool::globalInstance()->start(heart);
   }
-  else if (1 == msgId)
+  else if (msg::ProtoType::ID_MSG_ACK == msgId)
   {
+    Logger::info("Setting port");
+    m_clientInfos[pMsg->basicmsg().fromid()].serverPort = pMsg->newid().port();
   }
 }
 
@@ -242,11 +255,16 @@ void Server::sendUpdates()
   int id(0);
   for (auto&& info : m_clientInfos)
   {
-    if (info.priority == 1)
+    if (info.second.priority == 1)
     {
-      id = info.clientId;
+      id = info.second.clientId;
       break;
     }
+  }
+  if (id == 0)
+  {
+    Logger::error("That didn't work");
+    return;
   }
   int nextConvId(m_pSender->getNextConvId());
   auto pMsg = make_msgs::makeUpdateMsg(

@@ -54,9 +54,10 @@ qint64 TCPSenderServer::send(msg::MsgToSend* pMsg, int endpointId)
   if (itr != m_pSockets.end() && itr->second != nullptr)
   {
     return m_pSockets[endpointId]->write(
-      QByteArray(pMsg->SerializeAsString().c_str(),
-                 static_cast<int>(pMsg->SerializeAsString().size())));
+      QByteArray(pMsg->SerializeAsString().c_str()+'~',
+                 static_cast<int>(pMsg->SerializeAsString().size()+1)));
   }
+  Logger::error("Not in endpoints");
   return 0;
 }
 
@@ -77,6 +78,7 @@ std::shared_ptr<QTcpSocket> TCPSenderServer::getSocket(int id)
 
 int TCPSenderServer::getNextConvId()
 {
+  Logger::info("incrementing from: " + std::to_string(m_nextConvId));
   return m_nextConvId++;
 }
 
