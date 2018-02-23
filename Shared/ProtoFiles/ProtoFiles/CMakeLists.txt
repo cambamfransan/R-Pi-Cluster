@@ -4,7 +4,6 @@ set(${lib_name}_deps ${Protobuf_LIBRARIES})
 
 set(${lib_name}_srcs
 	BasicMsg.proto
-  IDMsg.proto
 	TaskMsg.proto
   TestMsg.proto
 	MsgToSend.proto

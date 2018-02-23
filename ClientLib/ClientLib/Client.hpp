@@ -22,10 +22,6 @@ private slots:
             int convId,
             std::chrono::seconds timeout,
             bool requireResponse);
-  void sendToNext(msg::MsgToSend* pMsg,
-                  int convId,
-                  std::chrono::seconds timeout,
-                  bool requireResponse);
   void lostConnection();
   void recieveUpdate(msg::MsgToSend* pMsg, int convId);
 

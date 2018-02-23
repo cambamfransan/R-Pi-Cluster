@@ -32,13 +32,11 @@ namespace make_msgs
 
   msg::MsgToSend* makeIdMsg(int fromId,
                             int toId,
-                            int convId,
-                            std::string ipAddress,
-                            int port);
+                            int convId);
 
   msg::MsgToSend* makeIdMsgAck(int fromId,
     int toId,
-    int convId, int port);
+    int convId);
 
 } // namespace make_msgs
 

@@ -3,20 +3,17 @@ import public "Update.proto";
 import public "BasicMsg.proto";
 import public "TaskMsg.proto";
 import public "TestMsg.proto";
-import public "IDMsg.proto";
 
 package msg;
 
 enum ProtoType {
   UNKNOWN = 0;
-  HEART_BEAT_MSG = 1;
-  HEART_BEAT_MSG_ACK = 2;
-  UPDATE = 3;
-  UPDATE_ACK = 4;
-  TASK_MSG = 5;
-  TEST_MSG = 6;
-  ID_MSG = 7;
-  ID_MSG_ACK = 8;
+  UPDATE = 1;
+  UPDATE_ACK = 2;
+  TASK_MSG = 3;
+  TEST_MSG = 4;
+  ID_MSG = 5;
+  ID_MSG_ACK = 6;
 }
 
 message MsgToSend {
@@ -24,5 +21,4 @@ message MsgToSend {
   Update update = 2;
   TaskMsg task = 3;
   TestMsg test = 4;
-  IDMsg NewId = 5;
 }

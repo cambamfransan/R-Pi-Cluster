@@ -32,7 +32,7 @@ public:
 private slots: 
   void connection();
   void disconnected();
-  void readStream();
+  //void readStream();
   void emitMessage();
 
 private:

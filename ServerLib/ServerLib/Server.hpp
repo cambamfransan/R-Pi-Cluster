@@ -36,15 +36,14 @@ private slots:
   void receiveMessageWeb(std::string msg);
   void lostConnection(int);
   void lostConnectionWeb();
-  void sendHeartBeats();
-  void sendUpdates();
-  void resendMsgs();
+  void sendTimedMsgs();
 
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
   std::shared_ptr<std::mutex> m_clientsMutex;
   std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
+  std::mutex m_clientInfosMutex;
   std::map<int,ClientInfo> m_clientInfos;
   int m_myId;
   MainWindow* m_window;
@@ -54,9 +53,7 @@ private:
   int m_nextPriority;
 
   //Timers
-  QTimer* m_pHeartBeatTimer;
-  QTimer* m_pUpdateTimer;
-  QTimer* m_pResendTimer;
+  QTimer* m_pTimer;
 };
 
 #endif

@@ -68,35 +68,26 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId,
     pClient->set_password(c.second.password);
     pClient->set_priority(c.second.priority);
     pClient->set_clientid(c.second.clientId);
-    pClient->set_serverport(c.second.serverPort);
   }
 
   return pToReturn;
 }
 
 msg::MsgToSend* make_msgs::makeIdMsg(
-  int fromId, int toId, int convId, std::string ipAddress, int port)
+  int fromId, int toId, int convId)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
-  msg::IDMsg* pId = new msg::IDMsg;
-  pId->set_ipaddress(ipAddress);
-  pId->set_port(port);
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::ID_MSG, convId));
-  pToReturn->set_allocated_newid(pId);
   return pToReturn;
 }
 
 msg::MsgToSend* make_msgs::makeIdMsgAck(int fromId,
                                         int toId,
-                                        int convId,
-                                        int port)
+                                        int convId)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
-  msg::IDMsg* pId = new msg::IDMsg;
-  pId->set_port(port);
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::ID_MSG_ACK, convId));
-  pToReturn->set_allocated_newid(pId);
   return pToReturn;
 }

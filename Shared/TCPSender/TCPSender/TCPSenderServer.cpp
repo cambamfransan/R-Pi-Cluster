@@ -53,9 +53,11 @@ qint64 TCPSenderServer::send(msg::MsgToSend* pMsg, int endpointId)
   auto itr = m_pSockets.find(endpointId);
   if (itr != m_pSockets.end() && itr->second != nullptr)
   {
+    auto temp = pMsg->SerializeAsString();
+    m_pSockets[endpointId]->write(QByteArray(std::to_string(temp.size()).c_str(), 20), 20);
     return m_pSockets[endpointId]->write(
-      QByteArray(pMsg->SerializeAsString().c_str()+'~',
-                 static_cast<int>(pMsg->SerializeAsString().size()+1)));
+      QByteArray(pMsg->SerializeAsString().c_str(),
+                 static_cast<int>(pMsg->SerializeAsString().size())));
   }
   Logger::error("Not in endpoints");
   return 0;
@@ -106,23 +108,35 @@ void TCPSenderServer::connection()
 void TCPSenderServer::emitMessage()
 {
   QTcpSocket* readSocket = qobject_cast<QTcpSocket*>(sender());
-  msg::MsgToSend* pMsg = new msg::MsgToSend();
-  pMsg->ParseFromString(readSocket->readAll().toStdString());
-  Logger::info("Received: " + pMsg->DebugString());
-  emit msgReceived(pMsg, readSocket->peerAddress(), readSocket->peerPort());
+  while (true)
+  {
+    auto size = readSocket->read(20).toInt();
+    if (size == 0)
+    {
+      Logger::error("Size was 0");
+      break;
+    }
+    auto msg = readSocket->read(size).toStdString();
+    msg::MsgToSend* pMsg = new msg::MsgToSend();
+    pMsg->ParseFromString(msg);
+    Logger::info("Message Received: " + pMsg->DebugString());
+    emit msgReceived(
+      pMsg, readSocket->peerAddress(), readSocket->peerPort());
+    if (!readSocket->bytesAvailable()) break;
+  }
 }
 
-void TCPSenderServer::readStream()
-{
-  auto readSocket =
-    std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
-  msg::MsgToSend* pReceived = new msg::MsgToSend();
-  pReceived->ParseFromString(readSocket->readAll().toStdString());
-
-  Logger::info("Message Received: " + pReceived->DebugString());
-  emit msgReceived(
-    pReceived, readSocket->peerAddress(), readSocket->peerPort());
-}
+//void TCPSenderServer::readStream()
+//{
+//  auto readSocket =
+//    std::shared_ptr<QTcpSocket>(qobject_cast<QTcpSocket*>(sender()));
+//  msg::MsgToSend* pReceived = new msg::MsgToSend();
+//  pReceived->ParseFromString(readSocket->readAll().toStdString());
+//
+//  Logger::info("Message Received: " + pReceived->DebugString());
+//  emit msgReceived(
+//    pReceived, readSocket->peerAddress(), readSocket->peerPort());
+//}
 
 void TCPSenderServer::disconnected()
 {

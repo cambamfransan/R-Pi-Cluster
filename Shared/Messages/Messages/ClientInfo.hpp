@@ -23,8 +23,6 @@ struct ClientInfo
   /** The clients Id*/
   int clientId;
 
-  /** Port the TCP Server is running on */
-  int serverPort;
 };
 
 #endif
