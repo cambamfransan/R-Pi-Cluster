@@ -24,6 +24,7 @@ public:
 public:
   qint64 send(msg::MsgToSend* pMsg, int endpointId);
 
+  std::string getServerIpAddress();
   quint16 getServerPort();
   std::shared_ptr<QTcpSocket> getSocket(int id);
   int getNextConvId();
@@ -31,7 +32,7 @@ public:
 private slots: 
   void connection();
   void disconnected();
-  void readStream();
+  //void readStream();
   void emitMessage();
 
 private:

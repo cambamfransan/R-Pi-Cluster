@@ -10,6 +10,7 @@ find_package(Qt5 COMPONENTS Core Network REQUIRED)
 set(${lib_name}_deps ProtoFiles Logger)
 
 set(${lib_name}_srcs
+  ClientInfo.hpp
   Conversation.hpp
   MakeMsgs.cpp
   MakeMsgs.hpp

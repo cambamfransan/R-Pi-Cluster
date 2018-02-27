@@ -1,4 +1,5 @@
 #include "Client.hpp"
+#include "Logger/Logger.hpp"
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
 #include <iostream>
@@ -7,9 +8,11 @@ Client::Client(QHostAddress addr, qint16 port)
   : m_pSender(std::make_shared<TCPSenderClient>(addr, port)),
     m_serverId(1),
     m_myId(0),
+    m_myPriority(99),
     m_window(new MainWindow()),
     m_outMessages(),
-    m_inputMessages()
+    m_inputMessages(),
+    m_allClientsInfo()
 {
   m_window->show();
   connect(m_pSender.get(),
@@ -32,15 +35,12 @@ Client::~Client() {}
 void Client::newConnection()
 {
   m_window->setPort(m_pSender->getLocalPort());
-  std::cout << "New Connection" << std::endl;
   m_window->addConnection(
     m_pSender->getPeerAddress(), m_pSender->getPeerPort());
-  std::cout << "Didn't Get here" << std::endl;
 }
 
 void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 {
-  std::cout << pMsg->DebugString() << std::endl;
   int id =
     make_msgs::getMapId(pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
   if (m_inputMessages.find(id) == m_inputMessages.end())
@@ -59,12 +59,15 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   case msg::ProtoType::ID_MSG:
     m_myId = pMsg->basicmsg().toid();
     m_serverId = pMsg->basicmsg().fromid();
-  case msg::ProtoType::HEART_BEAT_MSG:
-    send(make_msgs::makeBasicMsgToSend(
-           m_myId, m_serverId, msg::ProtoType::HEART_BEAT_MSG_ACK, convId),
+    send(make_msgs::makeIdMsgAck(
+           m_myId, m_serverId, convId),
          convId,
          std::chrono::seconds(1),
          false);
+    break;
+  case msg::ProtoType::UPDATE:
+    recieveUpdate(pMsg, convId);
+    break;
   }
 }
 
@@ -86,11 +89,33 @@ void Client::clicked(std::string msg)
 {
   msg::MsgToSend* pMsg =
     make_msgs::makeTestMsg(m_myId, 1, m_pSender->getNextConvId(), msg);
-  std::cout << "Sending" << std::endl;
   send(pMsg, 1, std::chrono::seconds(1), false);
 }
 
 void Client::lostConnection()
 {
   std::cout << "Client lost connection" << std::endl;
+}
+
+void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
+{
+  std::map<int, ClientInfo> infos;
+  for (int i = 0; i < pMsg->update().clients_size(); i++)
+  {
+    auto client = pMsg->update().clients(i);
+    ClientInfo info{client.ipaddress(),
+                    client.port(),
+                    client.username(),
+                    client.password(),
+                    client.priority(),
+                    client.clientid()};
+    if (info.clientId == m_myId) m_myPriority = info.priority;
+    infos[client.clientid()] = info;
+  }
+  m_allClientsInfo = infos;
+  send(make_msgs::makeBasicMsgToSend(
+         m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
+       convId,
+       std::chrono::seconds(1),
+       false);
 }

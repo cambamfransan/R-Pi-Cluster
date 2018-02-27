@@ -1,5 +1,5 @@
 #include <QtTest>
-#include "ProtoFiles/Backup.pb.h"
+#include "ProtoFiles/Update.pb.h"
 #include "ProtoFiles/BasicMsg.pb.h"
 #include "ProtoFiles/TaskMsg.pb.h"
 
@@ -14,7 +14,7 @@ public:
   private slots:
   void initTestCase();
   void cleanupTestCase();
-  void backupMsg();
+  void updateMsg();
   void basicMsg();
   void taskMsg();
 };
@@ -36,7 +36,7 @@ void ProtoFilesTest::cleanupTestCase()
   google::protobuf::ShutdownProtobufLibrary();
 }
 
-void ProtoFilesTest::backupMsg()
+void ProtoFilesTest::updateMsg()
 {
 
 }
