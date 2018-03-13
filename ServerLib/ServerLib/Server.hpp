@@ -23,10 +23,10 @@ public:
     std::chrono::seconds timeout,
     bool requireResponse, int endpointId);
 
-  void sendToWeb(const rapidjson::Document& msg,
+  void sendToWeb(const std::string& msg,
     int convId,
     std::chrono::seconds timeout,
-    bool requireResponse, int endpointId);
+    bool requireResponse);
 
 private slots:
   void newConnection(int);
@@ -49,7 +49,11 @@ private:
   MainWindow* m_window;
   std::mutex m_outMessagesMutex;
   std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
+  std::mutex m_webOutMessagesMutex;
+  std::map<int/*convID*/, JSONConversation> m_webOutMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+  std::map<int, std::chrono::steady_clock::time_point> m_webInputMessages;
+
   int m_nextPriority;
 
   //Timers

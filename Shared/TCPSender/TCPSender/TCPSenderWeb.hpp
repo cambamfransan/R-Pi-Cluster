@@ -21,9 +21,10 @@ public:
     void newConnection();
 
 public:
-  qint64 send(const rapidjson::Document&);
+  qint64 send(std::string toSend);
 
   quint16 getServerPort();
+  int nextConvId();
 
 private slots: 
   void connection();
@@ -31,6 +32,7 @@ private slots:
   void emitMessage();
 
 private:
+  int m_convId;
   std::shared_ptr<QTcpServer> m_pServer;
   std::shared_ptr<QTcpSocket> m_pSocket;
 };
