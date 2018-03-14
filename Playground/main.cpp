@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>
+#include <rapidjson/document.h>
 #include <stdexcept>
 #include <string>
 
@@ -36,8 +37,53 @@ std::string exec(const char* cmd)
 
 #endif
 
+void printJson(rapidjson::Document& pDoc)
+{
+  for (rapidjson::Value::ConstMemberIterator itr = pDoc.MemberBegin();
+       itr != pDoc.MemberEnd();
+       ++itr)
+  {
+    switch (itr->value.GetType())
+    {
+    case 0:
+      std::cout << itr->name.GetString() << " is: null" << std::endl;
+      break;
+    case 1:
+      std::cout << itr->name.GetString() << " is: False" << std::endl;
+      break;
+    case 2:
+      std::cout << itr->name.GetString() << " is: True" << std::endl;
+      break;
+    case 3:
+      std::cout << itr->name.GetString() << " is: Object" << std::endl;
+      break;
+    case 4:
+      std::cout << itr->name.GetString() << " is: Array" << std::endl;
+      break;
+    case 5:
+      std::cout << itr->name.GetString() << " is: String" << std::endl;
+      break;
+    case 6:
+      std::cout << itr->name.GetString() << " is: Number" << std::endl;
+      break;
+    default:
+      std::cout << "not anything...? What is going ON!!!!!????" << std::endl;
+    }
+  }
+}
+
+void makeString(rapidjson::Document& pDoc,
+                std::string member,
+                std::string value)
+{
+  rapidjson::Value author;
+  author.SetString(member.c_str(), member.size(), pDoc.GetAllocator());
+  printJson(pDoc);
+}
+
 int main()
 {
+//  printJson(d);
 //  std::cout << exec("dir") << std::endl;
 #if (TESTING_GUIS == 0)
   std::cout << "Build without Guis" << std::endl;

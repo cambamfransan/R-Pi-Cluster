@@ -9,6 +9,7 @@
 
 TCPSenderWeb::TCPSenderWeb()
   : QObject(nullptr),
+    m_convId(1),
     m_pServer(new QTcpServer(this)),
     m_pSocket()
 {
@@ -26,24 +27,23 @@ TCPSenderWeb::TCPSenderWeb()
 
 TCPSenderWeb::~TCPSenderWeb() {}
 
-qint64 TCPSenderWeb::send(const rapidjson::Document& msg)
+qint64 TCPSenderWeb::send(std::string msg)
 {
-  rapidjson::StringBuffer buffer;
-  buffer.Clear();
-  rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-  msg.Accept(writer);
-  auto str = std::string(buffer.GetString());
-
-  Logger::info("Sending to Web: " + str);
+  Logger::info("Sending to Web: " + msg);
 
   return m_pSocket->write(
-      QByteArray(str.c_str(),
-        static_cast<int>(str.size())));
+      QByteArray(msg.c_str(),
+        static_cast<int>(msg.size())));
 }
 
 quint16 TCPSenderWeb::getServerPort()
 {
   return m_pServer->serverPort();
+}
+
+int TCPSenderWeb::nextConvId()
+{
+  return m_convId++;
 }
 
 void TCPSenderWeb::connection()

@@ -16,9 +16,11 @@ void receive_msgs::UpdateAckTask::run()
     if (m_pMutex)
     {
       std::lock_guard<std::mutex> gaurd(*m_pMutex);
-      if(auto itr = m_pClientMap->find(m_msg.basicmsg().fromid()) != m_pClientMap->end())
-        m_pClientMap->at(m_msg.basicmsg().fromid()) =
-          std::chrono::steady_clock::now();
+      auto itr = m_pClientMap->find(m_msg.basicmsg().fromid());
+      if (itr != m_pClientMap->end())
+      {
+        itr->second = std::chrono::steady_clock::now();
+      }
     }
   }
   Logger::info("finished heartbeat");

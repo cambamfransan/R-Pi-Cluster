@@ -21,26 +21,43 @@ var net = require('net');
 
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
-	console.log('Connected');
-  client.write('Hello, server! Love, Client.');
+    console.log('Connected');
+    client.write(JSON.stringify({
+        convId: '0',
+        msg: 'Hello, server! Love, Client.'
+    }));
+    console.log(JSON.stringify({
+        convId: '0',
+        msg: 'Hello, server! Love, Client.'
+    }));
 });
 
 client.on('data', function(data) {
-  var temp = JSON.parse(data.toString());
-switch(temp.type) {
-  case "Heartbeat":
-      break;
-  default:
-      console.log("bad message received");
-}
+    var msgs = data.toString();
+    var msg;
+    while (msgs) {
+        var index = msgs.indexOf("~");
+        if(index == -1)index = msgs.length;
+        msg = msgs.substring(0, index);
+        msgs = msgs.substring(index+1);
+        var temp = JSON.parse(msg.toString());
+        switch (temp.MsgType) {
+            case "Heartbeat":
+            console.log("Recieved Heartbeat");
+                client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}));
+                break;
+            default:
+                console.log("bad message received");
+        }
+    }
 });
 
 client.on("error", function(err) {
-  console.log(err.stack)
+    console.log(err.stack)
 });
 
 client.on('close', function() {
-	console.log('Connection closed');
+    console.log('Connection closed');
 });
 
 app.listen(8080);

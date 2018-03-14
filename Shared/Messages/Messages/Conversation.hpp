@@ -22,4 +22,19 @@ struct Conversation
   int endpointId;
 };
 
+struct JSONConversation
+{
+  /** Request message */
+  std::string msg;
+
+  /** Conversation Id */
+  int convId;
+
+  /** How long it should take to receive a response */
+  std::chrono::seconds timeout;
+
+  /** When it was sent last*/
+  std::chrono::steady_clock::time_point timeSend;
+
+};
 #endif
