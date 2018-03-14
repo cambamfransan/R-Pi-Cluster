@@ -17,20 +17,25 @@ Server::Server()
     m_clientInfosMutex(),
     m_clientInfos(),
     m_myId(1),
+#if (TESTING_GUIS == 1)
     m_window(new MainWindow()),
+#endif
     m_outMessagesMutex(),
     m_outMessages(),
     m_inputMessages(),
     m_pTimer(new QTimer(this)),
     m_nextPriority(1)
 {
+#if (TESTING_GUIS == 1)
   m_window->show();
+  connect(m_window, &MainWindow::signalClicked, this, &Server::clicked);
+  m_window->setPort(m_pSender->getServerPort());
+#endif
   connect(m_pSender.get(),
           &TCPSenderServer::newConnection,
           this,
           &Server::newConnection);
-  m_window->setPort(m_pSender->getServerPort());
-  connect(m_window, &MainWindow::signalClicked, this, &Server::clicked);
+  std::cout << "Server Port: " << m_pSender->getServerPort() << std::endl;
   connect(m_pSender.get(),
           &TCPSenderServer::msgReceived,
           this,
@@ -77,7 +82,7 @@ void Server::send(msg::MsgToSend* pMsg,
   {
     {
       std::lock_guard<std::mutex> lock(m_outMessagesMutex);
-      m_outMessages[m_myId][pMsg->basicmsg().convid()] = Conversation{
+      m_outMessages[pMsg->basicmsg().toid()][pMsg->basicmsg().convid()] = Conversation{
         pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
     }
   }
@@ -101,7 +106,9 @@ void Server::newConnection(int id)
     (*m_clientIds)[id] = std::chrono::steady_clock::now();
   }
   auto t = m_pSender->getSocket(id);
+#if (TESTING_GUIS == 1)
   m_window->addConnection(t->peerAddress(), t->peerPort());
+#endif
   // this will move
   ClientInfo infoToInsert{t->peerAddress().toString().toStdString(),
                           t->peerPort(),
@@ -189,7 +196,9 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
       }
     }
   }
+#if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
+#endif
   int msgId = pMsg->basicmsg().msgtype();
   if (msg::ProtoType::UPDATE_ACK == msgId)
   {
@@ -267,7 +276,7 @@ void Server::sendTimedMsgs()
     {
       for (auto&& conv : client.second)
       {
-        if (conv.second.timeout + conv.second.timeSend >
+        if (conv.second.timeout + conv.second.timeSend <
             std::chrono::steady_clock::now())
         {
           if (conv.second.msg->basicmsg().attempt() > 3)

@@ -1,6 +1,6 @@
 set(lib_name ServerLib)
 
-set(${lib_name}_deps TCPSender Gui)
+set(${lib_name}_deps TCPSender)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -26,6 +26,9 @@ list(APPEND ${lib_name}_srcs ${server_msgs_srcs})
 include_directories(${RAPIDJSON_INCLUDE_DIRS})
 add_library(${lib_name} ${${lib_name}_srcs})
 target_link_libraries(${lib_name} ${${lib_name}_deps} Qt5::Core Qt5::Network)
+if(TESTING_GUIS EQUAL 1)
+target_link_libraries(${lib_name} Gui)
+endif(TESTING_GUIS EQUAL 1)
 set_property(TARGET ${lib_name} PROPERTY FOLDER ${folder})
 qt5_use_modules(${lib_name} Widgets Core Network Test)
 
