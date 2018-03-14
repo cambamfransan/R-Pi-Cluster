@@ -80,6 +80,7 @@ void MessagesTest::testUpdateMsgs()
   firstMap[2] = info2;
   firstMap[3] = info3;
   firstMap[4] = info4;
+
   auto third = make_msgs::makeUpdateMsg(1, 2, 3, 4, firstMap);
 
   third->update().clients(0).ipaddress();
