@@ -70,13 +70,13 @@ void MessagesTest::testMapIndex()
 void MessagesTest::testUpdateMsgs()
 {
   auto first = make_msgs::makeUpdateMsg(1, 2, 3, 4, {});
-  ClientInfo info{"127.0.0.1", 51212, "pi", "PiCluster!", 1};
+  ClientInfo info{"127.0.0.1", 51212, "pi", "PiCluster!", 1, 1};
   std::map<int, ClientInfo> firstMap;
   firstMap[1] = info;
   auto second = make_msgs::makeUpdateMsg(1, 2, 3, 4, firstMap);
-  ClientInfo info2{"127.0.0.1", 51212, "pi", "PiCluster!", 2};
-  ClientInfo info3{"127.0.0.1", 51212, "pi", "PiCluster!", 3};
-  ClientInfo info4{"127.0.0.1", 51212, "pi", "PiCluster!", 4};
+  ClientInfo info2{"127.0.0.1", 51212, "pi", "PiCluster!", 2, 2};
+  ClientInfo info3{"127.0.0.1", 51212, "pi", "PiCluster!", 3, 3};
+  ClientInfo info4{"127.0.0.1", 51212, "pi", "PiCluster!", 4, 4};
   firstMap[2] = info2;
   firstMap[3] = info3;
   firstMap[4] = info4;
@@ -117,23 +117,23 @@ void MessagesTest::testAddToObject()
 {
   rapidjson::Document d;
   rapidjson::Value v(rapidjson::kObjectType);
-  json::addIntToObject(d, v, std::string("first"), 1);
-  json::addIntToObject(d, v, std::string("second"), 2);
-  json::addBoolToObject(d, v, std::string("third"), true);
-  json::addBoolToObject(d, v, std::string("fourth"), false);
-  json::addNullToObject(d, v, std::string("fifth"));
-  json::addStringToObject(
-    d, v, std::string("sixth"), std::string("Hello World"));
+  std::string first("first"), second("second"), third("third"),
+    fourth("fourth"), fifth("fifth"), sixth("sixth"), seventh("seventh");
+  json::addIntToObject(d, v, first, 1);
+  json::addIntToObject(d, v, second, 2);
+  json::addBoolToObject(d, v, third, true);
+  json::addBoolToObject(d, v, fourth, false);
+  json::addNullToObject(d, v, fifth);
+  json::addStringToObject(d, v, sixth, std::string("Hello World"));
 
   rapidjson::Value v2(rapidjson::kObjectType);
-  json::addIntToObject(d, v2, std::string("first"), 1);
-  json::addIntToObject(d, v2, std::string("second"), 2);
-  json::addBoolToObject(d, v2, std::string("third"), true);
-  json::addBoolToObject(d, v2, std::string("fourth"), false);
-  json::addNullToObject(d, v2, std::string("fifth"));
-  json::addStringToObject(
-    d, v2, std::string("sixth"), std::string("Hello World"));
-  json::addObjectToObject(d, v, std::string("seventh"), v2);
+  json::addIntToObject(d, v2, first, 1);
+  json::addIntToObject(d, v2, second, 2);
+  json::addBoolToObject(d, v2, third, true);
+  json::addBoolToObject(d, v2, fourth, false);
+  json::addNullToObject(d, v2, fifth);
+  json::addStringToObject(d, v2, sixth, std::string("Hello World"));
+  json::addObjectToObject(d, v, seventh, v2);
 
   json::JSONParser parser;
   parser.convertJSONObject(v, "");
@@ -212,12 +212,14 @@ void MessagesTest::testAddToDoc()
 {
   rapidjson::Document d;
   d.SetObject();
-  json::addIntToDoc(d, std::string("first"), 1);
-  json::addIntToDoc(d, std::string("second"), 2);
-  json::addBoolToDoc(d, std::string("third"), true);
-  json::addBoolToDoc(d, std::string("fourth"), false);
-  json::addNullToDoc(d, std::string("fifth"));
-  json::addStringToDoc(d, std::string("sixth"), std::string("Hello World"));
+  std::string first("first"), second("second"), third("third"),
+    fourth("fourth"), fifth("fifth"), sixth("sixth");
+  json::addIntToDoc(d,    first, 1);
+  json::addIntToDoc(d,    second, 2);
+  json::addBoolToDoc(d,   third, true);
+  json::addBoolToDoc(d,   fourth, false);
+  json::addNullToDoc(d,   fifth);
+  json::addStringToDoc(d, sixth, std::string("Hello World"));
 
   json::JSONParser parser(d);
   auto map = parser.getMap();
@@ -246,14 +248,17 @@ void MessagesTest::testJSONToString()
 {
   rapidjson::Document d;
   d.SetObject();
-  json::addIntToDoc(d, std::string("first"), 1);
-  json::addIntToDoc(d, std::string("second"), 2);
-  json::addBoolToDoc(d, std::string("third"), true);
-  json::addBoolToDoc(d, std::string("fourth"), false);
-  json::addNullToDoc(d, std::string("fifth"));
-  json::addStringToDoc(d, std::string("sixth"), std::string("Hello World"));
+  std::string first("first"), second("second"), third("third"),
+    fourth("fourth"), fifth("fifth"), sixth("sixth");
+  json::addIntToDoc(d, first, 1);
+  json::addIntToDoc(d, second, 2);
+  json::addBoolToDoc(d, third, true);
+  json::addBoolToDoc(d, fourth, false);
+  json::addNullToDoc(d, fifth);
+  json::addStringToDoc(d, sixth, std::string("Hello World"));
 
-  std::string expected("{\"first\":1,\"second\":2,\"third\":true,\"fourth\":false,\"fifth\":null,\"sixth\":\"Hello World\"}");
+  std::string expected("{\"first\":1,\"second\":2,\"third\":true,\"fourth\":"
+                       "false,\"fifth\":null,\"sixth\":\"Hello World\"}");
 
   auto jsonString = json::jsonToString(d);
 
