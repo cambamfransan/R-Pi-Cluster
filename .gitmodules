@@ -1,0 +1,3 @@
+[submodule "RPiCalc"]
+	path = RPiCalc
+	url = git@github.com:cambamfransan/RPiCalc.git
