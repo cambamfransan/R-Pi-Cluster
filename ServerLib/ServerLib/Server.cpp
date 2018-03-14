@@ -26,8 +26,8 @@ Server::Server()
     m_webOutMessagesMutex(),
     m_webOutMessages(),
     m_inputMessages(),
-    m_pTimer(new QTimer(this)),
-    m_nextPriority(1)
+    m_nextPriority(1),
+    m_pTimer(new QTimer(this))
 {
   m_window->show();
   connect(m_pSender.get(),
