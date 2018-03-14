@@ -9,17 +9,21 @@ Client::Client(QHostAddress addr, qint16 port)
     m_serverId(1),
     m_myId(0),
     m_myPriority(99),
+#if (TESTING_GUIS == 1)
     m_window(new MainWindow()),
+#endif
     m_outMessages(),
     m_inputMessages(),
     m_allClientsInfo()
 {
+#if (TESTING_GUIS == 1)
   m_window->show();
+  connect(m_window, &MainWindow::signalClicked, this, &Client::clicked);
+#endif
   connect(m_pSender.get(),
           &TCPSenderClient::newConnection,
           this,
           &Client::newConnection);
-  connect(m_window, &MainWindow::signalClicked, this, &Client::clicked);
   connect(m_pSender.get(),
           &TCPSenderClient::msgReceived,
           this,
@@ -34,9 +38,11 @@ Client::~Client() {}
 
 void Client::newConnection()
 {
+#if (TESTING_GUIS == 1)
   m_window->setPort(m_pSender->getLocalPort());
   m_window->addConnection(
     m_pSender->getPeerAddress(), m_pSender->getPeerPort());
+#endif
 }
 
 void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
@@ -51,7 +57,9 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
                    pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
                  m_outMessages.end())
     m_outMessages.erase(itr);
+#if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
+#endif
 
   int convId = pMsg->basicmsg().convid();
   switch (pMsg->basicmsg().msgtype())

@@ -83,10 +83,13 @@ void makeString(rapidjson::Document& pDoc,
 
 int main()
 {
-  //  std::cout << exec("dir") << std::endl;
-
-
 //  printJson(d);
+//  std::cout << exec("dir") << std::endl;
+#if (TESTING_GUIS == 0)
+  std::cout << "Build without Guis" << std::endl;
+#else
+  std::cout << "Build with Guis" << std::endl;
+#endif
 
   return 0;
 }

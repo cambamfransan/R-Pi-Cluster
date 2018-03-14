@@ -5,10 +5,14 @@
 #include "TCPSender/TCPSenderWeb.hpp"
 #include <qobject.h>
 #include <chrono>
-#include <Gui/mainwindow.hpp>
 #include <rapidjson/document.h>
 #include <mutex>
 #include "Messages/ClientInfo.hpp"
+#include <qtimer.h>
+
+#if (TESTING_GUIS == 1)
+#include "Gui/mainwindow.hpp"
+#endif
 
 class Server : public QObject
 {
@@ -46,7 +50,9 @@ private:
   std::mutex m_clientInfosMutex;
   std::map<int,ClientInfo> m_clientInfos;
   int m_myId;
+#if (TESTING_GUIS == 1)
   MainWindow* m_window;
+#endif
   std::mutex m_outMessagesMutex;
   std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
   std::mutex m_webOutMessagesMutex;

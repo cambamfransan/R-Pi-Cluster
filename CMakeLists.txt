@@ -5,6 +5,8 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR} CACHE PATH
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING
   "Choose the type of build, options are: Debug Release"
   FORCE)
+SET(TESTING_GUIS 0 CACHE INTEGER "If Testing Guis should be used")
+add_definitions( -DTESTING_GUIS=${TESTING_GUIS} )
 project(RPi)
 include (version.cmake)
 enable_testing()
