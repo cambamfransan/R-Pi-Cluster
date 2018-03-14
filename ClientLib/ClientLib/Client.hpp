@@ -3,8 +3,11 @@
 
 #include "Messages/ClientInfo.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
-#include <Gui/mainwindow.hpp>
 #include <qobject.h>
+
+#if (TESTING_GUIS == 1)
+#include <Gui/mainwindow.hpp>
+#endif
 
 class Client : public QObject
 {
@@ -30,7 +33,9 @@ private:
   int m_serverId;
   int m_myId;
   int m_myPriority;
+#if (TESTING_GUIS == 1)
   MainWindow* m_window;
+#endif
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
   std::map<int, ClientInfo> m_allClientsInfo;
