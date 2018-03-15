@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package msg;
+
+message Result {
+  string toExecute = 1;
+  string result = 2;
+}
+
+message ResultsMsg {
+  repeated Result results = 1;
+  }

@@ -7,6 +7,7 @@ set(${lib_name}_srcs
 	TaskMsg.proto
   TestMsg.proto
 	MsgToSend.proto
+  Results.proto
 	Update.proto
   )
 

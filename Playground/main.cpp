@@ -1,10 +1,19 @@
+//#include "ProtoFiles/Results.pb.h"
+#include "ProtoFiles/TaskMsg.pb.h"
 #include <array>
+#include <chrono>
 #include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <rapidjson/document.h>
 #include <stdexcept>
 #include <string>
+
+namespace
+{
+  const std::string utask("Calculate pi now");
+}
 
 #ifdef __unix || __APPLE__
 std::string exec(const char* cmd)
@@ -37,59 +46,83 @@ std::string exec(const char* cmd)
 
 #endif
 
-void printJson(rapidjson::Document& pDoc)
-{
-  for (rapidjson::Value::ConstMemberIterator itr = pDoc.MemberBegin();
-       itr != pDoc.MemberEnd();
-       ++itr)
-  {
-    switch (itr->value.GetType())
-    {
-    case 0:
-      std::cout << itr->name.GetString() << " is: null" << std::endl;
-      break;
-    case 1:
-      std::cout << itr->name.GetString() << " is: False" << std::endl;
-      break;
-    case 2:
-      std::cout << itr->name.GetString() << " is: True" << std::endl;
-      break;
-    case 3:
-      std::cout << itr->name.GetString() << " is: Object" << std::endl;
-      break;
-    case 4:
-      std::cout << itr->name.GetString() << " is: Array" << std::endl;
-      break;
-    case 5:
-      std::cout << itr->name.GetString() << " is: String" << std::endl;
-      break;
-    case 6:
-      std::cout << itr->name.GetString() << " is: Number" << std::endl;
-      break;
-    default:
-      std::cout << "not anything...? What is going ON!!!!!????" << std::endl;
-    }
-  }
-}
-
-void makeString(rapidjson::Document& pDoc,
-                std::string member,
-                std::string value)
-{
-  rapidjson::Value author;
-  author.SetString(member.c_str(), member.size(), pDoc.GetAllocator());
-  printJson(pDoc);
-}
-
+/*
 int main()
 {
-//  printJson(d);
-//  std::cout << exec("dir") << std::endl;
-#if (TESTING_GUIS == 0)
-  std::cout << "Build without Guis" << std::endl;
-#else
-  std::cout << "Build with Guis" << std::endl;
-#endif
+  std::ofstream fout("ProtoTimeResults.txt");
+  for (int i = 0; i < 10000; i++)
+  {
+    msg::TaskMsg* taskFile = new msg::TaskMsg();;
 
+    auto start = std::chrono::steady_clock::now();
+    // Read the existing address book.
+    std::fstream input("tasks.txt", std::ios::in | std::ios::binary);
+    if (!input)
+    {
+      std::cout << "test"
+                << ": File not found.  Creating a new file." << std::endl;
+    }
+    else if (!taskFile->ParseFromIstream(&input))
+    {
+      std::cerr << "Failed to parse address book." << std::endl;
+      return -1;
+    }
+
+    //for (int i = 0; i < 10000; i++)
+    //{
+    //  taskFile->add_toexecute(utask);
+    //}
+
+   taskFile->mutable_toexecute()->RemoveLast();
+
+    std::fstream output(
+      "tasks.txt", std::ios::out | std::ios::trunc | std::ios::binary);
+    if (!taskFile->SerializeToOstream(&output))
+    {
+      std::cerr << "Failed to write address book." << std::endl;
+      return -1;
+    }
+
+    auto stop = std::chrono::steady_clock::now();
+
+    fout << "It took: "
+         << std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+              .count()
+         << std::endl;
+  
+
+  }
+  return 0;
+}
+*/
+int main()
+{
+  std::ofstream fout("FStreamResults.txt");
+  for (int i = 0; i < 10000; i++)
+  {
+    auto start = std::chrono::steady_clock::now();
+    // Read the existing address book.
+    std::ifstream input("tasks.txt");
+    if (!input)
+    {
+      std::cout << "test"
+                << ": File not found.  Creating a new file." << std::endl;
+    }
+    std::string str((std::istreambuf_iterator<char>(input)),
+                    std::istreambuf_iterator<char>());
+    input.close();
+
+    str.erase(0, str.find(",")+1);
+
+    std::ofstream output("tasks.txt");
+    output << str;
+
+    auto stop = std::chrono::steady_clock::now();
+
+    fout << "It took: "
+         << std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+              .count()
+         << std::endl;
+  }
   return 0;
 }
