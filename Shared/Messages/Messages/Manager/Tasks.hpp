@@ -12,7 +12,7 @@ namespace manager
   class Tasks
   {
   public:
-    Tasks(int id, int size, std::string TasksList, std::string destDir);
+    Tasks(int id, int size, std::string TasksList);
 
     ~Tasks();
 
@@ -24,7 +24,6 @@ namespace manager
     int m_myId;
     int m_maxSize;
     bool m_valid;
-    std::string m_destDir;
     std::vector<std::pair<int, std::string>> m_taskFiles;
   };
 } // namespace manager

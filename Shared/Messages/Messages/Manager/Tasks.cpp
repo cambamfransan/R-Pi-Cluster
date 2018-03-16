@@ -2,29 +2,30 @@
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <thread>
+#include <qdir.h>
 
 #include <qfile.h>
 
 manager::Tasks::Tasks(int id,
                       int size,
-                      std::string TasksList,
-                      std::string destDir)
+                      std::string TasksList)
   : m_myId(id),
     m_maxSize(size),
     m_valid(false),
-    m_destDir(destDir),
     m_taskFiles()
 {
-  //  char cCurrentPath[FILENAME_MAX];
-  //  std::cout << _getcwd(cCurrentPath, sizeof(cCurrentPath)) << TasksList
-  //            << std::endl;
   std::ifstream input(TasksList);
   std::string nextLine;
   if (!input) return;
+
+  system(std::string("mkdir " + std::to_string(m_myId)).c_str());
+  system(std::string("cd " + std::to_string(1) + " && mkdir Tasks").c_str());
+
   for (int i = 0; !input.eof(); i++)
   {
-    std::string nextFile(m_destDir + "/" + std::to_string(m_myId) + "/" +
+    std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                          std::to_string(i) + ".txt");
     m_taskFiles.emplace_back(i, nextFile);
     std::ofstream output(nextFile);
@@ -89,7 +90,7 @@ std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
 
 bool manager::Tasks::removeFromResults(Task task)
 {
-  std::string nextFile(m_destDir + "/" + std::to_string(m_myId) + "/" +
+  std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                        std::to_string(task.first) + ".txt");
 
   std::ifstream input(nextFile);
