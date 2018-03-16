@@ -11,7 +11,7 @@ void ManagerTest::cleanupTestCase() {}
 
 void ManagerTest::getTasksTest()
 {
-  manager::Tasks tasks(1, 10, std::string("..//..//..//..//..//R-Pi-Cluster//Shared//Messages//Messages//Test//TasksList.txt"), std::string("FirstTest"));
+  manager::Tasks tasks(1, 10, std::string("..//..//..//..//..//R-Pi-Cluster//Shared//Messages//Messages//Test//TasksList.txt"));
 
   auto toExecute = tasks.getNextTasks(5);
   QVERIFY(toExecute[0].first == 0 && toExecute[0].second == "0");
@@ -52,7 +52,7 @@ void ManagerTest::getTasksTest()
 
 void ManagerTest::removeTasksTest()
 {
-  manager::Tasks tasks(1, 10, std::string("..//..//..//..//..//R-Pi-Cluster//Shared//Messages//Messages//Test//TasksList.txt"), std::string("FirstTest"));
+  manager::Tasks tasks(1, 10, std::string("..//..//..//..//..//R-Pi-Cluster//Shared//Messages//Messages//Test//TasksList.txt"));
 
   QVERIFY(tasks.removeFromResults(Task(0, "0")));
   QVERIFY(tasks.removeFromResults(Task(0, "5")));
