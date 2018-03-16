@@ -8,6 +8,17 @@
 
 #include <qfile.h>
 
+manager::Task::Task(int page, int task, std::string execute)
+  : pageNumber(page), taskId(task), toExecute(execute)
+{
+}
+
+manager::TaskFile::TaskFile(int page, int task, std::string name)
+  : pageNumber(page), nextTaskId(task), pageName(name)
+{
+
+}
+
 manager::Tasks::Tasks(int id,
                       int size,
                       std::string TasksList)
@@ -27,7 +38,7 @@ manager::Tasks::Tasks(int id,
   {
     std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                          std::to_string(i) + ".txt");
-    m_taskFiles.emplace_back(i, nextFile);
+    m_taskFiles.push_back(TaskFile(i, 0, nextFile));
     std::ofstream output(nextFile);
     if (output)
     {
@@ -45,10 +56,10 @@ manager::Tasks::~Tasks()
 {
   // I should remove the files here
   for (size_t i = 0; i < m_taskFiles.size(); i++)
-    remove(m_taskFiles[i].second.c_str());
+    remove(m_taskFiles[i].pageName.c_str());
 }
 
-std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
+std::vector<manager::Task> manager::Tasks::getNextTasks(int howManyTasks)
 {
   if (!m_valid) return std::vector<Task>();
   std::vector<int> toDelete;
@@ -56,7 +67,7 @@ std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
   for (size_t i = 0; i < m_taskFiles.size() && forReturn.size() < howManyTasks;
        i++)
   {
-    std::ifstream input(m_taskFiles[i].second);
+    std::ifstream input(m_taskFiles[i].pageName);
     if (!input) continue;
     std::string str((std::istreambuf_iterator<char>(input)),
                     std::istreambuf_iterator<char>());
@@ -67,17 +78,17 @@ std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
       auto spot = str.find("\n");
       std::string inputString(str.substr(0, spot));
       str.erase(0, spot + 1);
-      forReturn.emplace_back(m_taskFiles[i].first, inputString);
+      forReturn.emplace_back(m_taskFiles[i].pageNumber, m_taskFiles[i].pageNumber*m_maxSize + m_taskFiles[i].nextTaskId++, inputString);
     }
     if (str.size() == 0)
     {
-      if (remove(m_taskFiles[i].second.c_str()) != 0)
+      if (remove(m_taskFiles[i].pageName.c_str()) != 0)
         perror("Error deleting file");
       toDelete.push_back(i);
     }
     else
     {
-      std::ofstream output(m_taskFiles[i].second);
+      std::ofstream output(m_taskFiles[i].pageName);
       output << str;
     }
   }
@@ -91,7 +102,7 @@ std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
 bool manager::Tasks::removeFromResults(Task task)
 {
   std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
-                       std::to_string(task.first) + ".txt");
+                       std::to_string(task.pageNumber) + ".txt");
 
   std::ifstream input(nextFile);
   if (!input) return false;
@@ -99,9 +110,9 @@ bool manager::Tasks::removeFromResults(Task task)
     (std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
   input.close();
 
-  auto spot = str.find(task.second);
+  auto spot = str.find(task.toExecute);
   if (spot == std::string::npos) return false;
-  str.erase(spot, task.second.size()+1);
+  str.erase(spot, task.toExecute.size()+1);
 
   std::ofstream output(nextFile);
   output << str;

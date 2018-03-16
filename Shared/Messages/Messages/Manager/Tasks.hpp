@@ -4,10 +4,28 @@
 #include <string>
 #include <vector>
 
-typedef std::pair<int, std::string> Task;
-
 namespace manager
 {
+
+struct Task
+{
+  Task(int page, int task, std::string execute);
+  int pageNumber;
+
+  int taskId;
+
+  std::string toExecute;
+};
+
+struct TaskFile
+{
+  TaskFile(int page, int task, std::string name);
+  int pageNumber;
+
+  int nextTaskId;
+
+  std::string pageName;
+};
 
   class Tasks
   {
@@ -24,7 +42,7 @@ namespace manager
     int m_myId;
     int m_maxSize;
     bool m_valid;
-    std::vector<std::pair<int, std::string>> m_taskFiles;
+    std::vector<TaskFile> m_taskFiles;
   };
 } // namespace manager
 #endif
