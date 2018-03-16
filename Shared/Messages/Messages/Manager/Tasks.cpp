@@ -27,7 +27,6 @@ manager::Tasks::Tasks(int id,
   {
     std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                          std::to_string(i) + ".txt");
-    std::cout << nextFile << std::endl;
     m_taskFiles.emplace_back(i, nextFile);
     std::ofstream output(nextFile);
     if (output)
@@ -91,7 +90,7 @@ std::vector<Task> manager::Tasks::getNextTasks(int howManyTasks)
 
 bool manager::Tasks::removeFromResults(Task task)
 {
-  std::string nextFile("/" + std::to_string(m_myId) + "/Tasks/" +
+  std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                        std::to_string(task.first) + ".txt");
 
   std::ifstream input(nextFile);
