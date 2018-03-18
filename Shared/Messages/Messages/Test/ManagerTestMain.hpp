@@ -2,8 +2,6 @@
 #define MANAGER_TEST_H
 
 #include <QtTest>
-#include <iostream>
-#include "Messages/Manager/Tasks.hpp"
 
 class ManagerTest : public QObject
 {
@@ -17,6 +15,7 @@ private slots:
   void initTestCase();
   void getTasksTest();
   void removeTasksTest();
+  void addResults();
   void cleanupTestCase();
 };
 

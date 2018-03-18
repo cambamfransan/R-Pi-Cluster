@@ -2,13 +2,13 @@
 #define RESULTS_CLASS_H
 
 #include "Tasks.hpp"
-#include <string>
 #include <set>
-
-typedef std::pair<manager::Task, std::string> Result;
+#include <string>
 
 namespace manager
 {
+  typedef std::pair<manager::Task, std::string> Result;
+
   class Results
   {
   public:
@@ -16,7 +16,7 @@ namespace manager
     ~Results();
 
     void addResult(Result result);
-    
+
     std::string getResults();
 
   private:
@@ -24,7 +24,6 @@ namespace manager
     int m_size;
     std::set<std::string> m_resultFiles;
     std::string m_basePath;
-
   };
 } // namespace manager
 #endif
