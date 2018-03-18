@@ -6,6 +6,7 @@
 
 #include <qbytearray.h>
 #include <qnetworkinterface.h>
+#include <iostream>
 
 TCPSenderServer::TCPSenderServer()
   : QObject(nullptr),
