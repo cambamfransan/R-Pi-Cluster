@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pwd
-sudo mkdir _bld
+mkdir _bld
 sudo apt-get update
 sudo apt-get update --fix-missing
 sudo apt-get install vim -y
