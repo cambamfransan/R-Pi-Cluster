@@ -21,6 +21,3 @@ sudo cp rapidjson/include/rapidjson /usr/include/ -r
 cd ./R-Pi-Cluster/Web && sudo npm install express --save
 cd ./../../_bld && cmake ../R-Pi-Cluster
 make -j3 install
-ls
-nohup ./bin/Server &
-
