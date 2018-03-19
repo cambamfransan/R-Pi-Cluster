@@ -5,5 +5,9 @@ def startClient(serverNode="127.0.0.1", port="0"):
     run('sudo ./R-Pi-Cluster/Scripts/Install.sh')
 #	sudo("python test.py  2>/dev/null >/dev/null &")
     run("pwd")
-    run("./_bld/bin/Client " + serverNode + " " + port + " &")
+	run("cd _bld/bin")
+	run("export DISPLAY=:0.0")
+	run("tmux")
+    run("./Client " + serverNode + " " + port + " &")
+	run("tmux detach")
 
