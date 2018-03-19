@@ -4,7 +4,7 @@
 #include "Messages/MapHelpers.hpp"
 #include <iostream>
 
-Client::Client(QHostAddress addr, qint16 port)
+Client::Client(QHostAddress addr, qint16 port, std::string arg)
   : m_pSender(std::make_shared<TCPSenderClient>(addr, port)),
     m_serverId(1),
     m_myId(0),
@@ -14,7 +14,8 @@ Client::Client(QHostAddress addr, qint16 port)
 #endif
     m_outMessages(),
     m_inputMessages(),
-    m_allClientsInfo()
+    m_allClientsInfo(),
+    m_database(arg)
 {
 #if (TESTING_GUIS == 1)
   m_window->show();
@@ -67,8 +68,7 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   case msg::ProtoType::ID_MSG:
     m_myId = pMsg->basicmsg().toid();
     m_serverId = pMsg->basicmsg().fromid();
-    send(make_msgs::makeIdMsgAck(
-           m_myId, m_serverId, convId),
+    send(make_msgs::makeIdMsgAck(m_myId, m_serverId, convId),
          convId,
          std::chrono::seconds(1),
          false);

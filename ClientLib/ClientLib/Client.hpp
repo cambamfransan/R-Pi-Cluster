@@ -14,7 +14,7 @@ class Client : public QObject
   Q_OBJECT
 
 public:
-  Client(QHostAddress addr, qint16 port);
+  Client(QHostAddress addr, qint16 port, std::string arg);
   ~Client();
 
 private slots:
@@ -39,6 +39,7 @@ private:
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
   std::map<int, ClientInfo> m_allClientsInfo;
+  std::string m_database;
 };
 
 #endif
