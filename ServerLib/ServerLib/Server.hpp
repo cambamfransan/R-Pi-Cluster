@@ -19,7 +19,7 @@ class Server : public QObject
   Q_OBJECT
 
 public:
-  Server();
+  Server(std::string arg);
   ~Server();
 
   void send(msg::MsgToSend* pMsg,
@@ -64,6 +64,7 @@ private:
 
   //Timers
   QTimer* m_pTimer;
+  std::string m_database;
 };
 
 #endif

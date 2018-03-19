@@ -5,6 +5,7 @@ sudo mkdir _bld
 sudo apt-get update
 sudo apt-get update --fix-missing
 sudo apt-get install vim -y
+sudo apt-get install tmux -y
 sudo apt-get install qt5-default -y
 sudo apt-get install rapidjson-dev -y
 sudo apt-get install libprotobuf-dev -y

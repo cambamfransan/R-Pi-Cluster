@@ -11,7 +11,7 @@
 #include <qthreadpool.h>
 #include <qtimer.h>
 
-Server::Server()
+Server::Server(std::string arg)
   : m_pSender(std::make_shared<TCPSenderServer>()),
     m_pWebSender(std::make_shared<TCPSenderWeb>()),
     m_clientsMutex(std::make_shared<std::mutex>()),
@@ -29,7 +29,8 @@ Server::Server()
     m_webOutMessages(),
     m_inputMessages(),
     m_nextPriority(1),
-    m_pTimer(new QTimer(this))
+    m_pTimer(new QTimer(this)),
+    m_database(arg)
 {
 #if (TESTING_GUIS == 1)
   m_window->show();
@@ -87,8 +88,9 @@ void Server::send(msg::MsgToSend* pMsg,
   {
     {
       std::lock_guard<std::mutex> lock(m_outMessagesMutex);
-      m_outMessages[pMsg->basicmsg().toid()][pMsg->basicmsg().convid()] = Conversation{
-        pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
+      m_outMessages[pMsg->basicmsg().toid()][pMsg->basicmsg().convid()] =
+        Conversation{
+          pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
     }
   }
   Logger::info("Sent: " + std::to_string(m_pSender->send(pMsg, endpointId)));
@@ -340,23 +342,26 @@ void Server::sendTimedMsgs()
       json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
   }
 
-  if(times == 3)
+  if (times == 3)
   {
     std::lock_guard<std::mutex> lock(m_outMessagesMutex);
     for (auto&& conv : m_webOutMessages)
     {
-        if (conv.second.timeout + conv.second.timeSend <
-            std::chrono::steady_clock::now())
-        {
-          std::cout << conv.second.timeout.count()*1000000000 + conv.second.timeSend.time_since_epoch().count() << std::endl;
-          std::cout << std::chrono::steady_clock::now().time_since_epoch().count() << std::endl;
-          //check tries??
-          Logger::error("Resending message from conversation: " +
-                        std::to_string(conv.second.convId));
-          conv.second.timeSend = std::chrono::steady_clock::now();
-          m_pWebSender->send(conv.second.msg + "~");
-        }
+      if (conv.second.timeout + conv.second.timeSend <
+          std::chrono::steady_clock::now())
+      {
+        std::cout << conv.second.timeout.count() * 1000000000 +
+                       conv.second.timeSend.time_since_epoch().count()
+                  << std::endl;
+        std::cout << std::chrono::steady_clock::now().time_since_epoch().count()
+                  << std::endl;
+        // check tries??
+        Logger::error("Resending message from conversation: " +
+                      std::to_string(conv.second.convId));
+        conv.second.timeSend = std::chrono::steady_clock::now();
+        m_pWebSender->send(conv.second.msg + "~");
       }
+    }
     times = 0;
   }
 

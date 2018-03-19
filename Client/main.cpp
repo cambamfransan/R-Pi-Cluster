@@ -13,13 +13,15 @@ int main(int argc, char* argv[])
   if(argc==1) addr = "127.0.0.1";
   else addr = argv[1];
   int port;
-  if (argc == 3)port = std::stoi(argv[2]);
+  if (argc > 2)port = std::stoi(argv[2]);
   else
   {
     std::cout << "What Port is would you like to run on?" << std::endl;
     std::cin >> port;
   }
-  Client client(QHostAddress(addr.c_str()), port);
+  std::string arg;
+  if (argc == 4) arg = argv[3];
+  Client client(QHostAddress(addr.c_str()), port, arg);
 
   return a.exec();
 }
