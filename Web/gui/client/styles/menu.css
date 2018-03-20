@@ -1,0 +1,158 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #FFFFFF;
+}
+#system {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1024px;
+	height: 768px;
+	background-color: #000000;
+}
+#system .screen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: none;
+	z-index: 0;
+}
+#system .screen.active {
+	display: block;
+}
+.screen {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+#load-cover {
+	background-color: #000000;
+	font-size: 48px;
+	font-weight: bold;
+	text-align: center;
+}
+#frame-border {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+#header {
+	height: 50px;
+	background-color: #333333;
+}
+#corner {
+	height: 100%;
+	text-align: right;
+}
+#search-text {
+	width: 115px;
+	height: 15px;
+}
+#search-button {
+	width: 40px;
+	height: 12px;
+}
+h1 {
+	font-size: 48pt;
+}
+h2 {
+	font-size: 18pt;
+}
+h3 {
+	font-size: 14pt;
+	font-weight: bold;
+}
+h4 {
+	font-size: 14pt;
+	font-weight: lighter;
+}
+button {
+	background: #000000;
+	border-width: 2px;
+	border-color: #FFFFFF;
+	border-radius: 0.30em;
+}
+button:hover {
+	background: #000000;
+	border-width: 2px;
+	border-color: #0000FF;
+	border-radius: 0.30em;
+	cursor: pointer;
+}
+.button-table {
+	width: 100px;
+	height: 40px;
+}
+ul.main-menu {
+	padding: 0;
+	list-style: none;
+}
+ul.main-menu li {
+	margin: 8px;
+}
+ul.main-menu li button {
+    width: 145px;
+	height: 40px;
+}
+#side {
+	width: 150px;
+	height: 485px;
+	background-color: #000000;
+	border-width: 2px;
+	border-color: #FFFFFF;
+	border-radius: 0.30em;
+	text-align: center;
+}
+#side-header {
+	font-size: 14pt;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+	background-color: #FFFFFF;
+	border-radius: 0.30em;
+}
+#side-controls {
+	width: 135px;
+	height: 30px;
+	background-color: #000000;
+	border-width: 2px;
+	border-color: #FFFFFF;
+	border-radius: 0.30em;
+	text-align: center;
+}
+.side-divider {
+	border-bottom: 2px solid #FFFFFF;
+}
+#download-button {
+	width: 70px;
+	height: 20px;
+}
+
+
+
+#addJob-popup {
+	position: absolute;
+	left: 237px;
+	top: 190px;
+	width: 175px;
+	height: 105px;
+	text-align: center;
+	background: black;
+	border: 2px solid white;
+	border-radius: 0.45em;
+	visibility: hidden;
+}
+#addUnit-popup {
+	position: absolute;
+	left: 192px;
+	top: 162px;
+	width: 265px;
+	height: 160px;
+	text-align: center;
+	background: black;
+	border: 2px solid white;
+	border-radius: 0.45em;
+	font-size: 32px;
+	font-weight: bold;
+	visibility: hidden;
+}

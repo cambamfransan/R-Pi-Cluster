@@ -1,0 +1,450 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<title>RPi Cluster</title>
+	<meta charset="UTF-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="client/plugins/jquery.reject/jquery.reject.js"></script>
+	<link rel="stylesheet" type="text/css" href="client/plugins/jquery.reject/jquery.reject.css">
+	<script>
+		$(document).ready(function() { 
+			$.reject({ 
+				beforeReject: function() { 
+					if ($.browser.name === 'chrome') {
+						filesLoad();
+					}
+					else {
+						document.getElementById('loading').innerHTML = 
+						'<h1 style="font-size: 32px;">' + 
+							'Unsupported Browser Detected' + 
+						'</h1>' + 
+						'<h2 style="font-size: 15px;">' + 
+							'To run this system, you must use a compatible browser.' + 
+						'</h2>' + 
+						'<hr style="border-style: solid; width: 500px;">' + 
+						'<h3 style="font-size: 24px;">' + 
+							'Supported Browsers' + 
+						'</h3>' + 
+						'<hr style="border-style: solid; width: 200px;">' + 
+						'<h4 style="font-size: 18px;">' + 
+							'Google Chrome' + 
+						'</h4>'
+						;
+					}
+				}
+			});
+			return false;
+		});
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+	<script>
+		var socket = io();
+		window.onbeforeunload = function(e) {
+  			localStorage.reload = true;
+		};
+	</script>
+	<script src="client/client.js"></script>
+	<link rel="stylesheet" type="text/css" href="client/styles/menu.css">
+</head>
+<body>
+	<div id="system">
+		<div id="load-cover">
+			<table>
+				<td id="loading">
+					LOADING
+					<br><br>
+					<font id="percentage">0</font>%
+				</td>
+			</table>
+		</div>
+		<div id="frame-border">
+			<table>
+				<tr id="header">
+					<td colspan="2">
+						<table>
+							<tr>
+								<td width="33%" align="left">
+									<h1>RPi Cluster</h1>
+								</td>
+								<td width="34%" align="center">
+									<button id="add-button">
+										<table class="button-table">
+											<tr>
+												<td>
+													<img id="add-image">
+												</td>
+												<td>
+													<h2>Add</h2>
+												</td>
+											</tr>
+										</table>
+									</button>
+									<button id="remove-button">
+										<table class="button-table">
+											<tr>
+												<td>
+													<img id="remove-image">
+												</td>
+												<td>
+													<h2>Remove</h2>
+												</td>
+											</tr>
+										</table>
+									</button>
+								</td>
+								<td width="33%" align="right">
+									<table id="corner">
+										<tr>
+											<td style="vertical-align:top">
+												<h3>john.doe  Logout</h3>
+											</td>
+										</tr>
+										<tr>
+											<td style="vertical-align:bottom">
+												<input type="radio" name="search-radio" id="jobs-radio" class="search-radio" checked> <h4>Jobs</h4>
+												<input type="radio" name="search-radio" id="units-radio" class="search-radio"> <h4>Units</h4> 
+												<input type="text" name="search-text" id="search-text"> 
+												<button id="search-button">
+													<h3>Search</h3>
+												</button>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<ul class="main-menu">
+							<li><button id="jobs-button">
+								Jobs
+							</button></li>
+							<li><button id="units-button">
+								Units
+							</button></li>
+							<li><button id="help-button">
+								Help
+							</button></li>
+							<li><button id="about-button">
+								About
+							</button></li>
+						</ul>
+						<table id="side">
+							<tr>
+								<table id="side-controls">
+									<tr>
+										<td>
+											<img id="playAll-image">
+										</td>
+										<td>
+											<img id="pauseAll-image">
+										</td>
+										<td>
+											<img id="stopAll-image">
+										</td>
+									</tr>
+								</table>
+							</tr>
+							<tr id="side-header">
+								<td>
+									Cluster
+								</td>
+							</tr>
+							<tr class="side-divider">
+								<td>
+									<button id="on-button">
+										<h4>ON</h4>
+									</button>
+									<button id="off-button">
+										<h4>OFF</h4>
+									</button>
+									<button id="restart-button">
+										<h4>Restart</h4>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h3>
+										Processor Load
+									</h3>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h4>##%</h4>
+								</td>
+							</tr>
+							<tr class="side-divider">
+								<td>
+									<table>
+										<tr>
+											<td>
+												<h4>Threads</h4>
+											</td>
+											<td>
+												<h4>128</h4>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h4>Processes</h4>
+											</td>
+											<td>
+												<h4>64</h4>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h3>
+										Memory Load
+									</h3>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h4>##%</h4>
+								</td>
+							</tr>
+							<tr class="side-divider">
+								<td>
+									<table>
+										<tr>
+											<td>
+												<h4>Available</h4>
+											</td>
+											<td>
+												<h4>64.0 GB</h4>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h4>Used</h4>
+											</td>
+											<td>
+												<h4>16.0 GB</h4>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<!-- Disk I/O, Network I/O, Power -->
+							<tr id="side-header">
+								<td>
+									Jobs
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h3>Progress</h3>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<h4>##%</h4>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table>
+										<tr>
+											<td>
+												<h4>Running</h4>
+											</td>
+											<td>
+												<h4>1</h4>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h4>Idle</h4>
+											</td>
+											<td>
+												<h4>2</h4>
+											</td>
+										</tr>
+										<tr class="side-divider">
+											<td>
+												<h4>Done</h4>
+											</td>
+											<td>
+												<h4>1</h4>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h4>TOTAL</h4>
+											</td>
+											<td>
+												<h4>4</h4>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table>
+										<tr>
+											<td>
+												<h4>Results</h4>
+											</td>
+											<td>
+												<button id="download-button">
+													<h4>Download</h4>
+												</button>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<div id="jobs-screen" class="screen">
+							<table>
+								<tr>
+									<th>
+										<input type="checkbox" name="jobs-selected" id="selectAll-jobs">
+									</th>
+									<th>
+										Name
+									</th>
+									<th>
+										Priority
+									</th>
+									<th>
+										Status
+									</th>
+									<th>
+										Progress
+									</th>
+									<th>
+										Controls
+									</th>
+									<th>
+										Units
+									</th>
+									<th>
+										Tasks per Bundle
+									</th>
+								</tr>
+								<tr>
+									<td>
+										<input type="checkbox" name="jobs-selected" id="null">
+									</td>
+									<td>
+										PI_jobA
+									</td>
+									<td>
+										<input type="number">
+									</td>
+									<td>
+										<button>
+											Ready
+										</button>
+									</td>
+									<td>
+										##%
+									</td>
+									<td>
+										<table>
+											<tr>
+												<td>
+													<img id="play-image">
+												</td>
+												<td>
+													<img id="pause-image">
+												</td>
+												<td>
+													<img id="stop-image">
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td>
+										<button>
+											View
+										</button>
+									</td>
+									<td>
+										<button>
+											<input type="number">
+										</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div id="units-screen" class="screen">
+							<table>
+								<tr>
+									<th>
+										<input type="checkbox" name="units-selected" id="selectAll-units">
+									</th>
+									<th>
+										Name
+									</th>
+									<th>
+										IP Address
+									</th>
+									<th>
+										Status
+									</th>
+									<th>
+										Jobs
+									</th>
+									<th>
+										Cores Limit
+									</th>
+								</tr>
+								<tr>
+									<td>
+										<input type="checkbox" name="units-selected" id="null">
+									</td>
+									<td>
+										PI_unitA
+									</td>
+									<td>
+										192.168.0.1
+									</td>
+									<td>
+										Running
+									</td>
+									<td>
+										<button>
+											View
+										</button>
+									</td>
+									<td>
+										<input type="number">
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div id="help-screen" class="screen">
+							<table>
+								<tr>
+									<td>
+										Help
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<script src="client/scripts/load.js"></script>
+	<script src="client/scripts/menu.js"></script>
+	<script src="client/scripts/jobs.js"></script>
+	<script src="client/scripts/units.js"></script>
+	<script src="client/scripts/system.js"></script>
+</body>
+</html>
