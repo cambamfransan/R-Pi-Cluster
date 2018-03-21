@@ -11,4 +11,4 @@ git clone $2
 mkdir _bld
 cd _bld
 cmake ../$1
-make
+make install

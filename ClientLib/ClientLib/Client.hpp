@@ -1,7 +1,7 @@
 #ifndef CLIENT_CLASS_H
 #define CLIENT_CLASS_H
 
-#include "Messages/ClientInfo.hpp"
+#include "Messages/Pi/Pi.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
 #include <qobject.h>
 
@@ -38,7 +38,7 @@ private:
 #endif
   std::map<int, Conversation> m_outMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
-  std::map<int, ClientInfo> m_allClientsInfo;
+  std::map<int, manager::Pi> m_allClientsInfo;
   std::string m_database;
 };
 

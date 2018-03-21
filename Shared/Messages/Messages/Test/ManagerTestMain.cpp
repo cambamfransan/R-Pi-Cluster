@@ -130,3 +130,11 @@ void ManagerTest::pi()
   auto backPi = manager::Pi::fromString(strPi);
   QVERIFY(pi == backPi);
 }
+
+void ManagerTest::job()
+{
+  manager::JobManager job(1, 10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", "", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
+
+  QVERIFY(job.getName() == "RPiCalc");
+  QVERIFY(job.getExec() == "./bin/CalcPi.exe");
+}

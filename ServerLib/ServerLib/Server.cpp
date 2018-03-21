@@ -122,20 +122,20 @@ void Server::newConnection(int id)
   m_window->addConnection(t->peerAddress(), t->peerPort());
 #endif
   // this will move
-  ClientInfo infoToInsert{t->peerAddress().toString().toStdString(),
+  manager::Pi pi(t->peerAddress().toString().toStdString(),
                           t->peerPort(),
                           "pi",
                           "PiCluster!",
                           m_nextPriority,
-                          id};
+                          id);
   m_nextPriority++;
   std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
-  m_clientInfos[id] = infoToInsert;
+  m_clientInfos[id] = pi;
   if (m_clientInfos.size() > 1)
   {
     for (auto&& info : m_clientInfos)
     {
-      if (info.second.priority == m_nextPriority - 2)
+      if (info.second.getPriority() == m_nextPriority - 2)
       {
         int nextConvId(m_pSender->getNextConvId());
         send(make_msgs::makeIdMsg(m_myId, id, nextConvId),
@@ -151,7 +151,7 @@ void Server::newConnection(int id)
   else if (m_clientInfos.size() == 1)
   {
     int nextConvId(m_pSender->getNextConvId());
-    send(make_msgs::makeIdMsg(m_myId, infoToInsert.clientId, nextConvId),
+    send(make_msgs::makeIdMsg(m_myId, pi.getClientId(), nextConvId),
          nextConvId,
          std::chrono::seconds(1),
          true,
@@ -273,9 +273,9 @@ void Server::lostConnection(int id)
     std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
     for (auto& info : m_clientInfos)
     {
-      if (info.second.priority > m_clientInfos[id].priority)
+      if (info.second.getPriority() > m_clientInfos[id].getPriority())
       {
-        info.second.priority--;
+        info.second.decrementPriority();
       }
     }
     m_clientInfos.erase(id);
@@ -300,13 +300,13 @@ void Server::sendTimedMsgs()
     {
       int nextConvId(m_pSender->getNextConvId());
       auto pMsg = make_msgs::makeUpdateMsg(m_myId,
-                                           info.second.clientId,
+                                           info.second.getClientId(),
                                            msg::ProtoType::UPDATE,
                                            nextConvId,
                                            m_clientInfos);
 
       send(
-        pMsg, nextConvId, std::chrono::seconds(1), true, info.second.clientId);
+        pMsg, nextConvId, std::chrono::seconds(1), true, info.second.getClientId());
     }
   }
 

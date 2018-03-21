@@ -107,18 +107,18 @@ void Client::lostConnection()
 
 void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 {
-  std::map<int, ClientInfo> infos;
+  std::map<int, manager::Pi> infos;
   for (int i = 0; i < pMsg->update().clients_size(); i++)
   {
     auto client = pMsg->update().clients(i);
-    ClientInfo info{client.ipaddress(),
+    manager::Pi pi(client.ipaddress(),
                     client.port(),
                     client.username(),
                     client.password(),
                     client.priority(),
-                    client.clientid()};
-    if (info.clientId == m_myId) m_myPriority = info.priority;
-    infos[client.clientid()] = info;
+                    client.clientid());
+    if (pi.getClientId() == m_myId) m_myPriority = pi.getPriority();
+    infos[client.clientid()] = pi;
   }
   m_allClientsInfo = infos;
   send(make_msgs::makeBasicMsgToSend(

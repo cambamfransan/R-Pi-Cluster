@@ -7,8 +7,8 @@
 #include <chrono>
 #include <rapidjson/document.h>
 #include <mutex>
-#include "Messages/ClientInfo.hpp"
 #include <qtimer.h>
+#include "Messages/Pi/Pi.hpp"
 
 #if (TESTING_GUIS == 1)
 #include "Gui/mainwindow.hpp"
@@ -48,7 +48,7 @@ private:
   std::shared_ptr<std::mutex> m_clientsMutex;
   std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
   std::mutex m_clientInfosMutex;
-  std::map<int,ClientInfo> m_clientInfos;
+  std::map<int,manager::Pi> m_clientInfos;
   int m_myId;
 #if (TESTING_GUIS == 1)
   MainWindow* m_window;
