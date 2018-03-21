@@ -122,3 +122,8 @@ std::vector<manager::Task> manager::Pi::getTasks()
 {
   return m_tasks;
 }
+
+void manager::Pi::decrementPriority()
+{
+  m_priority--;
+}

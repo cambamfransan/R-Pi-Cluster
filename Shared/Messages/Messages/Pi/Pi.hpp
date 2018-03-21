@@ -26,6 +26,7 @@ namespace manager
     int getPriority();
     int getClientId();
     std::vector<manager::Task> getTasks();
+    void decrementPriority();
 
   private:  
     /** Ip Address of the client */
