@@ -16,6 +16,7 @@ private slots:
   void getTasksTest();
   void removeTasksTest();
   void addResults();
+  void pi();
   void cleanupTestCase();
 };
 

@@ -11,7 +11,6 @@ set(${lib_name}_deps ProtoFiles Logger)
 
 ###########################################
 set(bottom_srcs
-  ClientInfo.hpp
   Conversation.hpp
   JSONHelpers.cpp
   JSONHelpers.hpp
@@ -31,8 +30,6 @@ set(manager_srcs
   Manager/Job.hpp
   Manager/Manager.cpp
   Manager/Manager.hpp
-  Manager/Pi.cpp
-  Manager/Pi.hpp
   Manager/Results.cpp
   Manager/Results.hpp
   Manager/Tasks.cpp
@@ -41,7 +38,19 @@ set(manager_srcs
 source_group("Manager" FILES ${manager_srcs})
 list(APPEND ${lib_name}_srcs ${manager_srcs})
 ###########################################
-
+set(pi_srcs
+  Pi/Pi.cpp
+  Pi/Pi.hpp
+  Pi/PiServerManager.cpp
+  Pi/PiServerManager.hpp
+  Pi/PiClientManager.cpp
+  Pi/PiClientManager.hpp
+  Pi/NewPiManager.cpp
+  Pi/NewPiManager.hpp
+  )
+source_group("Pi" FILES ${pi_srcs})
+list(APPEND ${lib_name}_srcs ${pi_srcs})
+###########################################
 
 include_directories(${RAPIDJSON_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")

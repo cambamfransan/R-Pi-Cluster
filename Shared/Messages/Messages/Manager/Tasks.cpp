@@ -19,15 +19,21 @@ manager::TaskFile::TaskFile(int page, int task, std::string name)
 
 }
 
-manager::Tasks::Tasks(int id,
+manager::TaskManager::TaskManager(int id,
                       int size,
-                      std::string TasksList)
+                      std::string tasksList)
   : m_myId(id),
     m_maxSize(size),
     m_valid(false),
     m_taskFiles()
 {
-  std::ifstream input(TasksList);
+  if (tasksList == "")return;
+  populateFields(tasksList);
+}
+
+void manager::TaskManager::populateFields(std::string tasksList)
+{
+  std::ifstream input(tasksList);
   std::string nextLine;
   if (!input) return;
 
@@ -37,12 +43,12 @@ manager::Tasks::Tasks(int id,
   for (int i = 0; !input.eof(); i++)
   {
     std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
-                         std::to_string(i) + ".txt");
+      std::to_string(i) + ".txt");
     m_taskFiles.push_back(TaskFile(i, 0, nextFile));
     std::ofstream output(nextFile);
     if (output)
     {
-      for (int j = 0; j < size; j++)
+      for (int j = 0; j < m_maxSize; j++)
       {
         if (!std::getline(input, nextLine)) break;
         if (nextLine != "") output << nextLine << "\n";
@@ -52,14 +58,14 @@ manager::Tasks::Tasks(int id,
   m_valid = true;
 }
 
-manager::Tasks::~Tasks()
+manager::TaskManager::~TaskManager()
 {
   // I should remove the files here
   for (size_t i = 0; i < m_taskFiles.size(); i++)
     remove(m_taskFiles[i].pageName.c_str());
 }
 
-std::vector<manager::Task> manager::Tasks::getNextTasks(int howManyTasks)
+std::vector<manager::Task> manager::TaskManager::getNextTasks(int howManyTasks)
 {
   if (!m_valid) return std::vector<Task>();
   std::vector<int> toDelete;
@@ -99,7 +105,7 @@ std::vector<manager::Task> manager::Tasks::getNextTasks(int howManyTasks)
   return forReturn;
 }
 
-bool manager::Tasks::removeFromResults(Task task)
+bool manager::TaskManager::removeFromResults(Task task)
 {
   std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
                        std::to_string(task.pageNumber) + ".txt");

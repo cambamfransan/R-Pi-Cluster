@@ -1,7 +1,7 @@
 #include "Results.hpp"
 #include <fstream>
 
-manager::Results::Results(int id)
+manager::ResultsManager::ResultsManager(int id)
   : m_myId(id), m_resultFiles(), m_basePath(std::to_string(m_myId) + "/Results")
 {
   system(std::string("mkdir " + std::to_string(m_myId)).c_str());
@@ -9,26 +9,30 @@ manager::Results::Results(int id)
     std::string("cd " + std::to_string(m_myId) + "&& mkdir Results").c_str());
 }
 
-manager::Results::~Results()
+manager::ResultsManager::~ResultsManager()
 {
   // delete files
   for (const auto& file : m_resultFiles)
     remove(file.c_str());
 }
 
-void manager::Results::addResult(Result result)
+void manager::ResultsManager::addResult(std::vector<Result> results)
 {
-  // Need to fix this
-  std::string outFilePath(m_basePath + "/" +
-                          std::to_string(result.first.pageNumber) + ".txt");
-  std::ofstream output(outFilePath, std::ios::app);
-  output << result.first.taskId << ":~:" << result.first.toExecute
-         << ":~:" << result.second << std::endl;
-  output.close();
-  m_resultFiles.insert(outFilePath);
+  // this could be more effecient
+  for (auto&& result : results)
+  {
+    // Need to fix this
+    std::string outFilePath(m_basePath + "/" +
+      std::to_string(result.first.pageNumber) + ".txt");
+    std::ofstream output(outFilePath, std::ios::app);
+    output << result.first.taskId << ":~:" << result.first.toExecute
+      << ":~:" << result.second << std::endl;
+    output.close();
+    m_resultFiles.insert(outFilePath);
+  }
 }
 
-std::string manager::Results::getResults()
+std::string manager::ResultsManager::getResults()
 {
   std::string results;
 

@@ -27,18 +27,21 @@ struct TaskFile
   std::string pageName;
 };
 
-  class Tasks
+  class TaskManager
   {
   public:
-    Tasks(int id, int size, std::string TasksList);
+    TaskManager(int id, int size, std::string tasksList = "");
 
-    ~Tasks();
+    void populateFields(std::string taskList);
+
+    ~TaskManager();
 
     std::vector<Task> getNextTasks(int howManyTasks);
 
     bool removeFromResults(Task task);
 
   private:
+    
     int m_myId;
     int m_maxSize;
     bool m_valid;

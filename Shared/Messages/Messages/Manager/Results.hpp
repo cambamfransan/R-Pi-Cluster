@@ -9,13 +9,13 @@ namespace manager
 {
   typedef std::pair<manager::Task, std::string> Result;
 
-  class Results
+  class ResultsManager
   {
   public:
-    Results(int id);
-    ~Results();
+    ResultsManager(int id);
+    ~ResultsManager();
 
-    void addResult(Result result);
+    void addResult(std::vector<Result> results);
 
     std::string getResults();
 

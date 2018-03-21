@@ -1,6 +1,8 @@
 #include "ManagerTestMain.hpp"
 #include "Messages/Manager/Results.hpp"
 #include "Messages/Manager/Tasks.hpp"
+#include "Messages/Pi/Pi.hpp"
+#include "Messages/Manager/Job.hpp"
 #include <iostream>
 
 ManagerTest::ManagerTest() {}
@@ -13,10 +15,11 @@ void ManagerTest::cleanupTestCase() {}
 
 void ManagerTest::getTasksTest()
 {
-  manager::Tasks tasks(1,
-                       10,
-                       std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
-                                   "Messages//Messages//Test//TasksList.txt"));
+  manager::TaskManager tasks(
+    1,
+    10,
+    std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
+                "Messages//Messages//Test//TasksList.txt"));
 
   auto toExecute = tasks.getNextTasks(5);
   QVERIFY(toExecute[0].pageNumber == 0 && toExecute[0].toExecute == "0" &&
@@ -83,10 +86,11 @@ void ManagerTest::getTasksTest()
 
 void ManagerTest::removeTasksTest()
 {
-  manager::Tasks tasks(1,
-                       10,
-                       std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
-                                   "Messages//Messages//Test//TasksList.txt"));
+  manager::TaskManager tasks(
+    1,
+    10,
+    std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
+                "Messages//Messages//Test//TasksList.txt"));
 
   QVERIFY(tasks.removeFromResults(manager::Task(0, 0, "0")));
   QVERIFY(tasks.removeFromResults(manager::Task(0, 5, "5")));
@@ -99,15 +103,30 @@ void ManagerTest::removeTasksTest()
 
 void ManagerTest::addResults()
 {
-  manager::Results results(2);
-  results.addResult(manager::Result(manager::Task(0, 0, "0"), "3"));
-  results.addResult(manager::Result(manager::Task(0, 1, "1"), "1"));
-  results.addResult(manager::Result(manager::Task(0, 2, "2"), "4"));
-  results.addResult(manager::Result(manager::Task(0, 3, "3"), "1"));
-  results.addResult(manager::Result(manager::Task(0, 4, "4"), "5"));
-  results.addResult(manager::Result(manager::Task(1, 10, "10"), "5"));
+  manager::ResultsManager results(2);
+  results.addResult({manager::Result(manager::Task(0, 0, "0"), "3")});
+  results.addResult({manager::Result(manager::Task(0, 1, "1"), "1")});
+  results.addResult({manager::Result(manager::Task(0, 2, "2"), "4")});
+  results.addResult({manager::Result(manager::Task(0, 3, "3"), "1")});
+  results.addResult({manager::Result(manager::Task(0, 4, "4"), "5")});
+  results.addResult({manager::Result(manager::Task(1, 10, "10"), "5")});
 
   QVERIFY(
     results.getResults() ==
     "0:~:0:~:3\n1:~:1:~:1\n2:~:2:~:4\n3:~:3:~:1\n4:~:4:~:5\n10:~:10:~:5\n");
+}
+
+void ManagerTest::pi()
+{
+  std::string ip("127.0.0.1");
+  int port(80);
+  std::string user("Cameron");
+  std::string pass("Frandsen");
+  int pri(5);
+  int id(2);
+
+  manager::Pi pi(ip, port, user, pass, pri, id);
+  auto strPi = pi.toString();
+  auto backPi = manager::Pi::fromString(strPi);
+  QVERIFY(pi == backPi);
 }

@@ -53,7 +53,7 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId,
                                          int toId,
                                          int msgType,
                                          int convId,
-                                         std::map<int, ClientInfo> clients)
+                                         std::map<int, manager::Pi> clients)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(
@@ -62,12 +62,12 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId,
   for (auto&& c : clients)
   {
     auto pClient = pToReturn->mutable_update()->add_clients();
-    pClient->set_ipaddress(c.second.ipAddress);
-    pClient->set_port(c.second.port);
-    pClient->set_username(c.second.username);
-    pClient->set_password(c.second.password);
-    pClient->set_priority(c.second.priority);
-    pClient->set_clientid(c.second.clientId);
+    pClient->set_ipaddress(c.second.getIpAddress());
+    pClient->set_port(c.second.getPort());
+    pClient->set_username(c.second.getUsername());
+    pClient->set_password(c.second.getPassword());
+    pClient->set_priority(c.second.getPriority());
+    pClient->set_clientid(c.second.getClientId());
   }
 
   return pToReturn;

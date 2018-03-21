@@ -1,7 +1,7 @@
 #ifndef MAKE_MSGS_H
 #define MAKE_MSGS_H
 
-#include "ClientInfo.hpp"
+#include "Pi/Pi.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
 #include <vector>
 
@@ -28,7 +28,7 @@ namespace make_msgs
                                 int toId,
                                 int msgType,
                                 int convId,
-                                std::map<int,ClientInfo> clients);
+                                std::map<int,manager::Pi> clients);
 
   msg::MsgToSend* makeIdMsg(int fromId,
                             int toId,
