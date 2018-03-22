@@ -45,8 +45,6 @@ set(pi_srcs
   Pi/PiServerManager.hpp
   Pi/PiClientManager.cpp
   Pi/PiClientManager.hpp
-  Pi/NewPiManager.cpp
-  Pi/NewPiManager.hpp
   )
 source_group("Pi" FILES ${pi_srcs})
 list(APPEND ${lib_name}_srcs ${pi_srcs})

@@ -1,9 +1,9 @@
 #include <iostream>
 #include <thread>
+#include "Logger/Logger.hpp"
 #include "ServerLib/Server.hpp"
 #include <QApplication>
 #include <qtimer.h>
-#include "Logger/Logger.hpp"
 
 int main(int argc, char* argv[])
 {

@@ -7,6 +7,7 @@
 
 namespace manager
 {
+  // TODO This is a single job, need a class for all jobs
   class JobManager
   {
   public:
