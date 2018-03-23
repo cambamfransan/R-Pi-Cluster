@@ -2,13 +2,27 @@
 #include <fstream>
 #include <iostream>
 
-manager::JobManager::JobManager(int id,
-                                int size,
-                                int pri,
-                                int taskpb,
-                                std::string gitUrl,
-                                std::string database,
-                                std::string cloneScript)
+manager::Job::Job()
+  : m_myId(-1),
+  m_priority(-1),
+  m_taskPerBundle(-1),
+  m_gitUrl(""),
+  m_taskManager(-1, -1),
+  m_resultManager(-1),
+  m_database(""),
+  m_name(),
+  m_toExec(),
+  m_status(manager::Status::PLAY)
+{}
+
+
+manager::Job::Job(int id,
+                  int size,
+                  int pri,
+                  int taskpb,
+                  std::string gitUrl,
+                  std::string database,
+                  std::string cloneScript)
   : m_myId(id),
     m_priority(pri),
     m_taskPerBundle(taskpb),
@@ -17,7 +31,8 @@ manager::JobManager::JobManager(int id,
     m_resultManager(id),
     m_database(database),
     m_name(),
-    m_toExec()
+    m_toExec(),
+    m_status(manager::Status::PLAY)
 {
   m_name = gitUrl;
   int spot;
@@ -34,37 +49,62 @@ manager::JobManager::JobManager(int id,
   std::getline(fin, m_toExec);
 }
 
-manager::JobManager::~JobManager()
+manager::Job::~Job()
 {
   // can remove folder
 }
 
-void manager::JobManager::addResults(std::vector<manager::Result> results)
+void manager::Job::addResults(std::vector<manager::Result> results)
 {
   m_resultManager.addResult(results);
 }
 
-std::vector<manager::Task> manager::JobManager::getTasks(int amount)
+std::vector<manager::Task> manager::Job::getTasks(int amount)
 {
   return m_taskManager.getNextTasks(amount);
 }
 
-std::string manager::JobManager::getName()
+int manager::Job::getJobId()
+{
+  return m_myId;
+}
+
+manager::Status manager::Job::getStatus()
+{
+  return m_status;
+}
+void manager::Job::setStatus(manager::Status s)
+{
+  m_status = s;
+}
+
+std::string manager::Job::getName()
 {
   return m_name;
 }
 
-std::string manager::JobManager::getExec()
+std::string manager::Job::getExec()
 {
   return m_toExec;
 }
 
-int manager::JobManager::getPriority()
+int manager::Job::getPriority()
 {
   return m_priority;
 }
 
-int manager::JobManager::getTasksPerBundle()
+void manager::Job::setPriority(int priority)
+{
+  m_priority = priority;
+}
+
+
+int manager::Job::getTasksPerBundle()
 {
   return m_taskPerBundle;
+}
+
+void manager::Job::setTasksPerBundle(int bundle)
+{
+  m_taskPerBundle = bundle;
 }

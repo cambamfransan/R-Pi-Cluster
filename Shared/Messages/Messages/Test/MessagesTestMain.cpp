@@ -9,7 +9,8 @@ void MessagesTest::initTestCase() {}
 void MessagesTest::TestMakeMsgs()
 {
   msg::MsgToSend* first = make_msgs::makeTestMsg(1, 2, 3, "This Message");
-  msg::MsgToSend* second = make_msgs::makeTaskMsg(1, 2, 3, "This Message");
+  manager::Task task(1, 2, 3, "toExecute");
+  msg::MsgToSend* second = make_msgs::makeTaskMsg(1, 2, 3, { task });
   msg::BasicMsg* third = make_msgs::makeBasicMsg(1, 2, 3, 4);
   msg::MsgToSend* fourth = make_msgs::makeBasicMsgToSend(1, 2, 3, 4);
   QVERIFY(first->basicmsg().convid() == 3);
@@ -20,7 +21,7 @@ void MessagesTest::TestMakeMsgs()
   QVERIFY(second->basicmsg().convid() == 3);
   QVERIFY(second->basicmsg().toid() == 2);
   QVERIFY(second->basicmsg().fromid() == 1);
-  QVERIFY(second->task().toexecute(0) == "This Message");
+  QVERIFY(second->task().task(0).toexecute() == "toExecute");
 
   QVERIFY(third->convid() == 4);
   QVERIFY(third->toid() == 2);

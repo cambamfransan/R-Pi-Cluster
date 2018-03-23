@@ -9,7 +9,12 @@ namespace manager
 
 struct Task
 {
-  Task(int page, int task, std::string execute);
+  Task(int jobId, int page, int task, std::string execute);
+
+  bool operator==(const Task& t);
+
+  int jobId;
+
   int pageNumber;
 
   int taskId;

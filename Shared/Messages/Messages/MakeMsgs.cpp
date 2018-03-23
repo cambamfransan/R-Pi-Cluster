@@ -15,10 +15,18 @@ msg::MsgToSend* make_msgs::makeTestMsg(int fromId,
 msg::MsgToSend* make_msgs::makeTaskMsg(int fromId,
                                        int toId,
                                        int convId,
-                                       std::string msg)
+                                       std::vector<manager::Task> task)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
-  pToReturn->mutable_task()->add_toexecute(msg);
+  for (auto&& t : task)
+  {
+    msg::Task* pTask = new msg::Task();
+    pTask->set_jobid(t.jobId);
+    pTask->set_pagenumber(t.pageNumber);
+    pTask->set_jobid(t.taskId);
+    pTask->set_toexecute(t.toExecute);
+    pTask = pToReturn->mutable_task()->add_task();
+  }
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::TASK_MSG, convId));
   return pToReturn;

@@ -2,7 +2,7 @@
 #include "Messages/Manager/Results.hpp"
 #include "Messages/Manager/Tasks.hpp"
 #include "Messages/Pi/Pi.hpp"
-#include "Messages/Manager/Job.hpp"
+#include "Messages/Manager/JobManager.hpp"
 #include <iostream>
 
 ManagerTest::ManagerTest() {}
@@ -92,24 +92,24 @@ void ManagerTest::removeTasksTest()
     std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
                 "Messages//Messages//Test//TasksList.txt"));
 
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, "0")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 5, "5")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 9, "9")));
-  QVERIFY(tasks.removeFromResults(manager::Task(1, 10, "10")));
-  QVERIFY(tasks.removeFromResults(manager::Task(2, 21, "21")));
-  QVERIFY(!tasks.removeFromResults(manager::Task(2, 22, "21")));
-  QVERIFY(!tasks.removeFromResults(manager::Task(1, 23, "0")));
+  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 0, "0")));
+  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 5, "5")));
+  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 9, "9")));
+  QVERIFY(tasks.removeFromResults(manager::Task(0, 1, 10, "10")));
+  QVERIFY(tasks.removeFromResults(manager::Task(0, 2, 21, "21")));
+  QVERIFY(!tasks.removeFromResults(manager::Task(0, 2, 22, "21")));
+  QVERIFY(!tasks.removeFromResults(manager::Task(0, 1, 23, "0")));
 }
 
 void ManagerTest::addResults()
 {
   manager::ResultsManager results(2);
-  results.addResult({manager::Result(manager::Task(0, 0, "0"), "3")});
-  results.addResult({manager::Result(manager::Task(0, 1, "1"), "1")});
-  results.addResult({manager::Result(manager::Task(0, 2, "2"), "4")});
-  results.addResult({manager::Result(manager::Task(0, 3, "3"), "1")});
-  results.addResult({manager::Result(manager::Task(0, 4, "4"), "5")});
-  results.addResult({manager::Result(manager::Task(1, 10, "10"), "5")});
+  results.addResult({manager::Result(manager::Task(0, 0, 0, "0"), "3")});
+  results.addResult({manager::Result(manager::Task(0, 0, 1, "1"), "1")});
+  results.addResult({manager::Result(manager::Task(0, 0, 2, "2"), "4")});
+  results.addResult({manager::Result(manager::Task(0, 0, 3, "3"), "1")});
+  results.addResult({manager::Result(manager::Task(0, 0, 4, "4"), "5")});
+  results.addResult({manager::Result(manager::Task(0, 1, 10, "10"), "5")});
 
   QVERIFY(
     results.getResults() ==
@@ -133,8 +133,10 @@ void ManagerTest::pi()
 
 void ManagerTest::job()
 {
-  manager::JobManager job(1, 10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", "", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
-
-  QVERIFY(job.getName() == "RPiCalc");
-  QVERIFY(job.getExec() == "./bin/CalcPi.exe");
+//  manager::JobManager job(1, 10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", "", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
+  manager::JobManager manager("");
+  int id = manager.addJob(10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git");
+ 
+  QVERIFY(manager.getJobName(id) == "RPiCalc");
+  QVERIFY(manager.getJobExec(id) == "./bin/CalcPi.exe");
 }

@@ -13,7 +13,7 @@ namespace manager
     Pi(std::string ip, int port, std::string user, std::string pass, int priority, int id);
     ~Pi();
 
-    void replaceTasks(std::vector<manager::Task> tasks);
+    void replaceTasks(std::vector<manager::Task> compelted, std::vector<manager::Task> tasks);
     std::string toString();
     static Pi fromString(std::string);
     bool operator==(const Pi&);
@@ -27,6 +27,8 @@ namespace manager
     int getClientId();
     std::vector<manager::Task> getTasks();
     void decrementPriority();
+    void changeThreads(int threads);
+    int getAmountToSend();
 
   private:  
     /** Ip Address of the client */
@@ -41,6 +43,8 @@ namespace manager
     int m_priority;
     /** The clients Id*/
     int m_clientId;
+    /** Amount of threads */
+    int m_threads;
     /** Vector of current tasks*/
     std::vector<manager::Task> m_tasks;
   };

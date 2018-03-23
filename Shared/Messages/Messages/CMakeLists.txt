@@ -7,7 +7,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
-set(${lib_name}_deps ProtoFiles Logger)
+set(${lib_name}_deps ProtoFiles Logger TCPSender)
 
 ###########################################
 set(bottom_srcs
@@ -28,8 +28,12 @@ list(APPEND ${lib_name}_srcs ${bottom_srcs})
 set(manager_srcs
   Manager/Job.cpp
   Manager/Job.hpp
-  Manager/Manager.cpp
-  Manager/Manager.hpp
+  Manager/JobManager.cpp
+  Manager/JobManager.hpp
+  Manager/ServerManager.cpp
+  Manager/ServerManager.hpp
+  Manager/ClientManager.cpp
+  Manager/ClientManager.hpp
   Manager/Results.cpp
   Manager/Results.hpp
   Manager/Tasks.cpp

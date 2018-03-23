@@ -8,10 +8,16 @@
 
 #include <qfile.h>
 
-manager::Task::Task(int page, int task, std::string execute)
-  : pageNumber(page), taskId(task), toExecute(execute)
+manager::Task::Task(int job, int page, int task, std::string execute)
+  : jobId(job), pageNumber(page), taskId(task), toExecute(execute)
 {
 }
+
+bool manager::Task::operator==(const Task& t)
+{
+  return jobId == t.jobId && pageNumber == t.pageNumber && taskId == t.taskId;
+}
+
 
 manager::TaskFile::TaskFile(int page, int task, std::string name)
   : pageNumber(page), nextTaskId(task), pageName(name)
@@ -84,7 +90,7 @@ std::vector<manager::Task> manager::TaskManager::getNextTasks(int howManyTasks)
       auto spot = str.find("\n");
       std::string inputString(str.substr(0, spot));
       str.erase(0, spot + 1);
-      forReturn.emplace_back(m_taskFiles[i].pageNumber, m_taskFiles[i].pageNumber*m_maxSize + m_taskFiles[i].nextTaskId++, inputString);
+      forReturn.emplace_back(m_myId, m_taskFiles[i].pageNumber, m_taskFiles[i].pageNumber*m_maxSize + m_taskFiles[i].nextTaskId++, inputString);
     }
     if (str.size() == 0)
     {

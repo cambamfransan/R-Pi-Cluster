@@ -5,10 +5,7 @@ manager::PiServerManager::PiServerManager()
 {
 }
 
-manager::PiServerManager::~PiServerManager()
-{
-
-}
+manager::PiServerManager::~PiServerManager() {}
 
 int manager::PiServerManager::addPi(std::string ip, int port)
 {
@@ -16,15 +13,22 @@ int manager::PiServerManager::addPi(std::string ip, int port)
   m_pis[pi.getClientId()] = pi;
   return m_nextPiId;
 }
- 
+
 void manager::PiServerManager::removePi(int id)
 {
   m_lastPriority--;
   m_pis.erase(id);
 }
- 
-void manager::PiServerManager::changePiTasks(int id, std::vector<manager::Task> tasks)
+
+void manager::PiServerManager::changePiTasks(
+  int id,
+  std::vector<manager::Task> completed,
+  std::vector<manager::Task> tasks)
 {
-  m_pis[id].replaceTasks(tasks);
+  m_pis[id].replaceTasks(completed, tasks);
 }
 
+int manager::PiServerManager::getAmountToSend(int id)
+{
+  return m_pis[id].getAmountToSend();
+}

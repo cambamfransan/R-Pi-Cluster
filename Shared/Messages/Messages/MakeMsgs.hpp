@@ -15,7 +15,7 @@ namespace make_msgs
   msg::MsgToSend* makeTaskMsg(int fromId,
                               int toId,
                               int convId,
-                              std::string msg);
+                              std::vector<manager::Task> msg);
 
   msg::BasicMsg* makeBasicMsg(int fromId, int toId, int msgType, int convId);
 
@@ -28,15 +28,11 @@ namespace make_msgs
                                 int toId,
                                 int msgType,
                                 int convId,
-                                std::map<int,manager::Pi> clients);
+                                std::map<int, manager::Pi> clients);
 
-  msg::MsgToSend* makeIdMsg(int fromId,
-                            int toId,
-                            int convId);
+  msg::MsgToSend* makeIdMsg(int fromId, int toId, int convId);
 
-  msg::MsgToSend* makeIdMsgAck(int fromId,
-    int toId,
-    int convId);
+  msg::MsgToSend* makeIdMsgAck(int fromId, int toId, int convId);
 
 } // namespace make_msgs
 

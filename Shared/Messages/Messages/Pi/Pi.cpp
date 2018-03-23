@@ -2,12 +2,13 @@
 
 manager::Pi::Pi()
   : m_ipAddress(),
-  m_port(),
-  m_username(),
-  m_password(),
-  m_priority(),
-  m_clientId(),
-  m_tasks()
+    m_port(),
+    m_username(),
+    m_password(),
+    m_priority(),
+    m_clientId(),
+    m_threads(),
+    m_tasks()
 {
 }
 
@@ -23,6 +24,7 @@ manager::Pi::Pi(std::string ip,
     m_password(pass),
     m_priority(priority),
     m_clientId(id),
+    m_threads(4),
     m_tasks()
 {
 }
@@ -32,39 +34,44 @@ manager::Pi::~Pi()
   // I don't think i need to do anything here yet
 }
 
-void manager::Pi::replaceTasks(std::vector<manager::Task> tasks)
+void manager::Pi::replaceTasks(std::vector<manager::Task> completed, std::vector<manager::Task> tasks)
 {
-  m_tasks = tasks;
+  std::vector<int> toDelete;
+  for (auto&& comp : completed)
+  {
+    m_tasks.erase(std::find(m_tasks.begin(), m_tasks.end(), comp));
+  }
+  m_tasks.insert(std::end(m_tasks), std::begin(tasks), std::end(tasks));
 }
 
 std::string manager::Pi::toString()
 {
   return m_ipAddress + "~" + std::to_string(m_port) + "~" + m_username + "~" +
-         m_password + "~" + std::to_string(m_priority) +
-         "~" + std::to_string(m_clientId);
+         m_password + "~" + std::to_string(m_priority) + "~" +
+         std::to_string(m_clientId);
 }
 
-manager::Pi manager::Pi::fromString(std::string str) 
+manager::Pi manager::Pi::fromString(std::string str)
 {
   auto spot = str.find("~");
   std::string address(str.substr(0, spot));
-  str.erase(0, spot+1);
+  str.erase(0, spot + 1);
 
   spot = str.find("~");
   int port(std::stoi(str.substr(0, spot)));
-  str.erase(0, spot+1);
+  str.erase(0, spot + 1);
 
   spot = str.find("~");
   std::string username(str.substr(0, spot));
-  str.erase(0, spot+1);
+  str.erase(0, spot + 1);
 
   spot = str.find("~");
   std::string password(str.substr(0, spot));
-  str.erase(0, spot+1);
+  str.erase(0, spot + 1);
 
   spot = str.find("~");
   int priority(std::stoi(str.substr(0, spot)));
-  str.erase(0, spot+1);
+  str.erase(0, spot + 1);
 
   spot = str.find("~");
   int clientId(std::stoi(str.substr(0, spot)));
@@ -126,4 +133,14 @@ std::vector<manager::Task> manager::Pi::getTasks()
 void manager::Pi::decrementPriority()
 {
   m_priority--;
+}
+
+void manager::Pi::changeThreads(int threads)
+{
+  m_threads = threads;
+}
+
+int manager::Pi::getAmountToSend()
+{
+  return m_threads * 2 - m_tasks.size();
 }

@@ -1,5 +1,5 @@
-#ifndef JOB_MANAGER_H
-#define JOB_MANAGER_H
+#ifndef JOB_H
+#define JOB_H
 
 #include <string>
 #include "Tasks.hpp"
@@ -7,19 +7,32 @@
 
 namespace manager
 {
-  // TODO This is a single job, need a class for all jobs
-  class JobManager
+  enum class Status
+  {
+    PLAY,
+    PAUSE,
+    STOP
+  };
+
+
+  class Job
   {
   public:
-    JobManager(int id, int size, int pri, int taskpb, std::string gitUrl, std::string database = "", std::string script = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
-    ~JobManager();
+    Job(); // I don't like this
+    Job(int id, int size, int pri, int taskpb, std::string gitUrl, std::string database = "", std::string script = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
+    ~Job();
 
     void addResults(std::vector<manager::Result> results);
     std::vector<manager::Task> getTasks(int amount);
     std::string getName();
     std::string getExec();
     int getPriority();
+    void setPriority(int priority);
     int getTasksPerBundle();
+    void setTasksPerBundle(int bundle);
+    int getJobId();
+    Status getStatus();
+    void setStatus(Status s);
 
   private:
     int m_myId;
@@ -31,9 +44,9 @@ namespace manager
     std::string m_database;
     std::string m_name;
     std::string m_toExec;
+    Status m_status;
 
   };
-
 } // namespace manager
 
 #endif

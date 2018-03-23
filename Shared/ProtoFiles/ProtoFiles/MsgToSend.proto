@@ -3,6 +3,7 @@ import public "Update.proto";
 import public "BasicMsg.proto";
 import public "TaskMsg.proto";
 import public "TestMsg.proto";
+import public "Results.proto";
 
 package msg;
 
@@ -20,5 +21,6 @@ message MsgToSend {
   BasicMsg basicMsg = 1;
   Update update = 2;
   TaskMsg task = 3;
-  TestMsg test = 4;
+  ResultsMsg results = 4;
+  TestMsg test = 5;
 }
