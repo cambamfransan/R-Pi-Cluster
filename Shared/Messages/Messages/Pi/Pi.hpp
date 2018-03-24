@@ -33,6 +33,7 @@ namespace manager
     void changeThreads(int threads);
     int getAmountToSend() const;
     void updateAck();
+    std::chrono::steady_clock::time_point getlastCom() const;
 
   private:  
     /** Ip Address of the client */

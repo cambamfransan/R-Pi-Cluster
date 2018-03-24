@@ -17,7 +17,6 @@ message Client {
   string password = 4;
   int32 priority = 5;
   int32 clientId = 6;
-  int32 serverPort = 7;
 }
 
 message Job {
@@ -25,14 +24,22 @@ message Job {
   int32 priority = 2;
   int32 taskPerBundle = 3;
   string gitUrl = 4;
-  ResultsMsg results = 5;
-  string database = 6;
-  string name = 7;
-  string toExec = 8;
-  int32 status = 9;
+  string name = 5;
+  string toExec = 6;
+  int32 status = 7;
+}
+
+message ModifyJob {
+  int32 id = 1;
+  string field = 2;
+  string value = 3;
 }
 
 message Update {
-  repeated Client clients = 1;  
-  repeated Job jobs = 2;
+  repeated Client newclients = 1;
+  repeated int32 lostclients = 2[packed = true];
+  repeated Job newJobs = 3;
+  repeated int32 lostJobs = 4[packed = true];
+  repeated ModifyJob modifiedJobs = 5;
+  repeated Result results = 6;
 }

@@ -34,6 +34,8 @@ namespace manager
 
     void updateAck(int id);
 
+    void removeUnresponsive();
+
   private:
 
     int m_myId;

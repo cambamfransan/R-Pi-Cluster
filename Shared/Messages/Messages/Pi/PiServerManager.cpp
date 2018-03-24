@@ -1,7 +1,14 @@
 #include "PiServerManager.hpp"
+#include "Logger/Logger.hpp"
 
 manager::PiServerManager::PiServerManager()
-  : m_nextPiId(1), m_lastPriority(1), m_pisMutex(), m_pis()
+  : m_nextPiId(2),
+    m_lastPriority(1),
+    m_pisMutex(),
+    m_pis(),
+    m_updateMutex(),
+    m_newPis(),
+    m_lostPis()
 {
 }
 
@@ -9,27 +16,40 @@ manager::PiServerManager::~PiServerManager() {}
 
 int manager::PiServerManager::addPi(std::string ip, int port)
 {
-  manager::Pi pi(ip, port, "", "", m_lastPriority++, m_nextPiId++);
+  int nextId(m_nextPiId);
+  m_nextPiId++;
+  manager::Pi pi(ip, port, "", "", m_lastPriority++, nextId);
   {
     std::lock_guard<std::mutex> lock(m_pisMutex);
-    m_pis[pi.getClientId()] = pi;
+    Logger::info("Adding Pi: " + std::to_string(nextId));
+    m_pis[nextId] = pi;
   }
-
-  return m_nextPiId;
+  {
+    std::lock_guard<std::mutex> lock(m_updateMutex);
+    m_newPis.push_back(pi);
+  }
+  return nextId;
 }
 
 void manager::PiServerManager::removePi(int id)
 {
-  m_lastPriority--;
-  std::lock_guard<std::mutex> lock(m_pisMutex);
-  for (auto&& pi : m_pis)
   {
-    if (pi.second.getPriority() > m_pis[id].getPriority())
-    {
-      pi.second.decrementPriority();
-    }
+    std::lock_guard<std::mutex> lock(m_updateMutex);
+    m_lostPis.push_back(id);
   }
-  m_pis.erase(id);
+  m_lastPriority--;
+  {
+    std::lock_guard<std::mutex> lock(m_pisMutex);
+    for (auto&& pi : m_pis)
+    {
+      if (pi.second.getPriority() > m_pis[id].getPriority())
+      {
+        pi.second.decrementPriority();
+      }
+    }
+    m_pis.erase(id);
+  }
+  Logger::error("Removed pi: " + std::to_string(id));
 }
 
 void manager::PiServerManager::changePiTasks(
@@ -66,3 +86,43 @@ void manager::PiServerManager::updateAck(int id)
   m_pis[id].updateAck();
 }
 
+void manager::PiServerManager::removeUnresponsive()
+{
+  std::vector<int> toDelete;
+  {
+    std::lock_guard<std::mutex> lock(m_pisMutex);
+    for (const auto& pi : m_pis)
+    {
+      if (pi.second.getlastCom() + std::chrono::seconds(5) <
+          std::chrono::steady_clock::now())
+      {
+        toDelete.push_back(pi.first);
+      }
+    }
+  }
+
+  for (const auto& id : toDelete)
+  {
+    removePi(id);
+  }
+}
+
+std::pair<std::vector<manager::Pi>, std::vector<int>> manager::PiServerManager::
+  getUpdates()
+{
+  std::lock_guard<std::mutex> lock(m_updateMutex);
+  auto toReturn = std::make_pair(m_newPis, m_lostPis);
+  m_newPis.clear();
+  m_lostPis.clear();
+  return toReturn;
+}
+
+std::vector<int> manager::PiServerManager::getClientIds()
+{
+  std::vector<int> toReturn;
+  std::lock_guard<std::mutex> lock(m_pisMutex);
+  for (const auto& pi : m_pis)
+    toReturn.push_back(pi.first);
+
+  return toReturn;
+}

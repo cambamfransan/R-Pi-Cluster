@@ -24,6 +24,9 @@ namespace manager
     int getAmountToSend(int id);
     int waitingPis();
     void updateAck(int id);
+    void removeUnresponsive();
+    std::pair<std::vector<Pi>, std::vector<int>> getUpdates();
+    std::vector<int> getClientIds();
 
   private:
     int m_nextPiId;
@@ -31,6 +34,9 @@ namespace manager
     
     std::mutex m_pisMutex;
     std::map<int, manager::Pi> m_pis;
+    std::mutex m_updateMutex;
+    std::vector<Pi> m_newPis;
+    std::vector<int> m_lostPis;
   };
 
 } // namespace manager

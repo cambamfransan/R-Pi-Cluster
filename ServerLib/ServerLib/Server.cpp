@@ -184,18 +184,23 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 #if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 #endif
+    m_serverManager.updateAck(pMsg->basicmsg().fromid());
   switch (pMsg->basicmsg().msgtype())
   {
   case msg::ProtoType::UPDATE_ACK:
-    m_serverManager.updateAck(pMsg->basicmsg().fromid());
     // receive_msgs::UpdateAckTask* heart =
     //  new receive_msgs::UpdateAckTask(*pMsg, m_clientsMutex, m_clientIds);
     // QThreadPool::globalInstance()->start(heart);
     break;
+  case msg::ProtoType::ID_MSG_ACK:
+    Logger::info("Pi is ready to go");
+    break;
   case msg::ProtoType::TASK_MSG_ACK:
+    Logger::info("Tasks received");
     break;
   case msg::ProtoType::RESULTS:
     m_serverManager.addResults(pMsg);
+    Logger::info("Results added");
     break;
   default:
     Logger::info("Did not catch message type: " +
@@ -241,17 +246,11 @@ void Server::receiveMessageWeb(std::string msg)
 
 void Server::lostConnection(int id)
 {
-  Logger::info("erasing client with Id" + std::to_string(id));
-  {
     // std::lock_guard<std::mutex> lock(m_outMessagesMutex);
     // if (auto itr = m_outMessages.find(id) != m_outMessages.end())
     //   m_outMessages.erase(itr);
-  }
-  Logger::info("erasing conversations for client with Id" + std::to_string(id));
-  {
     m_serverManager.removePi(id);
-  }
-  Logger::info("erasing successfully client with Id" + std::to_string(id));
+  Logger::info("erased successfully client with Id" + std::to_string(id));
 }
 
 void Server::lostConnectionWeb()
@@ -268,6 +267,8 @@ void Server::sendTimedMsgs()
   {
     m_serverManager.sendUpdates();
   }
+
+  m_serverManager.removeUnresponsive();
 
   // Resend Msgs
   /*  {

@@ -108,3 +108,8 @@ void manager::Job::setTasksPerBundle(int bundle)
 {
   m_taskPerBundle = bundle;
 }
+
+void manager::Job::setName(std::string name)
+{
+  m_name = name;
+}

@@ -57,17 +57,19 @@ msg::MsgToSend* make_msgs::makeBasicMsgToSend(int fromId,
   return pToReturn;
 }
 
-msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId,
-                                         int toId,
-                                         int msgType,
-                                         int convId,
-                                         std::map<int, manager::Pi> clients)
+msg::MsgToSend* make_msgs::makeUpdateMsg(
+  int fromId,
+  int toId,
+  int convId,
+  std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
+  manager::UpdateStruct jobs,
+  std::map<int, manager::Pi> clients)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(
-    makeBasicMsg(fromId, toId, msgType, convId));
+    makeBasicMsg(fromId, toId, msg::ProtoType::UPDATE, convId));
 
-  for (auto&& c : clients)
+/*  for (auto&& c : clients)
   {
     auto pClient = pToReturn->mutable_update()->add_clients();
     pClient->set_ipaddress(c.second.getIpAddress());
@@ -76,13 +78,12 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(int fromId,
     pClient->set_password(c.second.getPassword());
     pClient->set_priority(c.second.getPriority());
     pClient->set_clientid(c.second.getClientId());
-  }
+  }*/
 
   return pToReturn;
 }
 
-msg::MsgToSend* make_msgs::makeIdMsg(
-  int fromId, int toId, int convId)
+msg::MsgToSend* make_msgs::makeIdMsg(int fromId, int toId, int convId)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(
@@ -90,9 +91,7 @@ msg::MsgToSend* make_msgs::makeIdMsg(
   return pToReturn;
 }
 
-msg::MsgToSend* make_msgs::makeIdMsgAck(int fromId,
-                                        int toId,
-                                        int convId)
+msg::MsgToSend* make_msgs::makeIdMsgAck(int fromId, int toId, int convId)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(

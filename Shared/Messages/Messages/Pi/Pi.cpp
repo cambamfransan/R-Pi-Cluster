@@ -166,6 +166,11 @@ int manager::Pi::getAmountToSend() const
   return m_threads * 2 - m_tasks.size();
 }
 
+std::chrono::steady_clock::time_point manager::Pi::getlastCom() const
+{
+  return m_lastCom;
+}
+
 void manager::Pi::updateAck()
 {
   m_lastCom = std::chrono::steady_clock::now();

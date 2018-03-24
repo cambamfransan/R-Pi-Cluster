@@ -7,6 +7,18 @@
 
 namespace manager
 {
+  const std::string STATUS = "STATUS";
+  const std::string PRIORITY = "PRIORITY";
+  const std::string TASKS_PER_BUNDLE = "TASKS_PER_BUNDLE";
+  const std::string NAME = "NAME";
+
+  struct ModifiedJob
+  {
+    int id;
+    std::string field;
+    std::string value;
+  };
+
   enum class Status
   {
     PLAY,
@@ -33,6 +45,7 @@ namespace manager
     int getJobId();
     Status getStatus();
     void setStatus(Status s);
+    void setName(std::string name);
 
   private:
     int m_myId;

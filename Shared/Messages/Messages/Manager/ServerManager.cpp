@@ -56,7 +56,7 @@ void manager::ServerManager::addPi(std::string ip, int port)
 {
   // Add pi and send tasks to it
   int id(m_piManager.addPi(ip, port));
-  Logger::info("Pi added");
+  Logger::info("Pi added: " + std::to_string(id));
 
   int nextConvId(m_pServerSender->getNextConvId());
   m_pServerSender->send(make_msgs::makeIdMsg(m_myId, id, nextConvId), id);
@@ -93,6 +93,10 @@ void manager::ServerManager::addJob(int size,
 
 void manager::ServerManager::sendUpdates()
 {
+  std::vector<int> pis = m_piManager.getClientIds();
+  auto pis = m_piManager.getUpdates();
+  auto jobs = m_piManager.getUpdates();
+
   //TODO Send updates
   /*
       std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
@@ -122,4 +126,9 @@ void manager::ServerManager::updateAck(int id)
 void manager::ServerManager::removePi(int id)
 {
   m_piManager.removePi(id);
+}
+
+void manager::ServerManager::removeUnresponsive()
+{
+  m_piManager.removeUnresponsive();
 }

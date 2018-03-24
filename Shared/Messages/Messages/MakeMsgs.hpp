@@ -1,6 +1,7 @@
 #ifndef MAKE_MSGS_H
 #define MAKE_MSGS_H
 
+#include "Manager/JobManager.hpp"
 #include "Pi/Pi.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
 #include <vector>
@@ -24,11 +25,13 @@ namespace make_msgs
                                      int msgType,
                                      int convId);
 
-  msg::MsgToSend* makeUpdateMsg(int fromId,
-                                int toId,
-                                int msgType,
-                                int convId,
-                                std::map<int, manager::Pi> clients);
+  msg::MsgToSend* makeUpdateMsg(
+    int fromId,
+    int toId,
+    int convId,
+    std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
+    manager::UpdateStruct jobs,
+    std::map<int, manager::Pi> clients);
 
   msg::MsgToSend* makeIdMsg(int fromId, int toId, int convId);
 

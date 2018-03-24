@@ -81,7 +81,7 @@ std::shared_ptr<QTcpSocket> TCPSenderServer::getSocket(int id)
 
 int TCPSenderServer::getNextConvId()
 {
-  Logger::info("incrementing from: " + std::to_string(m_nextConvId));
+//  Logger::info("incrementing from: " + std::to_string(m_nextConvId));
   return m_nextConvId++;
 }
 
