@@ -44,7 +44,7 @@ client.on('data', function(data) {
         switch (temp.MsgType) {
             case "Heartbeat":
             console.log("Recieved Heartbeat");
-                client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}));
+                client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}) + '~');
                 break;
             default:
                 console.log("bad message received");

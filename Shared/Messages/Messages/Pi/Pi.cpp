@@ -8,6 +8,7 @@ manager::Pi::Pi()
     m_priority(),
     m_clientId(),
     m_threads(),
+    m_lastCom(std::chrono::steady_clock::now()),
     m_tasks()
 {
 }
@@ -25,6 +26,20 @@ manager::Pi::Pi(std::string ip,
     m_priority(priority),
     m_clientId(id),
     m_threads(4),
+    m_lastCom(std::chrono::steady_clock::now()),
+    m_tasks()
+{
+}
+
+manager::Pi::Pi(const Pi& pi)
+  : m_ipAddress(pi.getIpAddress()),
+    m_port(pi.getPort()),
+    m_username(pi.getUsername()),
+    m_password(pi.getPassword()),
+    m_priority(pi.getPriority()),
+    m_clientId(pi.getClientId()),
+    m_threads(pi.getThreads()),
+    m_lastCom(std::chrono::steady_clock::now()),
     m_tasks()
 {
 }
@@ -34,7 +49,8 @@ manager::Pi::~Pi()
   // I don't think i need to do anything here yet
 }
 
-void manager::Pi::replaceTasks(std::vector<manager::Task> completed, std::vector<manager::Task> tasks)
+void manager::Pi::replaceTasks(std::vector<manager::Task> completed,
+                               std::vector<manager::Task> tasks)
 {
   std::vector<int> toDelete;
   for (auto&& comp : completed)
@@ -95,39 +111,44 @@ bool manager::Pi::operator!=(const Pi& pi)
            m_priority == pi.m_priority && m_clientId == pi.m_clientId);
 }
 
-std::string manager::Pi::getIpAddress()
+std::string manager::Pi::getIpAddress() const
 {
   return m_ipAddress;
 }
 
-int manager::Pi::getPort()
+int manager::Pi::getPort() const
 {
   return m_port;
 }
 
-std::string manager::Pi::getUsername()
+std::string manager::Pi::getUsername() const
 {
   return m_username;
 }
 
-std::string manager::Pi::getPassword()
+std::string manager::Pi::getPassword() const
 {
   return m_password;
 }
 
-int manager::Pi::getPriority()
+int manager::Pi::getPriority() const
 {
   return m_priority;
 }
 
-int manager::Pi::getClientId()
+int manager::Pi::getClientId() const
 {
   return m_clientId;
 }
 
-std::vector<manager::Task> manager::Pi::getTasks()
+std::vector<manager::Task> manager::Pi::getTasks() const
 {
   return m_tasks;
+}
+
+int manager::Pi::getThreads() const
+{
+  return m_threads;
 }
 
 void manager::Pi::decrementPriority()
@@ -140,7 +161,12 @@ void manager::Pi::changeThreads(int threads)
   m_threads = threads;
 }
 
-int manager::Pi::getAmountToSend()
+int manager::Pi::getAmountToSend() const
 {
   return m_threads * 2 - m_tasks.size();
+}
+
+void manager::Pi::updateAck()
+{
+  m_lastCom = std::chrono::steady_clock::now();
 }

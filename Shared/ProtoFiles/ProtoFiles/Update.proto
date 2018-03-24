@@ -1,6 +1,14 @@
 syntax = "proto3";
 
+import public "Results.proto";
+
 package msg;
+
+enum STATUS {
+  PLAY = 0;
+  PAUSE = 1;
+  STOP = 2;
+}
 
 message Client {
   string ipAddress = 1;
@@ -12,6 +20,19 @@ message Client {
   int32 serverPort = 7;
 }
 
+message Job {
+  int32 id = 1;
+  int32 priority = 2;
+  int32 taskPerBundle = 3;
+  string gitUrl = 4;
+  ResultsMsg results = 5;
+  string database = 6;
+  string name = 7;
+  string toExec = 8;
+  int32 status = 9;
+}
+
 message Update {
   repeated Client clients = 1;  
+  repeated Job jobs = 2;
 }

@@ -33,9 +33,11 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
   std::vector<manager::Task> toReturn;
   while (toReturn.size() < amount)
   {
+    if (m_jobs.empty()) return toReturn;
     int priority(m_jobs[m_curJob].getPriority());
     if (m_curJobDone > priority)
     {
+      if (m_jobs.empty()) return toReturn;
       // find next job
       m_curJobDone = 0;
       auto itrCurJob = ++m_jobs.find(m_curJob);

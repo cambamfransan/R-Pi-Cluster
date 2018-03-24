@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Messages/Manager/Tasks.hpp"
+#include <chrono>
 
 namespace manager
 {
@@ -11,6 +12,7 @@ namespace manager
   public:
     Pi();
     Pi(std::string ip, int port, std::string user, std::string pass, int priority, int id);
+    Pi(const Pi& pi);
     ~Pi();
 
     void replaceTasks(std::vector<manager::Task> compelted, std::vector<manager::Task> tasks);
@@ -19,16 +21,18 @@ namespace manager
     bool operator==(const Pi&);
     bool operator!=(const Pi&);
 
-    std::string getIpAddress();
-    int getPort();
-    std::string getUsername();
-    std::string getPassword();
-    int getPriority();
-    int getClientId();
-    std::vector<manager::Task> getTasks();
+    std::string getIpAddress() const ;
+    int getPort() const;
+    std::string getUsername() const;
+    std::string getPassword() const;
+    int getPriority() const;
+    int getClientId() const;
+    std::vector<manager::Task> getTasks() const;
+    int getThreads() const;
     void decrementPriority();
     void changeThreads(int threads);
-    int getAmountToSend();
+    int getAmountToSend() const;
+    void updateAck();
 
   private:  
     /** Ip Address of the client */
@@ -45,6 +49,8 @@ namespace manager
     int m_clientId;
     /** Amount of threads */
     int m_threads;
+    /** Last Ack from pi*/
+    std::chrono::steady_clock::time_point m_lastCom;
     /** Vector of current tasks*/
     std::vector<manager::Task> m_tasks;
   };
