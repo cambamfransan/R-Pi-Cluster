@@ -21,9 +21,9 @@ namespace manager
 
   enum class Status
   {
-    PLAY,
-    PAUSE,
-    STOP
+    PLAY = 1,
+    PAUSE = 2,
+    STOP = 3
   };
 
 
@@ -46,6 +46,7 @@ namespace manager
     Status getStatus();
     void setStatus(Status s);
     void setName(std::string name);
+    std::string getUrl();
 
   private:
     int m_myId;

@@ -113,3 +113,8 @@ void manager::Job::setName(std::string name)
 {
   m_name = name;
 }
+
+std::string manager::Job::getUrl()
+{
+  return m_gitUrl;
+}

@@ -106,7 +106,7 @@ void manager::JobManager::pauseJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(id, STATUS, "PAUSE");
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, std::string("PAUSE") });
   }
 }
 
@@ -118,7 +118,7 @@ void manager::JobManager::playJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(id, STATUS, "PLAY");
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, std::string("PLAY") });
   }
 }
 
@@ -130,7 +130,7 @@ void manager::JobManager::stopJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(id, STATUS, "STOP");
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, "STOP" });
   }
 }
 
@@ -142,7 +142,7 @@ void manager::JobManager::setName(int id, std::string name)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(id, NAME, name);
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, NAME, name });
   }
 }
 
@@ -164,8 +164,8 @@ void manager::JobManager::modifyTasksPerBundle(int id, int taskPerBundle)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(
-      id, TASKS_PER_BUNDLE, std::to_string(taskPerBundle));
+    m_modifiedJobs.push_back(manager::ModifiedJob{
+      id, TASKS_PER_BUNDLE, std::to_string(taskPerBundle) });
   }
 }
 
@@ -177,7 +177,7 @@ void manager::JobManager::modifyPriority(int id, int priority)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.emplace_back(id, TASKS_PER_BUNDLE, std::to_string(priority));
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, TASKS_PER_BUNDLE, std::to_string(priority) });
   }
 }
 

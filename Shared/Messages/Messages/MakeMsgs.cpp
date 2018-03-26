@@ -62,23 +62,64 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
   int toId,
   int convId,
   std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
-  manager::UpdateStruct jobs,
-  std::map<int, manager::Pi> clients)
+  manager::UpdateStruct jobs)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::UPDATE, convId));
 
-/*  for (auto&& c : clients)
+  for (auto&& c : pis.first)
   {
-    auto pClient = pToReturn->mutable_update()->add_clients();
-    pClient->set_ipaddress(c.second.getIpAddress());
-    pClient->set_port(c.second.getPort());
-    pClient->set_username(c.second.getUsername());
-    pClient->set_password(c.second.getPassword());
-    pClient->set_priority(c.second.getPriority());
-    pClient->set_clientid(c.second.getClientId());
-  }*/
+    auto pClient = pToReturn->mutable_update()->add_newclients();
+    pClient->set_ipaddress(c.getIpAddress());
+    pClient->set_port(c.getPort());
+    pClient->set_username(c.getUsername());
+    pClient->set_password(c.getPassword());
+    pClient->set_priority(c.getPriority());
+    pClient->set_clientid(c.getClientId());
+  }
+
+  for (auto&& c : pis.second)
+  {
+    pToReturn->mutable_update()->add_lostclients(c);
+  }
+
+  for (auto&& j : jobs.newJobs)
+  {
+    auto pJob = pToReturn->mutable_update()->add_newjobs();
+    pJob->set_id(j.getJobId());
+    pJob->set_priority(j.getPriority());
+    pJob->set_taskperbundle(j.getTasksPerBundle());
+    pJob->set_giturl(j.getUrl());
+    pJob->set_name(j.getName());
+    pJob->set_toexec(j.getExec());
+    pJob->set_status(static_cast<int>(j.getStatus()));
+  }
+
+  for (auto&& j : jobs.lostJobs)
+  {
+    pToReturn->mutable_update()->add_lostjobs(j);
+  }
+
+  for (auto&& j : jobs.modifiedJobs)
+  {
+    auto pMod = pToReturn->mutable_update()->add_modifiedjobs();
+    pMod->set_id(j.id);
+    pMod->set_field(j.field);
+    pMod->set_value(j.value);
+  }
+
+  for (auto&& j : jobs.newResults)
+  {
+    auto pResult = pToReturn->mutable_update()->add_results();
+    msg::Task* pTask = new msg::Task();
+    pTask->set_id(j.first.taskId);
+    pTask->set_jobid(j.first.jobId);
+    pTask->set_pagenumber(j.first.pageNumber);
+    pTask->set_toexecute(j.first.toExecute);
+    pResult->set_allocated_task(pTask);
+    pResult->set_result(j.second);
+  }
 
   return pToReturn;
 }

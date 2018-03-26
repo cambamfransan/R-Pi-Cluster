@@ -30,8 +30,7 @@ namespace make_msgs
     int toId,
     int convId,
     std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
-    manager::UpdateStruct jobs,
-    std::map<int, manager::Pi> clients);
+    manager::UpdateStruct jobs);
 
   msg::MsgToSend* makeIdMsg(int fromId, int toId, int convId);
 

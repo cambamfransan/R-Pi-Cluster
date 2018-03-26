@@ -12,9 +12,9 @@ Client::Client(QHostAddress addr, qint16 port, std::string arg)
 #if (TESTING_GUIS == 1)
     m_window(new MainWindow()),
 #endif
-    m_outMessages(),
-    m_inputMessages(),
-    m_allClientsInfo(),
+//    m_outMessages(),
+//    m_inputMessages(),
+//    m_allClientsInfo(),
     m_database(arg)
 {
 #if (TESTING_GUIS == 1)
@@ -48,16 +48,16 @@ void Client::newConnection()
 
 void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 {
-  int id =
-    make_msgs::getMapId(pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
-  if (m_inputMessages.find(id) == m_inputMessages.end())
-    m_inputMessages[id] = std::chrono::steady_clock::now();
-  else
-    return;
-  if (auto itr = m_outMessages.find(make_msgs::getMapId(
-                   pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
-                 m_outMessages.end())
-    m_outMessages.erase(itr);
+//  int id =
+//    make_msgs::getMapId(pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
+//  if (m_inputMessages.find(id) == m_inputMessages.end())
+//    m_inputMessages[id] = std::chrono::steady_clock::now();
+//  else
+//    return;
+//  if (auto itr = m_outMessages.find(make_msgs::getMapId(
+//                   pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
+ //                m_outMessages.end())
+ //   m_outMessages.erase(itr);
 #if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 #endif
@@ -69,9 +69,9 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     m_myId = pMsg->basicmsg().toid();
     m_serverId = pMsg->basicmsg().fromid();
     send(make_msgs::makeIdMsgAck(m_myId, m_serverId, convId),
-         convId,
+      convId);/*,
          std::chrono::seconds(1),
-         false);
+         false);*/
     break;
   case msg::ProtoType::UPDATE:
     recieveUpdate(pMsg, convId);
@@ -80,16 +80,16 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 }
 
 void Client::send(msg::MsgToSend* pMsg,
-                  int convId,
+                  int convId/*,
                   std::chrono::seconds timeout,
-                  bool requireResponse)
+                  bool requireResponse*/)
 {
-  if (requireResponse)
-  {
-    m_outMessages[make_msgs::getMapId(m_myId, pMsg->basicmsg().convid())] =
-      Conversation{
-        pMsg, convId, timeout, std::chrono::steady_clock::now(), m_serverId};
-  }
+//  if (requireResponse)
+//  {
+//    m_outMessages[make_msgs::getMapId(m_myId, pMsg->basicmsg().convid())] =
+//      Conversation{
+//        pMsg, convId, timeout, std::chrono::steady_clock::now(), m_serverId};
+//  }
   m_pSender->send(pMsg);
 }
 
@@ -97,7 +97,7 @@ void Client::clicked(std::string msg)
 {
   msg::MsgToSend* pMsg =
     make_msgs::makeTestMsg(m_myId, 1, m_pSender->getNextConvId(), msg);
-  send(pMsg, 1, std::chrono::seconds(1), false);
+  send(pMsg, 1)/*, std::chrono::seconds(1), false)*/;
 }
 
 void Client::lostConnection()
@@ -107,8 +107,9 @@ void Client::lostConnection()
 
 void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 {
-  std::map<int, manager::Pi> infos;
-  for (int i = 0; i < pMsg->update().clients_size(); i++)
+  std::map<int, manager::Pi> infos; 
+  // TODO cfrandsen
+/*  for (int i = 0; i < pMsg->update().clients_size(); i++)
   {
     auto client = pMsg->update().clients(i);
     manager::Pi pi(client.ipaddress(),
@@ -120,10 +121,10 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
     if (pi.getClientId() == m_myId) m_myPriority = pi.getPriority();
     infos[client.clientid()] = pi;
   }
-  m_allClientsInfo = infos;
+  m_allClientsInfo = infos;*/
   send(make_msgs::makeBasicMsgToSend(
-         m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
-       convId,
+    m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
+    convId);/* ,
        std::chrono::seconds(1),
-       false);
+       false);*/
 }

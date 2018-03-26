@@ -1,6 +1,6 @@
 #include "ServerManager.hpp"
-#include "MakeMsgs.hpp"
 #include "Logger/Logger.hpp"
+#include "MakeMsgs.hpp"
 
 manager::ServerManager::ServerManager(
   int id,
@@ -8,8 +8,8 @@ manager::ServerManager::ServerManager(
   std::shared_ptr<TCPSenderWeb> pWebSender,
   std::string database)
   : m_myId(id),
-    m_jobManager(database), 
-    m_piManager(),          
+    m_jobManager(database),
+    m_piManager(),
     m_pServerSender(pServerSender),
     m_pWebSender(pWebSender)
 {
@@ -94,28 +94,16 @@ void manager::ServerManager::addJob(int size,
 void manager::ServerManager::sendUpdates()
 {
   std::vector<int> pis = m_piManager.getClientIds();
-  auto pis = m_piManager.getUpdates();
-  auto jobs = m_piManager.getUpdates();
+  auto piUpdate = m_piManager.getUpdates();
+  auto jobUpdate = m_jobManager.getUpdates();
 
-  //TODO Send updates
-  /*
-      std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
-    for (auto&& info : m_clientInfos)
-    {
-      int nextConvId(m_pSender->getNextConvId());
-      auto pMsg = make_msgs::makeUpdateMsg(m_myId,
-                                           info.second.getClientId(),
-                                           msg::ProtoType::UPDATE,
-                                           nextConvId,
-                                           m_clientInfos);
-
-      send(pMsg,
-           nextConvId,
-           std::chrono::seconds(1),
-           true,
-           info.second.getClientId());
-    }
-*/
+  auto pMsg = make_msgs::makeUpdateMsg(
+    m_myId, 0, m_pServerSender->getNextConvId(), piUpdate, jobUpdate);
+  for (const auto& pi : pis)
+  {
+    pMsg->mutable_basicmsg()->set_toid(pi);
+    m_pServerSender->send(pMsg, pi);
+  }
 }
 
 void manager::ServerManager::updateAck(int id)
