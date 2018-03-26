@@ -30,6 +30,10 @@ set(manager_srcs
   Manager/Job.hpp
   Manager/JobManager.cpp
   Manager/JobManager.hpp
+  Manager/Execute.cpp
+  Manager/Execute.hpp
+  Manager/ExecuteManager.cpp
+  Manager/ExecuteManager.hpp
   Manager/ServerManager.cpp
   Manager/ServerManager.hpp
   Manager/ClientManager.cpp

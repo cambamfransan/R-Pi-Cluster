@@ -12,6 +12,13 @@ namespace manager
   const std::string TASKS_PER_BUNDLE = "TASKS_PER_BUNDLE";
   const std::string NAME = "NAME";
 
+  struct JobInfo
+  {
+    int id;
+    int tasksPerBundle;
+    std::string bldLocation;
+  };
+
   struct ModifiedJob
   {
     int id;
