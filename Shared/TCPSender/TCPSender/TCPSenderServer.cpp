@@ -76,6 +76,7 @@ quint16 TCPSenderServer::getServerPort()
 
 std::shared_ptr<QTcpSocket> TCPSenderServer::getSocket(int id)
 {
+  std::cout << "getting socket" << std::endl;
   return (*m_pSockets.find(id)).second;
 }
 
@@ -108,6 +109,7 @@ void TCPSenderServer::connection()
 
 void TCPSenderServer::emitMessage()
 {
+  std::cout << "receied msg" << std::endl;
   QTcpSocket* readSocket = qobject_cast<QTcpSocket*>(sender());
   while (true)
   {
@@ -148,11 +150,18 @@ void TCPSenderServer::disconnected()
                  m_pSockets.end(),
                  [readSocket](std::pair<int, std::shared_ptr<QTcpSocket>> rhs) {
                    if (rhs.second == nullptr) return false;
-                   return readSocket->localPort() == rhs.second->localPort();
+                   return readSocket->peerPort() == rhs.second->peerPort();
                  });
   if (itr != m_pSockets.end())
   {
+    std::cout << "In Map: " << std::endl;
+    for (auto&& i : m_pSockets)
+    {
+      std::cout << i.first << ": "<<i.second->peerPort() << std::endl;
+    }
+    std::cout << "Found in map: " << itr->first << std::endl;
     emit lostConnection(itr->first);
-    itr->second == nullptr;
+    //itr->second = nullptr;
+    //m_pSockets.erase(itr);
   }
 }

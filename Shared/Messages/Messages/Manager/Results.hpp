@@ -12,14 +12,18 @@ namespace manager
   class ResultsManager
   {
   public:
+    ResultsManager();
     ResultsManager(int id);
     ~ResultsManager();
+
+    void init(int id);
 
     void addResult(std::vector<Result> results);
 
     std::string getResults();
 
   private:
+
     int m_myId;
     int m_size;
     std::set<std::string> m_resultFiles;

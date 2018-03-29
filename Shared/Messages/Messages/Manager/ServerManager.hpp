@@ -22,7 +22,7 @@ namespace manager
 
     void addResults(msg::MsgToSend* pMsg);
 
-    void addPi(std::string ip, int port);
+    void addPi(int id, std::string ip, int port);
 
     void addJob(int size, int pri, int taskpb, std::string gitUrl);
 

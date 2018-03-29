@@ -15,7 +15,8 @@ Client::Client(QHostAddress addr, qint16 port, std::string arg)
 //    m_outMessages(),
 //    m_inputMessages(),
 //    m_allClientsInfo(),
-    m_database(arg)
+    m_database(arg),
+  m_clientManager(m_pSender, m_database)
 {
 #if (TESTING_GUIS == 1)
   m_window->show();
@@ -108,23 +109,10 @@ void Client::lostConnection()
 void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 {
   std::map<int, manager::Pi> infos; 
-  // TODO cfrandsen
-/*  for (int i = 0; i < pMsg->update().clients_size(); i++)
-  {
-    auto client = pMsg->update().clients(i);
-    manager::Pi pi(client.ipaddress(),
-                    client.port(),
-                    client.username(),
-                    client.password(),
-                    client.priority(),
-                    client.clientid());
-    if (pi.getClientId() == m_myId) m_myPriority = pi.getPriority();
-    infos[client.clientid()] = pi;
-  }
-  m_allClientsInfo = infos;*/
   send(make_msgs::makeBasicMsgToSend(
     m_myId, pMsg->basicmsg().fromid(), msg::ProtoType::UPDATE_ACK, convId),
     convId);/* ,
        std::chrono::seconds(1),
        false);*/
+  m_clientManager.update(pMsg->update());
 }

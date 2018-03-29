@@ -1,12 +1,15 @@
 #include "Results.hpp"
 #include <fstream>
 
+manager::ResultsManager::ResultsManager()
+  : m_myId(-1), m_resultFiles(), m_basePath()
+{
+}
+
 manager::ResultsManager::ResultsManager(int id)
   : m_myId(id), m_resultFiles(), m_basePath(std::to_string(m_myId) + "/Results")
 {
-  system(std::string("mkdir " + std::to_string(m_myId)).c_str());
-  system(
-    std::string("cd " + std::to_string(m_myId) + "&& mkdir Results").c_str());
+  init(id);
 }
 
 manager::ResultsManager::~ResultsManager()
@@ -14,6 +17,15 @@ manager::ResultsManager::~ResultsManager()
   // delete files
   for (const auto& file : m_resultFiles)
     remove(file.c_str());
+}
+
+void manager::ResultsManager::init(int id)
+{
+  m_myId = id;
+  m_basePath = 
+  system(std::string("mkdir " + std::to_string(m_myId)).c_str());
+  system(
+    std::string("cd " + std::to_string(m_myId) + "&& mkdir Results").c_str());
 }
 
 void manager::ResultsManager::addResult(std::vector<Result> results)

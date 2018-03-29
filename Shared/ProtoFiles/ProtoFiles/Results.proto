@@ -4,7 +4,7 @@ import public "TaskMsg.proto";
 package msg;
 
 message Result {
-  Task task = 3;
+  Task task = 1;
   string result = 2;
 }
 

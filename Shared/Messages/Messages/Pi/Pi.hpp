@@ -7,6 +7,13 @@
 
 namespace manager
 {
+  struct ModifiedPi
+  {
+    int id;
+    std::string field;
+    std::string value;
+  };
+
   class Pi
   {
   public:
@@ -30,6 +37,7 @@ namespace manager
     std::vector<manager::Task> getTasks() const;
     int getThreads() const;
     void decrementPriority();
+    void changePriority(int priority);
     void changeThreads(int threads);
     int getAmountToSend() const;
     void updateAck();

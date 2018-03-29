@@ -20,6 +20,8 @@ namespace manager
 
     void addJob(manager::Job job);
     void addTasks(msg::TaskMsg* pTask);
+    void removeJob(int id);
+    void modifyJob(int id, std::string field, std::string value);
 
   private:
     std::map<int, JobInfo> m_jobs;

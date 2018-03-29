@@ -3,6 +3,7 @@
 
 #include "Manager/JobManager.hpp"
 #include "Pi/Pi.hpp"
+#include "Pi/PiServerManager.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
 #include <vector>
 
@@ -29,8 +30,8 @@ namespace make_msgs
     int fromId,
     int toId,
     int convId,
-    std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
-    manager::UpdateStruct jobs);
+    manager::PiUpdateStruct pis,
+    manager::JobUpdateStruct jobs);
 
   msg::MsgToSend* makeIdMsg(int fromId, int toId, int convId);
 

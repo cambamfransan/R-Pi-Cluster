@@ -50,7 +50,7 @@ void manager::JobManager::addJobResults(int id,
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_newResults.insert(m_newResults.end(), results.begin(), results.end());
+    m_newResults.push_back(results);
   }
 }
 
@@ -181,10 +181,10 @@ void manager::JobManager::modifyPriority(int id, int priority)
   }
 }
 
-manager::UpdateStruct manager::JobManager::getUpdates()
+manager::JobUpdateStruct manager::JobManager::getUpdates()
 {
   std::lock_guard<std::mutex> lock(m_updateMutex);
-  manager::UpdateStruct job{m_newJobs, m_lostJobs, m_newResults, m_modifiedJobs};
+  manager::JobUpdateStruct job{m_newJobs, m_lostJobs, m_newResults, m_modifiedJobs};
   m_newJobs.clear();
   m_lostJobs.clear();
   m_newResults.clear();

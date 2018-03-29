@@ -10,6 +10,12 @@ enum STATUS {
   STOP = 2;
 }
 
+message ModifyPi {
+  int32 id = 1;
+  string field = 2;
+  string value = 3;
+}
+
 message Client {
   string ipAddress = 1;
   int32 port = 2;
@@ -21,12 +27,13 @@ message Client {
 
 message Job {
   int32 id = 1;
-  int32 priority = 2;
-  int32 taskPerBundle = 3;
-  string gitUrl = 4;
-  string name = 5;
-  string toExec = 6;
-  int32 status = 7;
+  int32 size = 2;
+  int32 priority = 3;
+  int32 taskPerBundle = 4;
+  string gitUrl = 5;
+  string name = 6;
+  string toExec = 7;
+  int32 status = 8;
 }
 
 message ModifyJob {
@@ -38,8 +45,9 @@ message ModifyJob {
 message Update {
   repeated Client newclients = 1;
   repeated int32 lostclients = 2[packed = true];
-  repeated Job newJobs = 3;
-  repeated int32 lostJobs = 4[packed = true];
-  repeated ModifyJob modifiedJobs = 5;
-  repeated Result results = 6;
+  repeated ModifyPi modifiedPis = 3;
+  repeated Job newJobs = 4;
+  repeated int32 lostJobs = 5[packed = true];
+  repeated ModifyJob modifiedJobs = 6;
+  repeated ResultsMsg results = 7;
 }

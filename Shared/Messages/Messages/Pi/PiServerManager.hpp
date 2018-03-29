@@ -9,6 +9,16 @@
 
 namespace manager
 {
+  struct PiUpdateStruct
+  {
+    std::vector<Pi> newPis;
+    std::vector<int> lostPis;
+    std::vector<ModifiedPi> modifiedPis;
+  };
+
+  const std::string PI_PRIORITY("Priority");
+  const std::string PI_THREADS("Threads");
+
   class PiServerManager
   {
 
@@ -16,7 +26,7 @@ namespace manager
     PiServerManager();
     ~PiServerManager();
 
-    int addPi(std::string ip, int port);
+    void addPi(int id, std::string ip, int port);
     void removePi(int id);
     void changePiTasks(int id,
                        std::vector<manager::Task> completed,
@@ -25,11 +35,12 @@ namespace manager
     int waitingPis();
     void updateAck(int id);
     void removeUnresponsive();
-    std::pair<std::vector<Pi>, std::vector<int>> getUpdates();
+    PiUpdateStruct getUpdates();
     std::vector<int> getClientIds();
+    void modifyPriority(int id, int priority);
+    void modifyThreads(int id, int threads);
 
   private:
-    int m_nextPiId;
     int m_lastPriority;
     
     std::mutex m_pisMutex;
@@ -37,6 +48,7 @@ namespace manager
     std::mutex m_updateMutex;
     std::vector<Pi> m_newPis;
     std::vector<int> m_lostPis;
+    std::vector<ModifiedPi> m_modifiedPis;
   };
 
 } // namespace manager

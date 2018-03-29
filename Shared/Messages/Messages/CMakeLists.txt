@@ -38,6 +38,8 @@ set(manager_srcs
   Manager/ServerManager.hpp
   Manager/ClientManager.cpp
   Manager/ClientManager.hpp
+  Manager/ClientResultsManager.cpp
+  Manager/ClientResultsManager.hpp
   Manager/Results.cpp
   Manager/Results.hpp
   Manager/Tasks.cpp

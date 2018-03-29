@@ -2,41 +2,36 @@
 #include "Logger/Logger.hpp"
 
 manager::PiServerManager::PiServerManager()
-  : m_nextPiId(2),
-    m_lastPriority(1),
+  : m_lastPriority(1),
     m_pisMutex(),
     m_pis(),
     m_updateMutex(),
     m_newPis(),
-    m_lostPis()
+    m_lostPis(),
+    m_modifiedPis()
 {
 }
 
 manager::PiServerManager::~PiServerManager() {}
 
-int manager::PiServerManager::addPi(std::string ip, int port)
+void manager::PiServerManager::addPi(int id, std::string ip, int port)
 {
-  int nextId(m_nextPiId);
-  m_nextPiId++;
-  manager::Pi pi(ip, port, "", "", m_lastPriority++, nextId);
+  manager::Pi pi(ip, port, "", "", m_lastPriority++, id);
   {
     std::lock_guard<std::mutex> lock(m_pisMutex);
-    Logger::info("Adding Pi: " + std::to_string(nextId));
-    m_pis[nextId] = pi;
+    Logger::info("Adding Pi: " + std::to_string(id));
+    m_pis[id] = pi;
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
     m_newPis.push_back(pi);
   }
-  return nextId;
 }
 
 void manager::PiServerManager::removePi(int id)
 {
-  {
     std::lock_guard<std::mutex> lock(m_updateMutex);
     m_lostPis.push_back(id);
-  }
   m_lastPriority--;
   {
     std::lock_guard<std::mutex> lock(m_pisMutex);
@@ -45,6 +40,8 @@ void manager::PiServerManager::removePi(int id)
       if (pi.second.getPriority() > m_pis[id].getPriority())
       {
         pi.second.decrementPriority();
+        m_modifiedPis.push_back(
+          manager::ModifiedPi{ pi.first, PI_PRIORITY, std::to_string(pi.second.getPriority()) });
       }
     }
     m_pis.erase(id);
@@ -107,13 +104,13 @@ void manager::PiServerManager::removeUnresponsive()
   }
 }
 
-std::pair<std::vector<manager::Pi>, std::vector<int>> manager::PiServerManager::
-  getUpdates()
+manager::PiUpdateStruct manager::PiServerManager::getUpdates()
 {
   std::lock_guard<std::mutex> lock(m_updateMutex);
-  auto toReturn = std::make_pair(m_newPis, m_lostPis);
+  auto toReturn = PiUpdateStruct{m_newPis, m_lostPis, m_modifiedPis};
   m_newPis.clear();
   m_lostPis.clear();
+  m_modifiedPis.clear();
   return toReturn;
 }
 
@@ -125,4 +122,20 @@ std::vector<int> manager::PiServerManager::getClientIds()
     toReturn.push_back(pi.first);
 
   return toReturn;
+}
+
+void manager::PiServerManager::modifyPriority(int id, int priority)
+{
+  m_pis[id].changePriority(priority);
+  std::lock_guard<std::mutex> lock(m_updateMutex);
+  m_modifiedPis.push_back(
+    manager::ModifiedPi{id, PI_PRIORITY, std::to_string(priority)});
+}
+
+void manager::PiServerManager::modifyThreads(int id, int threads)
+{
+  m_pis[id].changeThreads(threads);
+  std::lock_guard<std::mutex> lock(m_updateMutex);
+  m_modifiedPis.push_back(
+    manager::ModifiedPi{id, PI_THREADS, std::to_string(threads)});
 }

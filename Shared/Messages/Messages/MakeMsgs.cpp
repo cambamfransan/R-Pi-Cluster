@@ -61,14 +61,14 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
   int fromId,
   int toId,
   int convId,
-  std::pair<std::vector<manager::Pi>, std::vector<int>> pis,
-  manager::UpdateStruct jobs)
+  manager::PiUpdateStruct pis,
+  manager::JobUpdateStruct jobs)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::UPDATE, convId));
 
-  for (auto&& c : pis.first)
+  for (auto&& c : pis.newPis)
   {
     auto pClient = pToReturn->mutable_update()->add_newclients();
     pClient->set_ipaddress(c.getIpAddress());
@@ -79,15 +79,24 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
     pClient->set_clientid(c.getClientId());
   }
 
-  for (auto&& c : pis.second)
+  for (auto&& c : pis.lostPis)
   {
     pToReturn->mutable_update()->add_lostclients(c);
+  }
+
+  for (auto&& c : pis.modifiedPis)
+  {
+    auto modifiedPi = pToReturn->mutable_update()->add_modifiedpis();
+    modifiedPi->set_id(c.id);
+    modifiedPi->set_field(c.field);
+    modifiedPi->set_value(c.value);
   }
 
   for (auto&& j : jobs.newJobs)
   {
     auto pJob = pToReturn->mutable_update()->add_newjobs();
     pJob->set_id(j.getJobId());
+    pJob->set_size(j.getSize());
     pJob->set_priority(j.getPriority());
     pJob->set_taskperbundle(j.getTasksPerBundle());
     pJob->set_giturl(j.getUrl());
@@ -109,16 +118,20 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
     pMod->set_value(j.value);
   }
 
-  for (auto&& j : jobs.newResults)
+  for (auto&& i : jobs.newResults)
   {
-    auto pResult = pToReturn->mutable_update()->add_results();
-    msg::Task* pTask = new msg::Task();
-    pTask->set_id(j.first.taskId);
-    pTask->set_jobid(j.first.jobId);
-    pTask->set_pagenumber(j.first.pageNumber);
-    pTask->set_toexecute(j.first.toExecute);
-    pResult->set_allocated_task(pTask);
-    pResult->set_result(j.second);
+    auto pResults = pToReturn->mutable_update()->add_results();
+    for (auto&& j : i)
+    {
+      auto pResult = pResults->add_results();
+      msg::Task* pTask = new msg::Task();
+      pTask->set_id(j.first.taskId);
+      pTask->set_jobid(j.first.jobId);
+      pTask->set_pagenumber(j.first.pageNumber);
+      pTask->set_toexecute(j.first.toExecute);
+      pResult->set_allocated_task(pTask);
+      pResult->set_result(j.second);
+    }
   }
 
   return pToReturn;

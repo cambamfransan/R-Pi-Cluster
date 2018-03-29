@@ -1,34 +1,33 @@
-//#ifndef SERVER_MANAGER_H
-//#define SERVER_MANAGER_H
-//
-//#include <string>
-//#include "JobManager.hpp"
-//#include "Pi/PiServerManager.hpp"
-//#include "TCPSender/TCPSenderServer.hpp"
-//#include "TCPSender/TCPSenderWeb.hpp"
-//#include "ProtoFiles/Results.pb.h"
-//
-//namespace manager
-//{
-//  class ServerManager
-//  {
-//    public:
-//      ServerManager(TCPSenderServer pServerSender, TCPSenderWeb pWebSender);
-//      ~ServerManager();
-//
-//      void addResults(msg::ResultsMsg* pMsg);
-//
-//      void addPi(std::string ip, int port);
-//
-//      void addJob(int id, int size, int pri, int taskpb, std::string gitUrl);
-//
-//    private:
-//      manager::JobManager m_jobManager;
-//      manager::PiServerManager m_piManager;
-//      TCPSenderServer m_pServerSender;
-//      TCPSenderWeb m_pWebSender;
-//  };
-//} // namespace json
-//
-//#endif
-//
+#ifndef CLIENT_MANAGER_H
+#define CLIENT_MANAGER_H
+
+#include "ClientResultsManager.hpp"
+#include "ExecuteManager.hpp"
+#include "Messages/Pi/PiClientManager.hpp"
+#include "TCPSender/TCPSenderClient.hpp"
+#include "TCPSender/TCPSenderWeb.hpp"
+#include <string>
+
+namespace manager
+{
+  class ClientManager
+  {
+  public:
+    ClientManager(std::shared_ptr<TCPSenderClient> pSenderClient,
+                  std::string database);
+    ~ClientManager();
+
+    void update(const msg::Update pMsg);
+
+    void execute(msg::TaskMsg* pMsg);
+
+  private:
+    std::shared_ptr<TCPSenderClient> m_pSenderClient;
+    std::string m_database;
+    manager::ExecuteManager m_executeManager;
+    manager::PiClientManager m_piManager;
+    manager::ClientResultsManager m_resultsManager;
+  };
+} // namespace manager
+
+#endif

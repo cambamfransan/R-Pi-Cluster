@@ -52,10 +52,10 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
     make_msgs::makeTaskMsg(m_myId, clientId, nextConvId, toSend), clientId);
 }
 
-void manager::ServerManager::addPi(std::string ip, int port)
+void manager::ServerManager::addPi(int id, std::string ip, int port)
 {
   // Add pi and send tasks to it
-  int id(m_piManager.addPi(ip, port));
+  m_piManager.addPi(id, ip, port);
   Logger::info("Pi added: " + std::to_string(id));
 
   int nextConvId(m_pServerSender->getNextConvId());
@@ -70,6 +70,7 @@ void manager::ServerManager::addPi(std::string ip, int port)
   nextConvId = m_pServerSender->getNextConvId();
   m_pServerSender->send(
     make_msgs::makeTaskMsg(m_myId, id, nextConvId, tasks), id);
+  // send all info
 }
 
 void manager::ServerManager::addJob(int size,
@@ -98,9 +99,10 @@ void manager::ServerManager::sendUpdates()
   auto jobUpdate = m_jobManager.getUpdates();
 
   auto pMsg = make_msgs::makeUpdateMsg(
-    m_myId, 0, m_pServerSender->getNextConvId(), piUpdate, jobUpdate);
+    m_myId, 0, 0, piUpdate, jobUpdate);
   for (const auto& pi : pis)
   {
+    pMsg->mutable_basicmsg()->set_convid(m_pServerSender->getNextConvId());
     pMsg->mutable_basicmsg()->set_toid(pi);
     m_pServerSender->send(pMsg, pi);
   }

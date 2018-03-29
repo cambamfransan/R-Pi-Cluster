@@ -132,3 +132,8 @@ bool manager::TaskManager::removeFromResults(Task task)
 
   return true;
 }
+
+int manager::TaskManager::getSize()
+{
+  return m_maxSize;
+}

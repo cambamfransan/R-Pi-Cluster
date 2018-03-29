@@ -45,6 +45,8 @@ struct TaskFile
 
     bool removeFromResults(Task task);
 
+    int getSize();
+
   private:
     
     int m_myId;

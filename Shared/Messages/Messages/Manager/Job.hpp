@@ -17,6 +17,9 @@ namespace manager
     int id;
     int tasksPerBundle;
     std::string bldLocation;
+    int status;
+    int priority;
+    std::string name;
   };
 
   struct ModifiedJob
@@ -54,6 +57,7 @@ namespace manager
     void setStatus(Status s);
     void setName(std::string name);
     std::string getUrl();
+    int getSize();
 
   private:
     int m_myId;

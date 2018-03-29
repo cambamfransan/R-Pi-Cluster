@@ -127,8 +127,7 @@ void Server::newConnection(int id)
 #endif
 
   // m_nextPriority++;
-  m_serverManager.addPi(
-    t->peerAddress().toString().toStdString(), t->peerPort());
+  m_serverManager.addPi(id, t->peerAddress().toString().toStdString(), t->peerPort());
 }
 
 void Server::newWebConnection()
@@ -240,7 +239,7 @@ void Server::receiveMessageWeb(std::string msg)
 
   if (map["/MsgType"] == "HeartbeatAck")
   {
-    std::cout << "Received HeartBeat Ack" << std::endl;
+ //   std::cout << "Received HeartBeat Ack" << std::endl;
   }
 }
 
@@ -263,10 +262,10 @@ void Server::sendTimedMsgs()
 {
   static int times(0);
   // send updates
-  if (times == 3)
-  {
+  //if (times == 3)
+  //{
     m_serverManager.sendUpdates();
-  }
+  //}
 
   m_serverManager.removeUnresponsive();
 
@@ -295,7 +294,6 @@ void Server::sendTimedMsgs()
       }
     }*/
 
-  {
     // send heartbeats
     if (connectedToWeb)
     {
@@ -303,11 +301,10 @@ void Server::sendTimedMsgs()
       sendToWeb(
         json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
     }
-  }
 
-  if (times == 3)
-  { /*
-     std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+  //if (times == 3)
+  //{ 
+     /*std::lock_guard<std::mutex> lock(m_outMessagesMutex);
      for (auto&& conv : m_webOutMessages)
      {
        if (conv.second.timeout + conv.second.timeSend <
@@ -326,8 +323,8 @@ void Server::sendTimedMsgs()
          m_pWebSender->send(conv.second.msg + "~");
        }
      }*/
-    times = 0;
-  }
+    //times = 0;
+  //}
 
   times++;
 }

@@ -4,6 +4,7 @@
 #include "Messages/Pi/Pi.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
 #include <qobject.h>
+#include "Messages/Manager/ClientManager.hpp"
 
 #if (TESTING_GUIS == 1)
 #include <Gui/mainwindow.hpp>
@@ -40,6 +41,7 @@ private:
 //  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
 //  std::map<int, manager::Pi> m_allClientsInfo;
   std::string m_database;
+  manager::ClientManager m_clientManager;
 };
 
 #endif

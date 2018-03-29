@@ -118,3 +118,8 @@ std::string manager::Job::getUrl()
 {
   return m_gitUrl;
 }
+
+int manager::Job::getSize()
+{
+  return m_taskManager.getSize();
+}

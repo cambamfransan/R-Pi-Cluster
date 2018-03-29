@@ -156,6 +156,11 @@ void manager::Pi::decrementPriority()
   m_priority--;
 }
 
+void manager::Pi::changePriority(int priority)
+{
+  m_priority = priority;
+}
+
 void manager::Pi::changeThreads(int threads)
 {
   m_threads = threads;

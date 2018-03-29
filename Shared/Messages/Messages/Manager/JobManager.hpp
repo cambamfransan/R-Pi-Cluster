@@ -8,11 +8,11 @@
 
 namespace manager
 {
-  struct UpdateStruct
+  struct JobUpdateStruct
   {
     std::vector<Job> newJobs;
     std::vector<int> lostJobs;
-    std::vector<Result> newResults;
+    std::vector<std::vector<Result>> newResults;
     std::vector<ModifiedJob> modifiedJobs;
   };
 
@@ -34,7 +34,7 @@ namespace manager
     std::string getJobExec(int id);
     void modifyTasksPerBundle(int id, int taskPerBundle);
     void modifyPriority(int id, int priority);
-    UpdateStruct getUpdates();
+    JobUpdateStruct getUpdates();
 
   private:
     std::map<int, Job> m_jobs;
@@ -48,7 +48,7 @@ namespace manager
     std::mutex m_updateMutex;
     std::vector<Job> m_newJobs;
     std::vector<int> m_lostJobs;
-    std::vector<Result> m_newResults;
+    std::vector<std::vector<Result>> m_newResults;
     std::vector<ModifiedJob> m_modifiedJobs;
 
     static std::string m_cloneScript;
