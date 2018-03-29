@@ -1,4 +1,5 @@
 #include "Pi.hpp"
+#include <algorithm>
 
 manager::Pi::Pi()
   : m_ipAddress(),

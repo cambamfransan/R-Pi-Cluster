@@ -64,7 +64,7 @@ void TCPSenderWeb::emitMessage()
   std::string msg;
   while (!msg.empty())
   {
-    int spot = str.find("~");
+    auto spot = str.find("~");
     if (spot == std::string::npos) spot = str.size()-1;
     msg = str.substr(0, spot);
     str.erase(0, spot + 1);

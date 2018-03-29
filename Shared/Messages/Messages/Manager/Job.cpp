@@ -35,7 +35,7 @@ manager::Job::Job(int id,
     m_status(manager::Status::PLAY)
 {
   m_name = gitUrl;
-  int spot;
+  size_t spot;
   while ((spot = m_name.find("/")) != std::string::npos)
   {
     m_name.erase(0, spot + 1);

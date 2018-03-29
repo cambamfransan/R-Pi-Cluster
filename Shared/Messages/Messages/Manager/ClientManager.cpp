@@ -73,7 +73,7 @@ void manager::ClientManager::update(const msg::Update pMsg)
   {
     std::vector<Result> toImport;
     auto jobResults = result.results();
-    int id;
+    int id(-1);
     for (const auto& jobr : jobResults)
     {
       auto task = jobr.task();

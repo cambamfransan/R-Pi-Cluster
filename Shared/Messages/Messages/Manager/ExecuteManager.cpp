@@ -4,10 +4,10 @@
 
 namespace
 {
-  //const std::string STATUS = "STATUS";
-  //const std::string PRIORITY = "PRIORITY";
-  //const std::string TASKS_PER_BUNDLE = "TASKS_PER_BUNDLE";
-  //const std::string NAME = "NAME";
+  // const std::string STATUS = "STATUS";
+  // const std::string PRIORITY = "PRIORITY";
+  // const std::string TASKS_PER_BUNDLE = "TASKS_PER_BUNDLE";
+  // const std::string NAME = "NAME";
 }
 
 manager::ExecuteManager::ExecuteManager(std::string database)
@@ -30,7 +30,10 @@ void manager::ExecuteManager::addJob(manager::Job job)
   m_jobs[job.getJobId()] =
     JobInfo{job.getJobId(),
             job.getTasksPerBundle(),
-            m_database + std::to_string(job.getJobId()) + "_bld"};
+            m_database + std::to_string(job.getJobId()) + "_bld",
+            static_cast<int>(job.getStatus()),
+            job.getPriority(),
+            job.getName()};
 }
 
 void manager::ExecuteManager::addTasks(msg::TaskMsg* pTask)
@@ -51,7 +54,9 @@ void manager::ExecuteManager::removeJob(int id)
   m_jobs.erase(id);
 }
 
-void manager::ExecuteManager::modifyJob(int id, std::string field, std::string value)
+void manager::ExecuteManager::modifyJob(int id,
+                                        std::string field,
+                                        std::string value)
 {
   if (field == manager::STATUS)
   {
