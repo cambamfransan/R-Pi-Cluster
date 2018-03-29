@@ -8,6 +8,7 @@
 #include <mutex>
 #include <qrunnable.h>
 #include <memory>
+#include <mutex>
 
 namespace manager
 {
