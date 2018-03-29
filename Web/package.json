@@ -1,11 +1,11 @@
 {
-  "name": "duck-hunt",
+  "name": "RPi Cluster",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
     "express": "^4.15.4",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.4"
   },
   "engines": {
     "node": "4.2.6"

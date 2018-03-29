@@ -1,5 +1,5 @@
 var express = require('express');
-var appMain = express(); 
+var appMain = express();
 //var appReset = express();
 var serverMain = require('http').Server(appMain);
 //var serverReset = require('http').Server(appReset);
@@ -11,35 +11,37 @@ appMain.get('/', function(req, res) {
 appMain.use('/gui', express.static(__dirname + '/gui'));
 
 // appReset.get('/', function(req, res) {
-    // res.sendFile(__dirname + '/reset.html');
+// res.sendFile(__dirname + '/reset.html');
 // });
 // appReset.use('/', express.static(__dirname + '/'));
 
+var net = require('net');
+
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
-	console.log('Connected');
-  client.write('Hello, server! Love, Client.');
+    console.log('Connected');
+    client.write('Hello, server! Love, Client.');
 });
-
+/*
 client.on('data', function(data) {
-  var temp = JSON.parse(data.toString());
-switch(temp.type) {
-  case "Heartbeat":
-      break;
-  default:
-      console.log("bad message received");
-}
+    var temp = JSON.parse(data.toString());
+    switch (temp.type) {
+        case "Heartbeat":
+            break;
+        default:
+            console.log("bad message received");
+    }
 });
 
 client.on("error", function(err) {
-  console.log(err.stack)
+    console.log(err.stack)
 });
 
 client.on('close', function() {
-	console.log('Connection closed');
+    console.log('Connection closed');
 });
 
-serverMain.listen(process.env.PORT || 6246); //console.log('Start mainServer'); // MAIN = 6246
+serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
 //serverReset.listen(process.env.PORT || 7378); //console.log('Start resetServer'); // REST = 7378
 
 //var systemData;
@@ -55,15 +57,14 @@ serverMain.listen(process.env.PORT || 6246); //console.log('Start mainServer'); 
     }
 });*/
 
-var ioMain = require('socket.io') (serverMain,{});
+var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
-    //console.log('mainSocket Connected');
+//console.log('mainSocket Connected');
 //    socket.emit('systemData', systemData);
-    socket.on('systemData', function(data) {
-		console.log("Received Data");
-        });
+socket.on('systemData', function(data) {
+    console.log("Received Data");
+});
 //        socket.emit('systemData', systemData);
-    });
 });
 
 /*var ioReset = require('socket.io') (serverReset,{});
