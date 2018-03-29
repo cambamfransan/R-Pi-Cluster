@@ -104,7 +104,7 @@ void manager::ServerManager::sendUpdates()
   {
     pMsg->mutable_basicmsg()->set_convid(m_pServerSender->getNextConvId());
     pMsg->mutable_basicmsg()->set_toid(pi);
-    std::cout << "Sending to: " << pi << std::endl;
+    //std::cout << "Sending to: " << pi << std::endl;
     m_pServerSender->send(pMsg, pi);
   }
 }

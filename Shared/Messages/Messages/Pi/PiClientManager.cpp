@@ -37,12 +37,7 @@ void manager::PiClientManager::removePi(int id)
     size_t spot = nextLine.find_last_of("~");
     if (nextLine.substr(spot + 1, nextLine.size()) != idString)
     {
-      std::cout << "Keeping pi: " << nextLine << std::endl;
       toWrite.append(nextLine);
-    }
-    else
-    {
-      std::cout << "Deleting pi: " << nextLine << std::endl;
     }
   }
   fin.close();

@@ -264,7 +264,7 @@ void Server::sendTimedMsgs()
   // send updates
   //if (times == 3)
   //{
-  std::cout << "Timed" << std::endl;
+  //std::cout << "Timed" << std::endl;
     m_serverManager.sendUpdates();
   //}
 
@@ -328,5 +328,5 @@ void Server::sendTimedMsgs()
   //}
 
 //  times++;
-    std::cout << "Done Timed" << std::endl;
+    //std::cout << "Done Timed" << std::endl;
 }
