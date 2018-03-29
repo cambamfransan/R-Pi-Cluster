@@ -7,6 +7,7 @@
 #include "Tasks.hpp"
 #include <mutex>
 #include <qrunnable.h>
+#include <memory>
 
 namespace manager
 {
