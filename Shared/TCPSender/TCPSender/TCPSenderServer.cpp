@@ -127,6 +127,7 @@ void TCPSenderServer::emitMessage()
       pMsg, readSocket->peerAddress(), readSocket->peerPort());
     if (!readSocket->bytesAvailable()) break;
   }
+  std::cout << "done receiving" << std::endl;
 }
 
 //void TCPSenderServer::readStream()
@@ -160,8 +161,10 @@ void TCPSenderServer::disconnected()
       std::cout << i.first << ": "<<i.second->peerPort() << std::endl;
     }
     std::cout << "Found in map: " << itr->first << std::endl;
-    emit lostConnection(itr->first);
+    int id = itr->first;
     //itr->second = nullptr;
-    //m_pSockets.erase(itr);
+    m_pSockets.erase(itr);
+    emit lostConnection(id);
   }
+  std::cout << "exit function" << std::endl;
 }
