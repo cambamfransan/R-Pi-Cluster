@@ -76,7 +76,8 @@ std::vector<manager::Task> manager::TaskManager::getNextTasks(int howManyTasks)
   if (!m_valid) return std::vector<Task>();
   std::vector<int> toDelete;
   std::vector<Task> forReturn;
-  for (size_t i = 0; i < m_taskFiles.size() && forReturn.size() < howManyTasks;
+  size_t amount(static_cast<int>(howManyTasks));
+  for (size_t i = 0; i < m_taskFiles.size() && forReturn.size() < amount;
        i++)
   {
     std::ifstream input(m_taskFiles[i].pageName);
@@ -85,7 +86,7 @@ std::vector<manager::Task> manager::TaskManager::getNextTasks(int howManyTasks)
                     std::istreambuf_iterator<char>());
     input.close();
 
-    while (str.size() != 0 && forReturn.size() < howManyTasks)
+    while (str.size() != 0 && forReturn.size() < amount)
     {
       auto spot = str.find("\n");
       std::string inputString(str.substr(0, spot));

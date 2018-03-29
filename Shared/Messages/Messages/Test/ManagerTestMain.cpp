@@ -15,12 +15,12 @@ void ManagerTest::cleanupTestCase() {}
 
 void ManagerTest::getTasksTest()
 {
+  std::cout << "Start Test" << std::endl;
   manager::TaskManager tasks(
     1,
     10,
     std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
                 "Messages//Messages//Test//TasksList.txt"));
-
   auto toExecute = tasks.getNextTasks(5);
   QVERIFY(toExecute[0].pageNumber == 0 && toExecute[0].toExecute == "0" &&
           toExecute[0].taskId == 0);
@@ -82,6 +82,7 @@ void ManagerTest::getTasksTest()
           toExecute[4].taskId == 24);
   QVERIFY(toExecute[5].pageNumber == 2 && toExecute[5].toExecute == "25" &&
           toExecute[5].taskId == 25);
+  std::cout << "Start Test1" << std::endl;
 }
 
 void ManagerTest::removeTasksTest()
@@ -110,6 +111,9 @@ void ManagerTest::addResults()
   results.addResult({manager::Result(manager::Task(0, 0, 3, "3"), "1")});
   results.addResult({manager::Result(manager::Task(0, 0, 4, "4"), "5")});
   results.addResult({manager::Result(manager::Task(0, 1, 10, "10"), "5")});
+
+  auto t = results.getResults();
+  std::cout << t << std::endl;
 
   QVERIFY(
     results.getResults() ==

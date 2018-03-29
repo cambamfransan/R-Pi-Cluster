@@ -5,7 +5,7 @@
 
 namespace
 {
-#ifdef __unix || __APPLE__
+#ifdef __unix||__APPLE__
   std::string exec(const char* cmd)
   {
     std::array<char, 128> buffer;

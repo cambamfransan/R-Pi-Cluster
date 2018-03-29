@@ -59,7 +59,7 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
   std::lock_guard<std::mutex> lock(m_jobsMutex);
   std::vector<manager::Task> toReturn;
   size_t am(static_cast<size_t>(amount));
-  while (toReturn.size() < amount)
+  while (toReturn.size() < am)
   {
     if (m_jobs.empty()) return toReturn;
     int priority(m_jobs[m_curJob].getPriority());

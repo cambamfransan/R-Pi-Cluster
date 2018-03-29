@@ -62,12 +62,11 @@ void ProtoFilesTest::basicMsg()
 void ProtoFilesTest::taskMsg()
 {
   std::shared_ptr<msg::TaskMsg> pMsg = std::make_shared<msg::TaskMsg>();
-  msg::Task* pTask = new msg::Task();
+  msg::Task* pTask = pMsg->add_task();
   pTask->set_id(0);
   pTask->set_jobid(1);
   pTask->set_pagenumber(2);
   pTask->set_toexecute("string");
-  pTask = pMsg->add_task();
 //  pMsg->add_toexecute("4 5 6");
 //  pMsg->add_toexecute("7 8 9");
   std::string encrypted = pMsg->SerializeAsString();
