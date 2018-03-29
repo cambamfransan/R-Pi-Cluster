@@ -7,10 +7,10 @@
 
 namespace receive_msgs
 {
-  class HeartBeatTask : public QRunnable
+  class UpdateAckTask : public QRunnable
   {
   public:
-    HeartBeatTask(
+    UpdateAckTask(
       msg::MsgToSend,
       std::shared_ptr<std::mutex>,
       std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>>);

@@ -10,7 +10,11 @@ find_package(Qt5Widgets REQUIRED)
 set(${exe_name}_deps Messages)
 
 set(srcs
+  TestMain.cpp
 	MessagesTestMain.cpp
+	MessagesTestMain.hpp
+	ManagerTestMain.cpp
+	ManagerTestMain.hpp
 )
 
 source_group("" FILES ${srcs})

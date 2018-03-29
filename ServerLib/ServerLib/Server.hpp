@@ -5,16 +5,21 @@
 #include "TCPSender/TCPSenderWeb.hpp"
 #include <qobject.h>
 #include <chrono>
-#include <Gui/mainwindow.hpp>
 #include <rapidjson/document.h>
 #include <mutex>
+#include "Messages/ClientInfo.hpp"
+#include <qtimer.h>
+
+#if (TESTING_GUIS == 1)
+#include "Gui/mainwindow.hpp"
+#endif
 
 class Server : public QObject
 {
   Q_OBJECT
 
 public:
-  Server();
+  Server(std::string arg);
   ~Server();
 
   void send(msg::MsgToSend* pMsg,
@@ -22,10 +27,10 @@ public:
     std::chrono::seconds timeout,
     bool requireResponse, int endpointId);
 
-  void sendToWeb(const rapidjson::Document& msg,
+  void sendToWeb(const std::string& msg,
     int convId,
     std::chrono::seconds timeout,
-    bool requireResponse, int endpointId);
+    bool requireResponse);
 
 private slots:
   void newConnection(int);
@@ -35,20 +40,31 @@ private slots:
   void receiveMessageWeb(std::string msg);
   void lostConnection(int);
   void lostConnectionWeb();
-  void sendHeartBeats();
+  void sendTimedMsgs();
 
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
   std::shared_ptr<std::mutex> m_clientsMutex;
   std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
+  std::mutex m_clientInfosMutex;
+  std::map<int,ClientInfo> m_clientInfos;
   int m_myId;
+#if (TESTING_GUIS == 1)
   MainWindow* m_window;
-  std::map<int, Conversation> m_outMessages;
+#endif
+  std::mutex m_outMessagesMutex;
+  std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
+  std::mutex m_webOutMessagesMutex;
+  std::map<int/*convID*/, JSONConversation> m_webOutMessages;
   std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+  std::map<int, std::chrono::steady_clock::time_point> m_webInputMessages;
+
+  int m_nextPriority;
 
   //Timers
-  QTimer* m_pHeartBeatTimer;
+  QTimer* m_pTimer;
+  std::string m_database;
 };
 
 #endif

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pwd
-mkdir _bld
+sudo mkdir _bld
 sudo apt-get update
 sudo apt-get update --fix-missing
 sudo apt-get install vim -y
@@ -22,8 +22,3 @@ sudo cp rapidjson/include/rapidjson /usr/include/ -r
 cd ./R-Pi-Cluster/Web && sudo npm install express --save
 cd ./../../_bld && cmake ../R-Pi-Cluster
 make -j3 install
-export DISPLAY=:0.0
-tmux
-cd bin
-./Server $0 &
-tmux detach

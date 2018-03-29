@@ -1,32 +1,47 @@
 #include "Server.hpp"
 #include "Logger/Logger.hpp"
+#include "Messages/JSONHelpers.hpp"
+#include "Messages/JSONParser.hpp"
+#include "Messages/MakeJSONMsgs.hpp"
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
-#include "Msgs/ReceiveHeartBeat.hpp"
+#include "Msgs/ReceiveUpdateAck.hpp"
+#include <iostream>
 #include <qprocess.h>
 #include <qthreadpool.h>
 #include <qtimer.h>
-#include <iostream>
 
-Server::Server()
+Server::Server(std::string arg)
   : m_pSender(std::make_shared<TCPSenderServer>()),
     m_pWebSender(std::make_shared<TCPSenderWeb>()),
     m_clientsMutex(std::make_shared<std::mutex>()),
     m_clientIds(
       std::make_shared<std::map<int, std::chrono::steady_clock::time_point>>()),
+    m_clientInfosMutex(),
+    m_clientInfos(),
     m_myId(1),
+#if (TESTING_GUIS == 1)
     m_window(new MainWindow()),
+#endif
+    m_outMessagesMutex(),
     m_outMessages(),
+    m_webOutMessagesMutex(),
+    m_webOutMessages(),
     m_inputMessages(),
-  m_pHeartBeatTimer(new QTimer(this))
+    m_nextPriority(1),
+    m_pTimer(new QTimer(this)),
+    m_database(arg)
 {
+#if (TESTING_GUIS == 1)
   m_window->show();
+  connect(m_window, &MainWindow::signalClicked, this, &Server::clicked);
+  m_window->setPort(m_pSender->getServerPort());
+#endif
   connect(m_pSender.get(),
           &TCPSenderServer::newConnection,
           this,
           &Server::newConnection);
-  m_window->setPort(m_pSender->getServerPort());
-  connect(m_window, &MainWindow::signalClicked, this, &Server::clicked);
+  std::cout << "Server Port: " << m_pSender->getServerPort() << std::endl;
   connect(m_pSender.get(),
           &TCPSenderServer::msgReceived,
           this,
@@ -56,11 +71,9 @@ Server::Server()
           &TCPSenderWeb::lostConnection,
           this,
           &Server::lostConnectionWeb);
-  //connect Timer
-  connect(m_pHeartBeatTimer, &QTimer::timeout,
-    this, &Server::sendHeartBeats);
-
-  m_pHeartBeatTimer->start(3000);
+  // connect Timer
+  connect(m_pTimer, &QTimer::timeout, this, &Server::sendTimedMsgs);
+  m_pTimer->start(1000);
 }
 
 Server::~Server() {}
@@ -73,30 +86,77 @@ void Server::send(msg::MsgToSend* pMsg,
 {
   if (requireResponse)
   {
-    m_outMessages[make_msgs::getMapId(m_myId, pMsg->basicmsg().convid())] =
-      Conversation{
-        pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
+    {
+      std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+      m_outMessages[pMsg->basicmsg().toid()][pMsg->basicmsg().convid()] =
+        Conversation{
+          pMsg, convId, timeout, std::chrono::steady_clock::now(), endpointId};
+    }
   }
-  std::cout << "In Sending" << std::endl;
-  m_pSender->send(pMsg, endpointId);
+  Logger::info("Sent: " + std::to_string(m_pSender->send(pMsg, endpointId)));
 }
 
-void Server::sendToWeb(const rapidjson::Document& msg,
+void Server::sendToWeb(const std::string& msg,
                        int convId,
                        std::chrono::seconds timeout,
-                       bool requireResponse,
-                       int endpointId)
+                       bool requireResponse)
 {
-  m_pWebSender->send(msg);
+  if (requireResponse)
+  {
+    std::lock_guard<std::mutex> lock(m_webOutMessagesMutex);
+    m_webOutMessages[convId] =
+      JSONConversation{msg, convId, timeout, std::chrono::steady_clock::now()};
+  }
+  m_pWebSender->send(msg + "~");
 }
 
 void Server::newConnection(int id)
 {
   std::cout << "Adding Connection" << std::endl;
-  std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
-  (*m_clientIds)[id] = std::chrono::steady_clock::now();
+  {
+    std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
+    (*m_clientIds)[id] = std::chrono::steady_clock::now();
+  }
   auto t = m_pSender->getSocket(id);
+#if (TESTING_GUIS == 1)
   m_window->addConnection(t->peerAddress(), t->peerPort());
+#endif
+  // this will move
+  ClientInfo infoToInsert{t->peerAddress().toString().toStdString(),
+                          t->peerPort(),
+                          "pi",
+                          "PiCluster!",
+                          m_nextPriority,
+                          id};
+  m_nextPriority++;
+  std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
+  m_clientInfos[id] = infoToInsert;
+  if (m_clientInfos.size() > 1)
+  {
+    for (auto&& info : m_clientInfos)
+    {
+      if (info.second.priority == m_nextPriority - 2)
+      {
+        int nextConvId(m_pSender->getNextConvId());
+        send(make_msgs::makeIdMsg(m_myId, id, nextConvId),
+             nextConvId,
+             std::chrono::seconds(1),
+             true,
+             id);
+        return;
+      }
+    }
+    Logger::error("No Id Msg Sent");
+  }
+  else if (m_clientInfos.size() == 1)
+  {
+    int nextConvId(m_pSender->getNextConvId());
+    send(make_msgs::makeIdMsg(m_myId, infoToInsert.clientId, nextConvId),
+         nextConvId,
+         std::chrono::seconds(1),
+         true,
+         id);
+  }
 }
 
 void Server::newWebConnection()
@@ -118,8 +178,8 @@ void Server::clicked(std::string msg)
 
 void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 {
-  int id =
-    make_msgs::getMapId(pMsg->basicmsg().fromid(), pMsg->basicmsg().convid());
+  int id = make_msgs::getMapId(
+    pMsg->basicmsg().fromid(), pMsg->basicmsg().convid()); // TODO
   if (m_inputMessages.find(id) == m_inputMessages.end())
     m_inputMessages[id] = std::chrono::steady_clock::now();
   else
@@ -127,20 +187,36 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     Logger::error("Duplicate: " + pMsg->DebugString());
     return;
   }
-  if (auto itr = m_outMessages.find(make_msgs::getMapId(
-                   pMsg->basicmsg().toid(), pMsg->basicmsg().convid())) ==
-                 m_outMessages.end())
-    m_outMessages.erase(itr);
-  m_window->receivedMsg(pMsg->DebugString(), ip, port);
-  int msgId = pMsg->basicmsg().msgtype();
-  if (msg::ProtoType::HEART_BEAT_MSG_ACK == msgId)
   {
-    receive_msgs::HeartBeatTask* hello =
-      new receive_msgs::HeartBeatTask(*pMsg, m_clientsMutex, m_clientIds);
-    QThreadPool::globalInstance()->start(hello);
+    Logger::info("checking for if needed response");
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    auto itr = m_outMessages.find(pMsg->basicmsg().fromid());
+    if (itr != m_outMessages.end())
+    {
+      Logger::info("Looking for convId: " +
+                   std::to_string(pMsg->basicmsg().convid()));
+      auto itr2 = itr->second.find(pMsg->basicmsg().convid());
+      Logger::info("Found client2");
+      if (itr2 != itr->second.end())
+      {
+        Logger::info("Found convId");
+        itr->second.erase(itr2);
+      }
+      else
+      {
+        Logger::info("Did not Found convId");
+      }
+    }
   }
-  else if (1 == msgId)
+#if (TESTING_GUIS == 1)
+  m_window->receivedMsg(pMsg->DebugString(), ip, port);
+#endif
+  int msgId = pMsg->basicmsg().msgtype();
+  if (msg::ProtoType::UPDATE_ACK == msgId)
   {
+    receive_msgs::UpdateAckTask* heart =
+      new receive_msgs::UpdateAckTask(*pMsg, m_clientsMutex, m_clientIds);
+    QThreadPool::globalInstance()->start(heart);
   }
 }
 
@@ -148,14 +224,63 @@ void Server::receiveMessageWeb(std::string msg)
 {
   rapidjson::Document doc;
   doc.Parse(msg.c_str());
+  json::JSONParser parser(doc);
+  auto map = parser.getMap();
+  Logger::info("received: " + msg);
+  int id = stoi(map["/convId"]);
+  if (m_inputMessages.find(id) == m_inputMessages.end())
+    m_inputMessages[id] = std::chrono::steady_clock::now();
+  else
+  {
+    Logger::error("Duplicate: " + msg);
+    return;
+  }
+  {
+    Logger::info("checking for if needed response");
+    std::lock_guard<std::mutex> lock(m_webOutMessagesMutex);
+    auto itr = m_webOutMessages.find(id);
+    if (itr != m_webOutMessages.end())
+    {
+      Logger::info("Found convId");
+      m_webOutMessages.erase(itr);
+    }
+    else
+    {
+      Logger::info("Did not find convId");
+    }
+  }
+
+  if (map["/MsgType"] == "HeartbeatAck")
+  {
+    std::cout << "Received HeartBeat Ack" << std::endl;
+  }
 }
 
 void Server::lostConnection(int id)
 {
-  std::cout << "erased" << std::endl;
-  std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
-  m_clientIds->erase(m_clientIds->find(id));
-  std::cout << "erased successful" << std::endl;
+  Logger::info("erasing client with Id" + std::to_string(id));
+  {
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    if (auto itr = m_outMessages.find(id) != m_outMessages.end())
+      m_outMessages.erase(itr);
+  }
+  Logger::info("erasing conversations for client with Id" + std::to_string(id));
+  {
+    std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
+    m_clientIds->erase(m_clientIds->find(id));
+  }
+  {
+    std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
+    for (auto& info : m_clientInfos)
+    {
+      if (info.second.priority > m_clientInfos[id].priority)
+      {
+        info.second.priority--;
+      }
+    }
+    m_clientInfos.erase(id);
+  }
+  Logger::info("erasing successfully client with Id" + std::to_string(id));
 }
 
 void Server::lostConnectionWeb()
@@ -164,14 +289,81 @@ void Server::lostConnectionWeb()
   std::cout << "erasedWeb successful" << std::endl;
 }
 
-void Server::sendHeartBeats()
+void Server::sendTimedMsgs()
 {
-  auto pMsg = make_msgs::makeBasicMsgToSend(m_myId, 0, msg::ProtoType::HEART_BEAT_MSG, 0);
-  std::lock_guard<std::mutex> gaurd(*m_clientsMutex);
-  for (auto&& id : *m_clientIds)
+  static int times(0);
+  // send updates
+  if (times == 3)
   {
-    pMsg->mutable_basicmsg()->set_toid(id.first);
-    pMsg->mutable_basicmsg()->set_convid(m_pSender->getNextConvId());
-    send(pMsg, 1, std::chrono::seconds(1), false, id.first);
+    std::lock_guard<std::mutex> gaurd(m_clientInfosMutex);
+    for (auto&& info : m_clientInfos)
+    {
+      int nextConvId(m_pSender->getNextConvId());
+      auto pMsg = make_msgs::makeUpdateMsg(m_myId,
+                                           info.second.clientId,
+                                           msg::ProtoType::UPDATE,
+                                           nextConvId,
+                                           m_clientInfos);
+
+      send(
+        pMsg, nextConvId, std::chrono::seconds(1), true, info.second.clientId);
+    }
   }
+
+  // Resend Msgs
+  {
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    for (auto&& client : m_outMessages)
+    {
+      for (auto&& conv : client.second)
+      {
+        if (conv.second.timeout + conv.second.timeSend <
+            std::chrono::steady_clock::now())
+        {
+          if (conv.second.msg->basicmsg().attempt() > 3)
+          {
+            // TODO cfrandsen: disconnect pi
+          }
+          Logger::error("Resending message from conversation: " +
+                        std::to_string(conv.second.convId));
+          conv.second.msg->mutable_basicmsg()->set_attempt(
+            conv.second.msg->basicmsg().attempt() + 1);
+          conv.second.timeSend = std::chrono::steady_clock::now();
+          m_pSender->send(conv.second.msg, conv.second.endpointId);
+        }
+      }
+    }
+  }
+
+  {
+    // send heartbeats
+    int next(m_pWebSender->nextConvId());
+    sendToWeb(
+      json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
+  }
+
+  if (times == 3)
+  {
+    std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+    for (auto&& conv : m_webOutMessages)
+    {
+      if (conv.second.timeout + conv.second.timeSend <
+          std::chrono::steady_clock::now())
+      {
+        std::cout << conv.second.timeout.count() * 1000000000 +
+                       conv.second.timeSend.time_since_epoch().count()
+                  << std::endl;
+        std::cout << std::chrono::steady_clock::now().time_since_epoch().count()
+                  << std::endl;
+        // check tries??
+        Logger::error("Resending message from conversation: " +
+                      std::to_string(conv.second.convId));
+        conv.second.timeSend = std::chrono::steady_clock::now();
+        m_pWebSender->send(conv.second.msg + "~");
+      }
+    }
+    times = 0;
+  }
+
+  times++;
 }
