@@ -1,0 +1,632 @@
+﻿<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<title>RPi Cluster</title>
+    <meta charset="UTF-8">
+    <script src="gui/client.js"></script>
+    <link rel="stylesheet" type="text/css" href="gui/styles/menu.css">
+</head>
+<body onload="Menu.system.initialize();">
+    <div id="empty-table">
+        No <span id="empty-table-text"></span> in Cluster<br><br>Click <b>Add</b> to Start
+    </div>
+    <div id="hide-screen"></div>
+    <div id="popup-screen">
+        <div id="add-job" class="popup-div">
+            <table class="popup-table">
+                <thead>
+                    <tr>
+                        <th>
+                            Add Job
+                            <span class="close-span">
+                                <img src="gui/images/close_mouseout.svg" id="close-job" class="close-image">
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table width="100%">
+                                <tr>
+                                    <td width="1%">
+                                        <input type="radio" name="source" id="remote-source" class="source-radio">
+                                    </td>
+                                    <td>
+                                        GitHub URL
+                                    </td>
+                                    <td width="1%">
+                                        <input type="radio" name="source" id="local-source" class="source-radio">
+                                    </td>
+                                    <td>
+                                        Local File
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="source-cell" height="25px"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" id="job-name" maxlength="20" pattern="[a-zA-Z0-9]+" placeholder="Character Limit: 20" style="width:200px; text-align:center;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Priority
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" id="job-priority" min="1" max="99" pattern="[0-9]+" placeholder="1 (High) — 99 (Low)" style="width:186px; padding-left:14px; text-align:center;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Tasks per Bundle
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="range" min="1" max="9" value="5" id="job-tpb">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%">
+                                <tr id="tpb-tr">
+                                    <td>
+                                        <div class="tpb-progress">
+                                            <div id="speed-bar" class="tpb-bar" style="background:#FF931E; background: linear-gradient(#F15A24,#FBB03B);">
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tpb-progress">
+                                            <div id="update-bar" class="tpb-bar" style="background:#3FA9F5; background: linear-gradient(#2E3192,#29ABE2);">
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Speed
+                                    </td>
+                                    <td>
+                                        Update
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="popup-table-tfoot">
+                            <button id="add-job-button" class="small">
+                                ADD
+                            </button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div id="add-unit" class="popup-div">
+            <table class="popup-table">
+                <thead>
+                    <tr>
+                        <th>
+                            Add Unit
+                            <span class="close-span">
+                                <img src="gui/images/close_mouseout.svg" id="close-unit" class="close-image">
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" id="unit-name" maxlength="20" pattern="[a-zA-Z0-9]+" placeholder="Character Limit: 20" style="width:200px; text-align:center;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            IP Address
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                           <input type="text" id="unit-IP1" class="unit-IP" maxlength="3" pattern="[0-9]+" placeholder="###">
+                           .
+                           <input type="text" id="unit-IP2" class="unit-IP" maxlength="3" pattern="[0-9]+" placeholder="###">
+                           .
+                           <input type="text" id="unit-IP3" class="unit-IP" maxlength="3" pattern="[0-9]+" placeholder="###">
+                           .
+                           <input type="text" id="unit-IP4" class="unit-IP" maxlength="3" pattern="[0-9]+" placeholder="###">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Username
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" id="unit-username" style="width:200px; text-align:center;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Password
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="password" id="unit-password" style="width:200px; text-align:center;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Cores Limit
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" id="unit-cores" maxlength="1" min="1" max="4" value="4" pattern="[1-4]+" style="width:186px; padding-left:14px; text-align:center;">
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="popup-table-tfoot">
+                            <button id="add-unit-button" class="small">
+                                ADD
+                            </button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <table id="frame-table">
+        <tr>
+            <td colspan="2">
+                <table id="header">
+                    <tr>
+                        <td align="left">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="gui/images/raspberry-pi.svg" width="30px" style="margin:5px;">
+                                    </td>
+                                    <td>
+                                        <dt class="text1">
+                                            RPi Cluster
+                                        </dt>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td align="center">
+                            <button id="add-button">
+                                <table class="button-table">
+                                    <tr>
+                                        <td class="button-table-image">
+                                            <img id="add-image" class="icon1" src="gui/images/add_mouseout.svg">
+                                        </td>
+                                        <td>
+                                            <dt class="text2">
+                                                Add
+                                            </dt>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </button>
+                            <button id="remove-button">
+                                <table class="button-table">
+                                    <tr>
+                                        <td class="button-table-image">
+                                            <img id="remove-image" class="icon1" src="gui/images/remove_mouseout.svg">
+                                        </td>
+                                        <td>
+                                            <dt class="text2">
+                                                Remove
+                                            </dt>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </button>
+                        </td>
+                        <td align="right" valign="bottom">
+                            <table id="corner">
+                                <tr>
+                                    <td colspan="2">
+                                        <dt id="server-IP">
+                                            <img src="gui/images/server.svg" id="server-IP-icon">
+                                            <a id="server-IP-text">IP:PORT MISSING!</a>
+                                            <input type="text" id="server-IP-value" maxlength="20" pattern="[0-9.:]+">
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr height="25px">
+                                    <td>
+                                        <img src="gui/images/search_text.svg" id="search-image">
+                                    </td>
+                                    <td>
+                                        <input type="search" id="search-text">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td id="main-menu">
+                <ul class="main-menu">
+                    <li>
+                        <button id="jobs-button">
+                            <dt class="text2">
+                                Jobs
+                            </dt>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="units-button">
+                            <dt class="text2">
+                                Units
+                            </dt>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="help-button">
+                            <dt class="text2">
+                                Help
+                            </dt>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="about-button">
+                            <dt class="text2">
+                                About
+                            </dt>
+                        </button>
+                    </li>
+                </ul>
+            </td>
+            <td id="main" rowspan="2">
+                <div id="system">
+                    <div id="jobs-screen" class="screen">
+                        <table id="jobs-table" class="main-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="checkAllJobs" class="check-box">
+                                    </th>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Source
+                                    </th>
+                                    <th>
+                                        Priority
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        Progress
+                                    </th>
+                                    <th>
+                                        Controls
+                                    </th>
+                                    <th>
+                                        Results
+                                    </th>
+                                    <th>
+                                        Units
+                                    </th>
+                                    <th>
+                                        Tasks per Bundle
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="units-screen" class="screen">
+                        <table id="units-table" class="main-table">
+                            <thead>
+                                <tr>
+                                    <th class="check-cell">
+                                        <input type="checkbox" id="checkAllUnits" class="check-box">
+                                    </th>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        IP Address
+                                    </th>
+                                    <th>
+                                        MAC Address
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        CPU Load
+                                    </th>
+                                    <th>
+                                        RAM Load
+                                    </th>
+                                    <th>
+                                        Jobs
+                                    </th>
+                                    <th>
+                                        Cores Limit
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="help-screen" class="screen">
+                        Help
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td id="main-panel" align="center">
+                <table id="side">
+                    <tr>
+                        <td>
+                            <table id="side-controls" align="center">
+                                <tr>
+                                    <td>
+                                        <img id="playAll-button" class="icon1" src="gui/images/play_mouseout.svg" title="Run All Jobs">
+                                    </td>
+                                    <td>
+                                        <img id="pauseAll-button" class="icon1" src="gui/images/pause_mouseout.svg" title="Halt All Jobs">
+                                    </td>
+                                    <td>
+                                        <img id="stopAll-button" class="icon1" src="gui/images/stop_mouseout.svg" title="Clear All Jobs">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="side-divider">
+                            <table class="side-table" align="center">
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Results<div style="display:inline; margin-left:5px;">▶︎</div>
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <button id="download-button" class="small" style="margin-bottom:2px;">
+                                            <dt class="text4">
+                                                Download
+                                            </dt>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="side-divider">
+                            <table class="side-table" align="center">
+                                <tr>
+                                    <td class="side-header" colspan="2">
+                                        Cluster
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <dt class="text3">
+                                            Processor Load
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="side-progress">
+                                            <div class="side-bar">
+                                                <div id="cpu-load" class="side-percentage">
+                                                    50%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Threads
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="cpu-threads" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Processes
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="cpu-processes" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="side-divider">
+                            <table class="side-table" align="center" style="margin-top:-2px;">
+                                <tr>
+                                    <td colspan="2">
+                                        <dt class="text3">
+                                            Memory Load
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="side-progress">
+                                            <div class="side-bar">
+                                                <div id="ram-load" class="side-percentage">
+                                                    50%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Available
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="ram-available" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Used
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="ram-used" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="side-divider">
+                            <table class="side-table" align="center">
+                                <tr>
+                                    <td class="side-header" colspan="2">
+                                        Jobs
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <dt class="text3">
+                                            Progress
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="side-progress">
+                                            <div class="side-bar">
+                                                <div id="jobsAll-progress" class="side-percentage">
+                                                    50%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Running
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="jobs-running" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Idle
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="jobs-idle" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            Done
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="jobs-done" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="side-table" align="center">
+                                <tr>
+                                    <td align="left">
+                                        <dt class="text4">
+                                            TOTAL
+                                        </dt>
+                                    </td>
+                                    <td align="right">
+                                        <dt id="jobs-total" class="text4">
+                                            null
+                                        </dt>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <script src="gui/scripts/menu.js"></script>
+    <script src="gui/scripts/jobs.js"></script>
+    <script src="gui/scripts/units.js"></script>
+    <script src="gui/scripts/system.js"></script>
+</body>
+</html>

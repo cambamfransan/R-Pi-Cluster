@@ -1,0 +1,71 @@
+How do I add a job?
+  1. Select the "Jobs" menu.
+  2. Click the "Add" button.
+  3. Fill out the "Add Job" form.
+    ~ GitHub URL: web address of job source.
+    ~ Local File: local address of job source.
+    ~ Name: user specified job identification.
+    ~ Priority: place in queue of the job.
+    ~ Tasks per Bundle: tasks of job per network packet.
+    ! Increase "Tasks per Bundle" for greater performance and less frequent updates.
+    ! Decrease "Tasks per Bundle" for lesser performance and more frequent updates.
+  4. Click the "ADD" button to add job to "Jobs" table.
+  * The added job will immediately begin executing on assigned cluster units.
+
+How do I add a unit?
+  1. Select the "Units" menu.
+  2. Click the "Add" button.
+  3. Fill out the "Add Unit" form.
+    ~ Name: user specified unit identification.
+    ~ IP Address: network address of connected unit.
+    ~ Username: user account identification on connected unit.
+    ~ Password: user password of account on connected unit.
+    ~ Cores Limit: sets limit on number of cpu cores on unit.
+    ! Increase "Cores Limit" for more resources and more load on unit.
+    ! Decrease "Cores Limit" for less resources and less load on unit.
+  4. Click the "ADD" button to add unit to "Units" table.
+  * The added unit will immediately increase cluster resources and execute jobs.
+
+How do I remove a job?
+  1. Select the "Jobs" menu.
+  2. Check the job(s) to be removed.
+  3. Click the "Remove" button.
+  * The checked job(s) are now removed from the "Jobs" table.
+
+How do I remove a unit?
+  1. Select the "Units" menu.
+  2. Check the unit(s) to be removed.
+  3. Click the "Remove button.
+  * The checked unit(s) are now removed from the "Units" table.
+
+What does the status of a job mean?
+  ~ Active: the job is executing and progressing towards completion.
+  ~ Idle: the job is halted and is not progressing towards completion.
+  ~ Done: the job has finished executing and is now completed.
+
+What does the status of a unit mean?
+  ~ Active: the unit is processing jobs and actively executing them.
+  ~ Idle: the unit is at rest and presently isn't running any jobs.
+  ~ Offline: the unit is no longer detected in the units cluster.
+
+How do I run, halt, or clear a job?
+  1. Select the "Jobs" menu.
+  2. View column "Controls" and row of desired job.
+    ~ Run: shown as the play icon, will execute job from idle state when clicked.
+    ~ Halt: shown as the pause icon, will suspend job from running state when clicked.
+    ~ Clear: shown as the stop icon, will return job to new state when clicked.
+
+How do I run, halt, or clear all jobs?
+  * View left side of interface above "Download" button.
+
+How do I download results of completed job?
+  1. Select the "Jobs" menu.
+  2. View column "Results" and row of desired job.
+  3. Click the "Ready" button.
+  * The job results will be download to user's local computer terminal.
+
+How can I power on, shutdown, or restart the cluster?
+  * View left side of interface below menu buttons for title "Cluster".
+    ~ ON: powers on the cluster when clicked.
+    ~ OFF: powers off the cluster when clicked.
+    ~ Restart: powers off then on the cluster when clicked.
