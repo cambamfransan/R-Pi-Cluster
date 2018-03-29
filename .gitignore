@@ -37,4 +37,6 @@ Web/node_modules/*
 
 # python
 *.pyc
+.DS_Store
+.vs*
 
