@@ -7,8 +7,9 @@
 #include <chrono>
 #include <rapidjson/document.h>
 #include <mutex>
-#include "Messages/ClientInfo.hpp"
 #include <qtimer.h>
+#include "Messages/Pi/Pi.hpp"
+#include "Messages/Manager/ServerManager.hpp"
 
 #if (TESTING_GUIS == 1)
 #include "Gui/mainwindow.hpp"
@@ -45,22 +46,25 @@ private slots:
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
-  std::shared_ptr<std::mutex> m_clientsMutex;
-  std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
-  std::mutex m_clientInfosMutex;
-  std::map<int,ClientInfo> m_clientInfos;
+  //std::shared_ptr<std::mutex> m_clientsMutex;
+  //std::shared_ptr<std::map<int, std::chrono::steady_clock::time_point>> m_clientIds;
+//  std::mutex m_clientInfosMutex;
+  //std::map<int,manager::Pi> m_clientInfos;
   int m_myId;
+  manager::ServerManager m_serverManager;
+  bool connectedToWeb;
+  
 #if (TESTING_GUIS == 1)
   MainWindow* m_window;
 #endif
-  std::mutex m_outMessagesMutex;
-  std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
-  std::mutex m_webOutMessagesMutex;
-  std::map<int/*convID*/, JSONConversation> m_webOutMessages;
-  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
-  std::map<int, std::chrono::steady_clock::time_point> m_webInputMessages;
+//  std::mutex m_outMessagesMutex;
+//  std::map<int/*clientId*/, std::map<int/*convID*/,Conversation>> m_outMessages;
+//  std::mutex m_webOutMessagesMutex;
+//  std::map<int/*convID*/, JSONConversation> m_webOutMessages;
+ // std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+ // std::map<int, std::chrono::steady_clock::time_point> m_webInputMessages;
 
-  int m_nextPriority;
+//  int m_nextPriority;
 
   //Timers
   QTimer* m_pTimer;

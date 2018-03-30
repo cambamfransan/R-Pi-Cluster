@@ -16,7 +16,6 @@ sudo apt-get install libprotoc-dev -y
 sudo apt-get install fabric -y
 sudo apt-get install nodejs -y
 sudo apt-get install npm -y
-ls
 git clone https://github.com/Tencent/rapidjson.git
 sudo cp rapidjson/include/rapidjson /usr/include/ -r
 cd ./R-Pi-Cluster/Web && sudo npm install express --save

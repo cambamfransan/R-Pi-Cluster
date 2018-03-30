@@ -49,7 +49,7 @@ QHostAddress TCPSenderClient::getPeerAddress()
 
 int TCPSenderClient::getNextConvId()
 {
-  Logger::info("incrementing from: " + std::to_string(m_nextConvId));
+//  Logger::info("incrementing from: " + std::to_string(m_nextConvId));
   return m_nextConvId++;
 }
 

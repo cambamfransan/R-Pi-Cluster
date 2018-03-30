@@ -1,6 +1,20 @@
 syntax = "proto3";
 
+import public "Results.proto";
+
 package msg;
+
+enum STATUS {
+  PLAY = 0;
+  PAUSE = 1;
+  STOP = 2;
+}
+
+message ModifyPi {
+  int32 id = 1;
+  string field = 2;
+  string value = 3;
+}
 
 message Client {
   string ipAddress = 1;
@@ -9,9 +23,31 @@ message Client {
   string password = 4;
   int32 priority = 5;
   int32 clientId = 6;
-  int32 serverPort = 7;
+}
+
+message Job {
+  int32 id = 1;
+  int32 size = 2;
+  int32 priority = 3;
+  int32 taskPerBundle = 4;
+  string gitUrl = 5;
+  string name = 6;
+  string toExec = 7;
+  int32 status = 8;
+}
+
+message ModifyJob {
+  int32 id = 1;
+  string field = 2;
+  string value = 3;
 }
 
 message Update {
-  repeated Client clients = 1;  
+  repeated Client newclients = 1;
+  repeated int32 lostclients = 2[packed = true];
+  repeated ModifyPi modifiedPis = 3;
+  repeated Job newJobs = 4;
+  repeated int32 lostJobs = 5[packed = true];
+  repeated ModifyJob modifiedJobs = 6;
+  repeated ResultsMsg results = 7;
 }

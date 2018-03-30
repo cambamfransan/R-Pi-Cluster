@@ -7,11 +7,10 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
-set(${lib_name}_deps ProtoFiles Logger)
+set(${lib_name}_deps ProtoFiles Logger TCPSender)
 
 ###########################################
 set(bottom_srcs
-  ClientInfo.hpp
   Conversation.hpp
   JSONHelpers.cpp
   JSONHelpers.hpp
@@ -29,10 +28,18 @@ list(APPEND ${lib_name}_srcs ${bottom_srcs})
 set(manager_srcs
   Manager/Job.cpp
   Manager/Job.hpp
-  Manager/Manager.cpp
-  Manager/Manager.hpp
-  Manager/Pi.cpp
-  Manager/Pi.hpp
+  Manager/JobManager.cpp
+  Manager/JobManager.hpp
+  Manager/Execute.cpp
+  Manager/Execute.hpp
+  Manager/ExecuteManager.cpp
+  Manager/ExecuteManager.hpp
+  Manager/ServerManager.cpp
+  Manager/ServerManager.hpp
+  Manager/ClientManager.cpp
+  Manager/ClientManager.hpp
+  Manager/ClientResultsManager.cpp
+  Manager/ClientResultsManager.hpp
   Manager/Results.cpp
   Manager/Results.hpp
   Manager/Tasks.cpp
@@ -41,7 +48,17 @@ set(manager_srcs
 source_group("Manager" FILES ${manager_srcs})
 list(APPEND ${lib_name}_srcs ${manager_srcs})
 ###########################################
-
+set(pi_srcs
+  Pi/Pi.cpp
+  Pi/Pi.hpp
+  Pi/PiServerManager.cpp
+  Pi/PiServerManager.hpp
+  Pi/PiClientManager.cpp
+  Pi/PiClientManager.hpp
+  )
+source_group("Pi" FILES ${pi_srcs})
+list(APPEND ${lib_name}_srcs ${pi_srcs})
+###########################################
 
 include_directories(${RAPIDJSON_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")

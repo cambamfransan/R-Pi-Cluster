@@ -62,15 +62,22 @@ void ProtoFilesTest::basicMsg()
 void ProtoFilesTest::taskMsg()
 {
   std::shared_ptr<msg::TaskMsg> pMsg = std::make_shared<msg::TaskMsg>();
-  pMsg->add_toexecute("1 2 3");
-  pMsg->add_toexecute("4 5 6");
-  pMsg->add_toexecute("7 8 9");
+  msg::Task* pTask = pMsg->add_task();
+  pTask->set_id(0);
+  pTask->set_jobid(1);
+  pTask->set_pagenumber(2);
+  pTask->set_toexecute("string");
+//  pMsg->add_toexecute("4 5 6");
+//  pMsg->add_toexecute("7 8 9");
   std::string encrypted = pMsg->SerializeAsString();
   std::shared_ptr<msg::TaskMsg> pUnencrypted = std::make_shared<msg::TaskMsg>();
   pUnencrypted->ParseFromString(encrypted);
-  QVERIFY(pUnencrypted->toexecute(0) == "1 2 3");
-  QVERIFY(pUnencrypted->toexecute(1) == "4 5 6");
-  QVERIFY(pUnencrypted->toexecute(2) == "7 8 9");
+  QVERIFY(pUnencrypted->task(0).id() == 0);
+  QVERIFY(pUnencrypted->task(0).jobid() == 1);
+  QVERIFY(pUnencrypted->task(0).pagenumber() == 2);
+  QVERIFY(pUnencrypted->task(0).toexecute() == "string");
+//  QVERIFY(pUnencrypted->toexecute(1) == "4 5 6");
+//  QVERIFY(pUnencrypted->toexecute(2) == "7 8 9");
 }
 
 QTEST_APPLESS_MAIN(ProtoFilesTest)

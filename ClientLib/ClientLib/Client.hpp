@@ -1,9 +1,10 @@
 #ifndef CLIENT_CLASS_H
 #define CLIENT_CLASS_H
 
-#include "Messages/ClientInfo.hpp"
+#include "Messages/Pi/Pi.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
 #include <qobject.h>
+#include "Messages/Manager/ClientManager.hpp"
 
 #if (TESTING_GUIS == 1)
 #include <Gui/mainwindow.hpp>
@@ -22,9 +23,9 @@ private slots:
   void clicked(std::string s);
   void recieveMessage(msg::MsgToSend* msg, QHostAddress, qint16);
   void send(msg::MsgToSend* pMsg,
-            int convId,
+            int convId)/*,
             std::chrono::seconds timeout,
-            bool requireResponse);
+            bool requireResponse)*/;
   void lostConnection();
   void recieveUpdate(msg::MsgToSend* pMsg, int convId);
 
@@ -36,10 +37,11 @@ private:
 #if (TESTING_GUIS == 1)
   MainWindow* m_window;
 #endif
-  std::map<int, Conversation> m_outMessages;
-  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
-  std::map<int, ClientInfo> m_allClientsInfo;
+//  std::map<int, Conversation> m_outMessages;
+//  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
+//  std::map<int, manager::Pi> m_allClientsInfo;
   std::string m_database;
+  manager::ClientManager m_clientManager;
 };
 
 #endif

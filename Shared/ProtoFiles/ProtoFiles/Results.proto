@@ -1,12 +1,13 @@
 syntax = "proto3";
+import public "TaskMsg.proto";
 
 package msg;
 
 message Result {
-  string toExecute = 1;
+  Task task = 1;
   string result = 2;
 }
 
 message ResultsMsg {
   repeated Result results = 1;
-  }
+}

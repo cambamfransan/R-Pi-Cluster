@@ -4,27 +4,55 @@
 #include <string>
 #include <vector>
 
-typedef std::pair<int, std::string> Task;
-
 namespace manager
 {
 
-  class Tasks
+struct Task
+{
+  Task(int jobId, int page, int task, std::string execute);
+
+  bool operator==(const Task& t);
+
+  int jobId;
+
+  int pageNumber;
+
+  int taskId;
+
+  std::string toExecute;
+};
+
+struct TaskFile
+{
+  TaskFile(int page, int task, std::string name);
+  int pageNumber;
+
+  int nextTaskId;
+
+  std::string pageName;
+};
+
+  class TaskManager
   {
   public:
-    Tasks(int id, int size, std::string TasksList);
+    TaskManager(int id, int size, std::string tasksList = "");
 
-    ~Tasks();
+    void populateFields(std::string taskList);
+
+    ~TaskManager();
 
     std::vector<Task> getNextTasks(int howManyTasks);
 
     bool removeFromResults(Task task);
 
+    int getSize();
+
   private:
+    
     int m_myId;
     int m_maxSize;
     bool m_valid;
-    std::vector<std::pair<int, std::string>> m_taskFiles;
+    std::vector<TaskFile> m_taskFiles;
   };
 } // namespace manager
 #endif

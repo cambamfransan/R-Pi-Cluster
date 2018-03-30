@@ -12,6 +12,6 @@ std::string json::makeJsonHeartbeat(int convId)
   json::addStringToDoc(d, std::string("MsgType"), "Heartbeat");
   json::addStringToDoc(d, std::string("convId"), std::to_string(convId));
   std::string msg(json::jsonToString(d));
-  std::cout << "HeartbeatToDeliver: " << msg << " Size: " << msg.size() << std::endl;
+  //std::cout << "HeartbeatToDeliver: " << msg << " Size: " << msg.size() << std::endl;
   return msg;
 }

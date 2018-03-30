@@ -1,0 +1,1 @@
+The RPi Cluster consists of several Raspberry Pis that work together on one goal: high computational mathematics. The cluster is very dynamic and can connect new Raspberry Pis very easily. There is a user interface that you can connect to using a web browser to manage the cluster. The cluster is very stable, and can handle a crash on any of the Raspberry Pis.

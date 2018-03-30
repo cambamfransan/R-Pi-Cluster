@@ -16,14 +16,9 @@ sudo apt-get install libprotoc-dev -y
 sudo apt-get install fabric -y
 sudo apt-get install nodejs -y
 sudo apt-get install npm -y
-ls
 git clone https://github.com/Tencent/rapidjson.git
 sudo cp rapidjson/include/rapidjson /usr/include/ -r
 cd ./R-Pi-Cluster/Web && sudo npm install express --save
 cd ./../../_bld && cmake ../R-Pi-Cluster
 make -j3 install
-export DISPLAY=:0.0
-tmux
-cd bin
-./Server $0 &
-tmux detach
+#export DISPLAY=:0.0

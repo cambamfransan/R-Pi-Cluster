@@ -1,21 +1,12 @@
-const express = require('express');
-const app = express();
-// var bodyParser = require('body-parser');
+var express = require('express');
+var appMain = express();
+var serverMain = require('http').Server(appMain);
+var fs = require('fs');
 
-// configure app to use bodyParser()
-// this will let us get the data from a POST
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-// var router = express.Router(); 
-
-app.get('/', (req, res) => res.sendFile(__dirname + '/MainPage.html'));
-
-app.get('/pis', (req, res) => res.sendFile(__dirname + '/PiPage.html'));
-
-// app.get('/api/1', function(req, res) { // example api
-//   res.json({ message: 'hooray! welcome to our api!', value: 1 });   
-// });
+appMain.get('/', function(req, res) {
+    res.sendFile(__dirname + '/gui/index.html');
+});
+appMain.use('/gui', express.static(__dirname + '/gui'));
 
 var net = require('net');
 
@@ -23,10 +14,6 @@ var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
     console.log('Connected');
     client.write(JSON.stringify({
-        convId: '0',
-        msg: 'Hello, server! Love, Client.'
-    }));
-    console.log(JSON.stringify({
         convId: '0',
         msg: 'Hello, server! Love, Client.'
     }));
@@ -44,7 +31,7 @@ client.on('data', function(data) {
         switch (temp.MsgType) {
             case "Heartbeat":
             console.log("Recieved Heartbeat");
-                client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}));
+                client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}) + '~');
                 break;
             default:
                 console.log("bad message received");
@@ -60,4 +47,11 @@ client.on('close', function() {
     console.log('Connection closed');
 });
 
-app.listen(8080);
+serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
+
+var ioMain = require('socket.io')(serverMain, {});
+ioMain.sockets.on('connection', function(socket) {
+    socket.on('systemData', function(data) {
+        console.log("Received Data");
+    });
+});

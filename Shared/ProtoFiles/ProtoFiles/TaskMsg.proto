@@ -2,6 +2,13 @@ syntax = "proto3";
 
 package msg;
 
+message Task {
+  string toExecute = 1;
+  int32 jobId = 2;
+  int32 pageNumber = 3;
+  int32 id = 4;
+}
+
 message TaskMsg {
-  repeated string toExecute = 1;
+  repeated Task task = 1;
 }
