@@ -20,12 +20,11 @@ msg::MsgToSend* make_msgs::makeTaskMsg(int fromId,
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
   for (auto&& t : task)
   {
-    msg::Task* pTask = new msg::Task();
+    msg::Task* pTask = pToReturn->mutable_task()->add_task();
     pTask->set_jobid(t.jobId);
     pTask->set_pagenumber(t.pageNumber);
     pTask->set_jobid(t.taskId);
     pTask->set_toexecute(t.toExecute);
-    pTask = pToReturn->mutable_task()->add_task();
   }
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::TASK_MSG, convId));
