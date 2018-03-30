@@ -7,7 +7,7 @@ appMain.get('/', function(req, res) {
     res.sendFile(__dirname + '/gui/index.html');
 });
 appMain.use('/gui', express.static(__dirname + '/gui'));
-
+// Comment from here
 var net = require('net');
 
 var client = new net.Socket();
@@ -46,6 +46,7 @@ client.on("error", function(err) {
 client.on('close', function() {
     console.log('Connection closed');
 });
+// To here
 
 serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
 
