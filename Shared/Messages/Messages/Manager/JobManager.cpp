@@ -1,7 +1,7 @@
 #include "JobManager.hpp"
 #include <algorithm>
 
-manager::JobManager::JobManager(std::string database)
+manager::JobManager::JobManager(std::string database, std::string cloneScript)
   : m_jobs(),
     m_nextJobId(0),
     m_database(database),
@@ -12,7 +12,8 @@ manager::JobManager::JobManager(std::string database)
     m_newJobs(),
     m_lostJobs(),
     m_newResults(),
-    m_modifiedJobs()
+    m_modifiedJobs(),
+    m_cloneScript(cloneScript)
 {
 }
 
@@ -193,6 +194,3 @@ manager::JobUpdateStruct manager::JobManager::getUpdates()
 
   return job;
 }
-
-std::string manager::JobManager::m_cloneScript =
-  ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh";

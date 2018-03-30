@@ -138,7 +138,7 @@ void ManagerTest::pi()
 void ManagerTest::job()
 {
 //  manager::JobManager job(1, 10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", "", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
-  manager::JobManager manager("");
+  manager::JobManager manager("", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
   int id = manager.addJob(10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git");
  
   QVERIFY(manager.getJobName(id) == "RPiCalc");

@@ -19,7 +19,9 @@ namespace manager
   class JobManager
   {
   public:
-    JobManager(std::string m_database);
+    JobManager(
+      std::string m_database,
+      std::string cloneScript = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
     ~JobManager();
 
     int addJob(int size, int pri, int taskpb, std::string gitUrl);
@@ -51,7 +53,7 @@ namespace manager
     std::vector<std::vector<Result>> m_newResults;
     std::vector<ModifiedJob> m_modifiedJobs;
 
-    static std::string m_cloneScript;
+    std::string m_cloneScript;
   };
 
 } // namespace manager
