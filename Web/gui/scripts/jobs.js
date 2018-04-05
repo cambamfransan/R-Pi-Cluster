@@ -6,6 +6,7 @@
 System.jobs = (function() {
 	'use strict';
 	var imageID; var inputID;
+	var socket = io();
 
 	function saveListener(e) {
 		if (e.which === 13) // ENTER key
@@ -20,7 +21,7 @@ System.jobs = (function() {
 			active: [], 
 			reuse: [] 
 		};
-		that.index = function() {
+		/*that.index = function() {
 			// Assign an index value to the job.
 			var jobIndex;
 			if (IDs.reuse.length == 0) {
@@ -48,10 +49,10 @@ System.jobs = (function() {
 				IDs.active.push(Number(jobIndex));
 			}
 			return jobIndex;
-		};
-		that.add = function() {
+		};*/
+		that.add = function(jobIndex) {
 			// Add a job to the interface table.
-			var jobIndex = that.index();
+			var jobIndex = jobIndex;
 			var jobRow = jobsBody.insertRow(0);
 			jobRow.id = 'jobRow' + jobIndex;
 			// Create table cell for job checkbox.
@@ -407,6 +408,11 @@ System.jobs = (function() {
 			}
 		};
 		return that;
+	}
+
+	socket.on('AddJobAck'), function(data) {
+		console.log("adding job to table!!" + data);
+		Jobs.add(data);
 	}
 
 	return {

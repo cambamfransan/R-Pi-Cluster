@@ -24,7 +24,7 @@ namespace manager
 
     void addPi(int id, std::string ip, int port);
 
-    void addJob(int size, int pri, int taskpb, std::string gitUrl);
+    int addJob(int size, int pri, int taskpb, std::string gitUrl);
 
     void sendUpdates();
 

@@ -598,7 +598,20 @@ Menu.screens['jobs-screen'] = (function(system) {
 		document.getElementById('add-job-button').addEventListener('click', function () {
 			// Add new job to the cluster.
 			if (submit()) {
-				System.main.systemEvent('add_job');
+				var toSend = {MsgType: 'AddJob'};
+				if (document.getElementById('remote-source').checked) {
+					toSend.remote = document.getElementById('job-remote').value;
+				}
+				else if (document.getElementById('local-source').checked) {
+					toSend.file = document.getElementById('job-local').innerText;
+				}
+				toSend.name = document.getElementById('job-name').value;
+				toSend.priority = document.getElementById('job-priority').value;
+				toSend.taskPerBundle = document.getElementById('job-tpb').value;
+				socket.emit('systemData', toSend);
+				//console.log(toSend);
+
+				//System.main.systemEvent('add_job');
 				document.getElementById('close-job').click();
 			}
 		});
@@ -647,7 +660,7 @@ Menu.screens['jobs-screen'] = (function(system) {
 	function submit() {
 		var submit = true;
 		if (document.getElementById('remote-source').checked) {
-			if (document.getElementById('job-remote').value == '')
+			if (document.getElementById('job-remote').value == '') 
 				submit = false;
 		}
 		else if (document.getElementById('local-source').checked) {

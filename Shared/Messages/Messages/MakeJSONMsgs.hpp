@@ -7,6 +7,8 @@ namespace json
 {
   std::string makeJsonHeartbeat(int convId);
 
+  std::string makeJsonAddJobAck(int convId, int jobId);
+
 } // namespace json
 
 #endif

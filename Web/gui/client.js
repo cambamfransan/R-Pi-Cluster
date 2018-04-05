@@ -1,5 +1,7 @@
+var socket = io();
+
 socket.on('systemData', function(data) {
-    //console.log('Received Data from Server');
+    console.log('Received Data from Server');
     if (data !== null) {
         //console.log('Data is Empty');
         if (JSON.parse(localStorage.reload)) {

@@ -62,13 +62,13 @@ void TCPSenderWeb::emitMessage()
   QTcpSocket* readSocket = qobject_cast<QTcpSocket*>(sender());
   auto str = readSocket->readAll().toStdString();
   std::string msg;
-  while (!msg.empty())
+  while (!str.empty())
   {
     auto spot = str.find("~");
-    if (spot == std::string::npos) spot = str.size()-1;
+    if (spot == std::string::npos) spot = str.size();
     msg = str.substr(0, spot);
     str.erase(0, spot + 1);
-    emit msgReceived(str);
+    emit msgReceived(msg);
   }
 }
 

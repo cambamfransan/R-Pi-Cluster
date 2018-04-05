@@ -73,13 +73,15 @@ void manager::ServerManager::addPi(int id, std::string ip, int port)
   // send all info
 }
 
-void manager::ServerManager::addJob(int size,
+int manager::ServerManager::addJob(int size,
                                     int pri,
                                     int taskpb,
                                     std::string gitUrl)
 {
   // If active pis, send tasks to it
-  m_jobManager.addJob(size, pri, taskpb, gitUrl);
+  Logger::info("Adding Job in Server Manager");
+  int jobId(m_jobManager.addJob(size, pri, taskpb, gitUrl));
+  Logger::info("Added Job in Server Manager");
 
   int id;
   while ((id = m_piManager.waitingPis()) != -1)
@@ -90,6 +92,8 @@ void manager::ServerManager::addJob(int size,
     m_pServerSender->send(
       make_msgs::makeTaskMsg(m_myId, id, convId, toSend), id);
   }
+  Logger::info("Adding Job in Server Manager as: " + std::to_string(jobId));
+  return jobId;
 }
 
 void manager::ServerManager::sendUpdates()
