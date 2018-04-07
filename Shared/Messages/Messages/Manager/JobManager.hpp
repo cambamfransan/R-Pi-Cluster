@@ -19,9 +19,15 @@ namespace manager
   class JobManager
   {
   public:
+#ifdef __GNUC__
     JobManager(
       std::string m_database,
       std::string cloneScript = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
+#else
+    JobManager(
+      std::string m_database,
+      std::string cloneScript = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.bat");
+#endif
     ~JobManager();
 
     int addJob(int size, int pri, int taskpb, std::string gitUrl);

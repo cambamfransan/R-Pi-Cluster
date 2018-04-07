@@ -16,13 +16,17 @@ std::string json::makeJsonHeartbeat(int convId)
   return msg;
 }
 
-std::string json::makeJsonAddJobAck(int convId, int jobId)
+std::string json::makeJsonAddJobAck(int convId, int jobId, std::string remote, std::string name, int pri, int tpb)
 {
   rapidjson::Document d;
   d.SetObject();
   json::addStringToDoc(d, std::string("MsgType"), "AddJobAck");
   json::addIntToDoc(d, std::string("JobId"), jobId);
   json::addIntToDoc(d, std::string("convId"), convId);
+  json::addStringToDoc(d, std::string("remote"), remote);
+  json::addStringToDoc(d, std::string("name"), name);
+  json::addIntToDoc(d, std::string("priority"), pri);
+  json::addIntToDoc(d, std::string("taskPerBundle"), tpb);
   std::string msg(json::jsonToString(d));
   return msg;
 }

@@ -38,8 +38,10 @@ client.on('data', function(data) {
                 break;
             case 'AddJobAck':
                 console.log("received AddJobAck" + mySockets.length);
-                for(var i = 0; i < mySockets.length; i++)
-                    mySockets[i].emit('AddJobAck', temp.JobId);
+                for(var i = 0; i < mySockets.length; i++) {
+                    console.log('Emitting' + temp.JobId);
+                    mySockets[i].emit('AddJobAck', temp);
+                }
                 break;
             default:
                 console.log("bad message received");
@@ -69,5 +71,9 @@ ioMain.sockets.on('connection', function(socket) {
                 console.log("Adding Job");
                 break;
         }
+    });
+    socket.on('disconnect', function(){
+        mySockets.splice(mySockets.indexOf(socket), 1);
+        console.log('disconnnected');
     });
 });

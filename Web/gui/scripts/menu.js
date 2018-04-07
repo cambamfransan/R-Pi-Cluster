@@ -4,6 +4,8 @@
 //
 // ------------------------------------------------------------------
 var System = {};
+System.socket = io();
+
 var Menu = { screens : {} };
 var idle = {
 	jobs: true,
@@ -600,7 +602,12 @@ Menu.screens['jobs-screen'] = (function(system) {
 			if (submit()) {
 				var toSend = {MsgType: 'AddJob'};
 				if (document.getElementById('remote-source').checked) {
-					toSend.remote = document.getElementById('job-remote').value;
+					var jobSourceValue;
+				 	if (document.getElementById('job-protocol').value == 'http')
+				 		jobSourceValue = 'http://';
+				 	else if (document.getElementById('job-protocol').value == 'https')
+				 		jobSourceValue = 'https://';
+					toSend.remote = jobSourceValue + document.getElementById('job-remote').value;
 				}
 				else if (document.getElementById('local-source').checked) {
 					toSend.file = document.getElementById('job-local').innerText;
@@ -608,7 +615,7 @@ Menu.screens['jobs-screen'] = (function(system) {
 				toSend.name = document.getElementById('job-name').value;
 				toSend.priority = document.getElementById('job-priority').value;
 				toSend.taskPerBundle = document.getElementById('job-tpb').value;
-				socket.emit('systemData', toSend);
+				System.socket.emit('systemData', toSend);
 				//console.log(toSend);
 
 				//System.main.systemEvent('add_job');

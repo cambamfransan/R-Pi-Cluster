@@ -247,12 +247,17 @@ void Server::receiveMessageWeb(std::string msg)
 
     // future can make size configurable
     Logger::info("Need to add a job");
+
+    
+    int pri(std::stoi(map["/priority"])); 
+    int tpb(std::stoi(map["/taskPerBundle"]));
+    std::string remote(map["/remote"]);
+    std::string name(map["/name"]);
     int jobId = m_serverManager.addJob(100,
-                                    std::stoi(map["/priority"]),
-                                    std::stoi(map["/taskPerBundle"]),
-                                    map["/remote"]);
-    sendToWeb(json::makeJsonAddJobAck(convId, jobId), convId, std::chrono::seconds(3), false);
-    //m_pWebSender->send(json::makeJsonAddJobAck(convId, jobId));
+                                    pri,
+                                    tpb,
+                                    remote);
+    sendToWeb(json::makeJsonAddJobAck(convId, jobId, remote, name, pri, tpb), convId, std::chrono::seconds(3), false);
     Logger::info("Sent new Job Ack!");
   }
 }

@@ -6,7 +6,6 @@
 System.jobs = (function() {
 	'use strict';
 	var imageID; var inputID;
-	var socket = io();
 
 	function saveListener(e) {
 		if (e.which === 13) // ENTER key
@@ -21,38 +20,9 @@ System.jobs = (function() {
 			active: [], 
 			reuse: [] 
 		};
-		/*that.index = function() {
-			// Assign an index value to the job.
-			var jobIndex;
-			if (IDs.reuse.length == 0) {
-				if (IDs.active.length == 0)
-					jobIndex = jobsBody.rows.length.toString();
-				else {
-					if (IDs.active.length >= 2) {
-						IDs.active.sort(function(a,b){return a-b});
-						for (var index = 0; index < IDs.active.length-1; index++) {
-							if (IDs.active[index+1] - IDs.active[index] >= 2)
-								jobIndex = (IDs.active[index] + 1).toString();
-						}
-					}
-					else
-						jobIndex = (IDs.active[0] + 1).toString();
-				}
-				if (jobIndex == null)
-					jobIndex = (IDs.active[IDs.active.length-1] + 1).toString();
-				IDs.active.push(Number(jobIndex));
-			}
-			else {
-				IDs.reuse.sort(function(a,b){return a-b});
-				jobIndex = IDs.reuse[0].toString();
-				IDs.reuse.splice(0,1);
-				IDs.active.push(Number(jobIndex));
-			}
-			return jobIndex;
-		};*/
-		that.add = function(jobIndex) {
+		that.add = function(job) {
 			// Add a job to the interface table.
-			var jobIndex = jobIndex;
+			var jobIndex = job.JobId;
 			var jobRow = jobsBody.insertRow(0);
 			jobRow.id = 'jobRow' + jobIndex;
 			// Create table cell for job checkbox.
@@ -65,7 +35,8 @@ System.jobs = (function() {
 			});
 			// Create table cell for job name.
 			var jobName  = jobRow.insertCell(1);
-			var jobNameValue = document.getElementById('job-name').value;
+			// var jobNameValue = document.getElementById('job-name').value;
+			var jobNameValue = job.name;
 			jobName.id = 'jobNameCell'+ jobIndex;
 			var jobNameID = 'jobName' + jobIndex;
 			var jobNameIconID = 'jobNameIcon' + jobIndex;
@@ -147,15 +118,16 @@ System.jobs = (function() {
 			// Create table cell for job source.
 			var jobSource  = jobRow.insertCell(2);
 			var jobSourceValue;
-			if (document.getElementById('remote-source').checked) {
-				jobSourceValue = document.getElementById('job-remote').value;
-				if (document.getElementById('job-protocol').value == 'http')
-					jobSourceValue = 'http://' + jobSourceValue;
-				else if (document.getElementById('job-protocol').value == 'https')
-					jobSourceValue = 'https://' + jobSourceValue;
-			}
-			else if (document.getElementById('local-source').checked)
-				jobSourceValue = document.getElementById('job-local').innerText;
+			jobSourceValue = job.remote;
+			// if (document.getElementById('remote-source').checked) {
+			// 	jobSourceValue = document.getElementById('job-remote').value;
+			// 	if (document.getElementById('job-protocol').value == 'http')
+			// 		jobSourceValue = 'http://' + jobSourceValue;
+			// 	else if (document.getElementById('job-protocol').value == 'https')
+			// 		jobSourceValue = 'https://' + jobSourceValue;
+			// }
+			// else if (document.getElementById('local-source').checked)
+			// 	jobSourceValue = document.getElementById('job-local').innerText;
 			var jobSourceID = 'jobSource' + jobIndex;
 			jobSource.innerHTML = '<dt id="' + jobSourceID + '" class="tooltip">' + jobSourceValue + '<span class="tooltip-text">' + jobSourceValue + '</span></dt>';
 			document.getElementById(jobSourceID).style.marginLeft = '3px';
@@ -172,7 +144,8 @@ System.jobs = (function() {
 			});
 			// Create table cell for job priority.
 			var jobPriority  = jobRow.insertCell(3);
-			var jobPriorityValue = Number(document.getElementById('job-priority').value);
+			var jobPriorityValue = job.priority;
+			// var jobPriorityValue = Number(document.getElementById('job-priority').value);
 			jobPriority.id = 'jobPriorityCell'+ jobIndex;
 			var jobPriorityID = 'jobPriority' + jobIndex;
 			var jobPriorityIconID = 'jobPriorityIcon' + jobIndex;
@@ -261,11 +234,12 @@ System.jobs = (function() {
 			// Create table cell for job status.
 			var jobStatus  = jobRow.insertCell(4);
 			var jobStatusID = 'jobStatus' + jobIndex;
-			jobStatus.innerHTML = '<dt id="' + jobStatusID + '">Idle</dt>';
+			jobStatus.innerHTML = '<dt id="' + jobStatusID + '">Active</dt>';
 			// Create table cell for job progress.
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
-			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar"><div id="' + jobProgressID + '" class="main-percentage">50%</div></div></div>';
+			// will this work?
+			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -342,7 +316,8 @@ System.jobs = (function() {
 			});
 			// Create table cell for job tpb.
 			var jobTPB = jobRow.insertCell(9);
-			var jobTPBValue = Number(document.getElementById('job-tpb').value);
+			var jobTPBValue = job.taskPerBundle;
+			// var jobTPBValue = Number(document.getElementById('job-tpb').value);
 			var jobTPBID = 'jobTPB' + jobIndex;
 			jobTPB.innerHTML = '<input type="range" id="' + jobTPBID + '" class="tpb-field">';
 			document.getElementById(jobTPBID).min = '1';
@@ -351,7 +326,14 @@ System.jobs = (function() {
 			document.getElementById(jobTPBID).addEventListener('input', function () {
 				// ! Update tasks per bundle of job in the cluster.
 			});
+			Menu.system.empty('job');			
 		};
+
+		System.socket.on('AddJobAck', function(data) {
+			console.log("adding job to table!!" + JSON.stringify(data));
+			that.add(data);
+		});
+
 		that.remove = function() {
 			// Remove a job(s) from the interface table.
 			document.removeEventListener('keydown', saveListener);
@@ -410,12 +392,7 @@ System.jobs = (function() {
 		return that;
 	}
 
-	socket.on('AddJobAck'), function(data) {
-		console.log("adding job to table!!" + data);
-		Jobs.add(data);
-	}
-
 	return {
 		Jobs : Jobs 
 	};
-}());
+}(System));

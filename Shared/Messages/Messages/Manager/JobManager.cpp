@@ -1,4 +1,5 @@
 #include "JobManager.hpp"
+#include "Logger/Logger.hpp"
 #include <algorithm>
 
 manager::JobManager::JobManager(std::string database, std::string cloneScript)
@@ -30,8 +31,9 @@ int manager::JobManager::addJob(int size,
   int jobId = m_nextJobId++;
   Job newJob(jobId, size, pri, taskpb, gitUrl, m_database, m_cloneScript);
   {
+    Logger::info("Added new Job");
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[newJob.getJobId()] = newJob;
+    m_jobs[newJob.getJobId()] = newJob; // is this where it is dying?
     if (m_jobs.size() == 1) m_curJob = jobId;
   }
   {

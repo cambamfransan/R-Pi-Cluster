@@ -282,7 +282,7 @@ ul.main-menu li button {
 }
 .main-bar {
     position: relative;
-    width: 50%;
+    width: 0%; /*TODO: If we want to use the progress bar, we need to be able to change it */
     height: 100%;
     background-color: #FFFFFF;
 }
