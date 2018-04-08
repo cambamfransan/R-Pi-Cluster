@@ -1,6 +1,7 @@
 #include "JobManager.hpp"
 #include "Logger/Logger.hpp"
 #include <algorithm>
+#include <iostream>
 
 manager::JobManager::JobManager(std::string database, std::string cloneScript)
   : m_jobs(),
@@ -16,6 +17,10 @@ manager::JobManager::JobManager(std::string database, std::string cloneScript)
     m_modifiedJobs(),
     m_cloneScript(cloneScript)
 {
+  if (m_database.back() == '\\')m_database.pop_back();
+  m_database += +"/Jobs";
+  std::cout << m_database << std::endl;
+  system(std::string("mkdir " + m_database).c_str());
 }
 
 manager::JobManager::~JobManager()
@@ -33,7 +38,7 @@ int manager::JobManager::addJob(int size,
   {
     Logger::info("Added new Job");
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[newJob.getJobId()] = newJob; // is this where it is dying?
+    m_jobs[newJob.getJobId()] = newJob;
     if (m_jobs.size() == 1) m_curJob = jobId;
   }
   {

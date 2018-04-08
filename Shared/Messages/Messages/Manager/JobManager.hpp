@@ -26,7 +26,7 @@ namespace manager
 #else
     JobManager(
       std::string m_database,
-      std::string cloneScript = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.bat");
+      std::string cloneScript = ".\\..\\..\\R-Pi-Cluster\\Scripts\\cloneUrl.bat");
 #endif
     ~JobManager();
 

@@ -104,7 +104,7 @@ void ManagerTest::removeTasksTest()
 
 void ManagerTest::addResults()
 {
-  manager::ResultsManager results(2);
+  manager::ResultsManager results(2, "");
   results.addResult({manager::Result(manager::Task(0, 0, 0, "0"), "3")});
   results.addResult({manager::Result(manager::Task(0, 0, 1, "1"), "1")});
   results.addResult({manager::Result(manager::Task(0, 0, 2, "2"), "4")});

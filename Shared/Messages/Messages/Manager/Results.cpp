@@ -7,8 +7,8 @@ manager::ResultsManager::ResultsManager()
 {
 }
 
-manager::ResultsManager::ResultsManager(int id)
-  : m_myId(id), m_resultFiles(), m_basePath(std::to_string(m_myId) + "/Results")
+manager::ResultsManager::ResultsManager(int id, std::string database)
+  : m_myId(id), m_resultFiles(), m_basePath(database + "/Results")
 {
   init(id);
 }
@@ -23,10 +23,9 @@ manager::ResultsManager::~ResultsManager()
 void manager::ResultsManager::init(int id)
 {
   m_myId = id;
-  m_basePath = std::to_string(m_myId) + "/Results";
-  system(std::string("mkdir " + std::to_string(m_myId)).c_str());
-  system(
-    std::string("cd " + std::to_string(m_myId) + "&& mkdir Results").c_str());
+  if(m_basePath.empty())
+    m_basePath = std::to_string(m_myId) + "//Results";
+  system(std::string("mkdir " + m_basePath).c_str());
 }
 
 void manager::ResultsManager::addResult(std::vector<Result> results)

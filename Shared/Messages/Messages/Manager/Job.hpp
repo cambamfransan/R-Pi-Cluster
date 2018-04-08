@@ -41,7 +41,7 @@ namespace manager
   {
   public:
     Job(); // I don't like this
-    Job(int id, int size, int pri, int taskpb, std::string gitUrl, std::string database = "", std::string script = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
+    Job(int id, int size, int pri, int taskpb, std::string gitUrl, std::string database, std::string script = ".//..//..//R-Pi-Cluster/Scripts/cloneUrl.sh");
     ~Job();
 
     void addResults(std::vector<manager::Result> results);
@@ -64,9 +64,9 @@ namespace manager
     int m_priority;
     int m_taskPerBundle;
     std::string m_gitUrl;
+    std::string m_database;
     manager::TaskManager m_taskManager;
     manager::ResultsManager m_resultManager;
-    std::string m_database;
     std::string m_name;
     std::string m_toExec;
     Status m_status;

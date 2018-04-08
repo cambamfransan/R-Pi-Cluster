@@ -27,13 +27,17 @@ manager::TaskFile::TaskFile(int page, int task, std::string name)
 
 manager::TaskManager::TaskManager(int id,
                       int size,
+  std::string database,
                       std::string tasksList)
   : m_myId(id),
     m_maxSize(size),
     m_valid(false),
+    m_database(database + "//Tasks//"),
     m_taskFiles()
 {
   if (tasksList == "")return;
+  std::cout << "Task Mgr" << std::endl;
+  system(std::string("mkdir " + m_database).c_str());
   populateFields(tasksList);
 }
 
@@ -43,12 +47,9 @@ void manager::TaskManager::populateFields(std::string tasksList)
   std::string nextLine;
   if (!input) return;
 
-  system(std::string("mkdir " + std::to_string(m_myId)).c_str());
-  system(std::string("cd " + std::to_string(1) + " && mkdir Tasks").c_str());
-
   for (int i = 0; !input.eof(); i++)
   {
-    std::string nextFile(std::to_string(m_myId) + "/Tasks/" +
+    std::string nextFile(m_database +
       std::to_string(i) + ".txt");
     m_taskFiles.push_back(TaskFile(i, 0, nextFile));
     std::ofstream output(nextFile);

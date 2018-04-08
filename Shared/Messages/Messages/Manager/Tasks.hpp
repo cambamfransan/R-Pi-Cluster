@@ -35,7 +35,7 @@ struct TaskFile
   class TaskManager
   {
   public:
-    TaskManager(int id, int size, std::string tasksList = "");
+    TaskManager(int id, int size, std::string database, std::string tasksList = "");
 
     void populateFields(std::string taskList);
 
@@ -52,6 +52,7 @@ struct TaskFile
     int m_myId;
     int m_maxSize;
     bool m_valid;
+    std::string m_database;
     std::vector<TaskFile> m_taskFiles;
   };
 } // namespace manager
