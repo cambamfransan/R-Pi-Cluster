@@ -2,6 +2,7 @@ var express = require('express');
 var appMain = express();
 var serverMain = require('http').Server(appMain);
 var fs = require('fs');
+var mySockets = [];
 
 appMain.get('/', function(req, res) {
     res.sendFile(__dirname + '/gui/index.html');
@@ -9,6 +10,7 @@ appMain.get('/', function(req, res) {
 appMain.use('/gui', express.static(__dirname + '/gui'));
 
 var net = require('net');
+var nextConvId = 1;
 
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
@@ -22,6 +24,7 @@ client.connect(process.argv[2], '127.0.0.1', function() {
 client.on('data', function(data) {
     var msgs = data.toString();
     var msg;
+    console.log("received data" + mySockets.length);
     while (msgs) {
         var index = msgs.indexOf("~");
         if(index == -1)index = msgs.length;
@@ -30,8 +33,15 @@ client.on('data', function(data) {
         var temp = JSON.parse(msg.toString());
         switch (temp.MsgType) {
             case "Heartbeat":
-            console.log("Recieved Heartbeat");
+                console.log("Recieved Heartbeat");
                 client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}) + '~');
+                break;
+            case 'AddJobAck':
+                console.log("received AddJobAck" + mySockets.length);
+                for(var i = 0; i < mySockets.length; i++) {
+                    console.log('Emitting' + temp.JobId);
+                    mySockets[i].emit('AddJobAck', temp);
+                }
                 break;
             default:
                 console.log("bad message received");
@@ -51,7 +61,19 @@ serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); 
 
 var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
+    mySockets.push(socket);
+    console.log('connected');
     socket.on('systemData', function(data) {
-        console.log("Received Data");
+        switch(data.MsgType) {
+            case 'AddJob':
+                data.convId = nextConvId++;
+                client.write(JSON.stringify(data) + '~');
+                console.log("Adding Job");
+                break;
+        }
+    });
+    socket.on('disconnect', function(){
+        mySockets.splice(mySockets.indexOf(socket), 1);
+        console.log('disconnnected');
     });
 });

@@ -3,7 +3,6 @@
 <head>
 	<title>RPi Cluster</title>
     <meta charset="UTF-8">
-    <script src="gui/client.js"></script>
     <link rel="stylesheet" type="text/css" href="gui/styles/menu.css">
 </head>
 <body onload="Menu.system.initialize();">
@@ -624,7 +623,9 @@
             </td>
         </tr>
     </table>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="gui/scripts/menu.js"></script>
+    <!-- <script src="gui/client.js"></script> -->
     <script src="gui/scripts/jobs.js"></script>
     <script src="gui/scripts/units.js"></script>
     <script src="gui/scripts/system.js"></script>

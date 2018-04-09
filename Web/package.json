@@ -1,11 +1,12 @@
 {
-  "name": "RPi Cluster",
+  "name": "RPiCluster",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.15.4",
-    "socket.io": "^2.0.4"
+    "express": "^4.16.3",
+    "socket-io": "^1.0.0",
+    "socket.io": "^2.1.0"
   },
   "engines": {
     "node": "4.2.6"

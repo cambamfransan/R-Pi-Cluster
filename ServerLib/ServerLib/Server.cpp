@@ -10,6 +10,7 @@
 #include <qprocess.h>
 #include <qthreadpool.h>
 #include <qtimer.h>
+#include <thread>
 
 Server::Server(std::string arg)
   : m_pSender(std::make_shared<TCPSenderServer>()),
@@ -127,7 +128,8 @@ void Server::newConnection(int id)
 #endif
 
   // m_nextPriority++;
-  m_serverManager.addPi(id, t->peerAddress().toString().toStdString(), t->peerPort());
+  m_serverManager.addPi(
+    id, t->peerAddress().toString().toStdString(), t->peerPort());
 }
 
 void Server::newWebConnection()
@@ -183,7 +185,7 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 #if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 #endif
-    m_serverManager.updateAck(pMsg->basicmsg().fromid());
+  m_serverManager.updateAck(pMsg->basicmsg().fromid());
   switch (pMsg->basicmsg().msgtype())
   {
   case msg::ProtoType::UPDATE_ACK:
@@ -214,7 +216,6 @@ void Server::receiveMessageWeb(std::string msg)
   json::JSONParser parser(doc);
   auto map = parser.getMap();
   Logger::info("received: " + msg);
-  int id = stoi(map["/convId"]);
   /*  if (m_inputMessages.find(id) == m_inputMessages.end())
       m_inputMessages[id] = std::chrono::steady_clock::now();
     else
@@ -236,19 +237,42 @@ void Server::receiveMessageWeb(std::string msg)
         Logger::info("Did not find convId");
       }
     }*/
-
-  if (map["/MsgType"] == "HeartbeatAck")
+  std::string type = map["/MsgType"];
+  if (type == "HeartbeatAck")
   {
- //   std::cout << "Received HeartBeat Ack" << std::endl;
+    //   std::cout << "Received HeartBeat Ack" << std::endl;
+  }
+  else if (type == "AddJob")
+  {
+    int convId = stoi(map["/convId"]);
+
+    // future can make size configurable
+    Logger::info("Need to add a job");
+
+    int pri(std::stoi(map["/priority"])); 
+    int tpb(std::stoi(map["/taskPerBundle"]));
+    std::string remote(map["/remote"]);
+    std::string name(map["/name"]);
+
+    int jobId = m_serverManager.getNextJobId();
+    sendToWeb(json::makeJsonAddJobAck(convId, jobId, remote, name, pri, tpb), convId, std::chrono::seconds(3), false);
+    Logger::info("Sent new Job Ack!");
+    std::thread thr([this, pri, tpb, remote, jobId](){
+        m_serverManager.addJob(100, // Need to switch this and next line
+            pri,
+            tpb,
+            remote, jobId);
+        });
+    thr.detach();
   }
 }
 
 void Server::lostConnection(int id)
 {
-    // std::lock_guard<std::mutex> lock(m_outMessagesMutex);
-    // if (auto itr = m_outMessages.find(id) != m_outMessages.end())
-    //   m_outMessages.erase(itr);
-    m_serverManager.removePi(id);
+  // std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+  // if (auto itr = m_outMessages.find(id) != m_outMessages.end())
+  //   m_outMessages.erase(itr);
+  m_serverManager.removePi(id);
   Logger::info("erased successfully client with Id" + std::to_string(id));
 }
 
@@ -262,10 +286,10 @@ void Server::sendTimedMsgs()
 {
   static int times(0);
   // send updates
-  //if (times == 3)
+  // if (times == 3)
   //{
-  //std::cout << "Timed" << std::endl;
-    m_serverManager.sendUpdates();
+  // std::cout << "Timed" << std::endl;
+  m_serverManager.sendUpdates();
   //}
 
   m_serverManager.removeUnresponsive();
@@ -295,38 +319,38 @@ void Server::sendTimedMsgs()
       }
     }*/
 
-    // send heartbeats
-    if (connectedToWeb)
-    {
-      int next(m_pWebSender->nextConvId());
-      sendToWeb(
-        json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
-    }
+  // send heartbeats
+  if (connectedToWeb)
+  {
+    int next(m_pWebSender->nextConvId());
+    sendToWeb(
+      json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
+  }
 
-  //if (times == 3)
-  //{ 
-     /*std::lock_guard<std::mutex> lock(m_outMessagesMutex);
-     for (auto&& conv : m_webOutMessages)
-     {
-       if (conv.second.timeout + conv.second.timeSend <
-           std::chrono::steady_clock::now())
-       {
-         std::cout << conv.second.timeout.count() * 1000000000 +
-                        conv.second.timeSend.time_since_epoch().count()
-                   << std::endl;
-         std::cout <<
-     std::chrono::steady_clock::now().time_since_epoch().count()
-                   << std::endl;
-         // check tries??
-         Logger::error("Resending message from conversation: " +
-                       std::to_string(conv.second.convId));
-         conv.second.timeSend = std::chrono::steady_clock::now();
-         m_pWebSender->send(conv.second.msg + "~");
-       }
-     }*/
-    //times = 0;
+  // if (times == 3)
+  //{
+  /*std::lock_guard<std::mutex> lock(m_outMessagesMutex);
+  for (auto&& conv : m_webOutMessages)
+  {
+    if (conv.second.timeout + conv.second.timeSend <
+        std::chrono::steady_clock::now())
+    {
+      std::cout << conv.second.timeout.count() * 1000000000 +
+                     conv.second.timeSend.time_since_epoch().count()
+                << std::endl;
+      std::cout <<
+  std::chrono::steady_clock::now().time_since_epoch().count()
+                << std::endl;
+      // check tries??
+      Logger::error("Resending message from conversation: " +
+                    std::to_string(conv.second.convId));
+      conv.second.timeSend = std::chrono::steady_clock::now();
+      m_pWebSender->send(conv.second.msg + "~");
+    }
+  }*/
+  // times = 0;
   //}
 
-//  times++;
-    //std::cout << "Done Timed" << std::endl;
+  //  times++;
+  // std::cout << "Done Timed" << std::endl;
 }

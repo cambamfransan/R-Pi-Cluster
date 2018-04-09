@@ -163,7 +163,7 @@ void TCPSenderServer::disconnected()
     //std::cout << "Found in map: " << itr->first << std::endl;
     int id = itr->first;
     //itr->second = nullptr;
-    m_pSockets.erase(itr);
+    //m_pSockets.erase(itr); // TODO
     emit lostConnection(id);
   }
   std::cout << "exit function" << std::endl;

@@ -13,7 +13,7 @@ namespace manager
   {
   public:
     ResultsManager();
-    ResultsManager(int id);
+    ResultsManager(int id, std::string database);
     ~ResultsManager();
 
     void init(int id);

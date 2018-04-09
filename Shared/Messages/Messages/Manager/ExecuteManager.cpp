@@ -31,6 +31,7 @@ void manager::ExecuteManager::addJob(manager::Job job)
     JobInfo{job.getJobId(),
             job.getTasksPerBundle(),
             m_database + std::to_string(job.getJobId()) + "_bld",
+            job.getUrl(),
             static_cast<int>(job.getStatus()),
             job.getPriority(),
             job.getName()};

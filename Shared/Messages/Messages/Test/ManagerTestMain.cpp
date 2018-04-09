@@ -18,7 +18,7 @@ void ManagerTest::getTasksTest()
   std::cout << "Start Test" << std::endl;
   manager::TaskManager tasks(
     1,
-    10,
+    10,".",
     std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
                 "Messages//Messages//Test//TasksList.txt"));
   auto toExecute = tasks.getNextTasks(5);
@@ -89,7 +89,7 @@ void ManagerTest::removeTasksTest()
 {
   manager::TaskManager tasks(
     1,
-    10,
+    10,".",
     std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
                 "Messages//Messages//Test//TasksList.txt"));
 
@@ -104,7 +104,7 @@ void ManagerTest::removeTasksTest()
 
 void ManagerTest::addResults()
 {
-  manager::ResultsManager results(2);
+  manager::ResultsManager results(2, ".");
   results.addResult({manager::Result(manager::Task(0, 0, 0, "0"), "3")});
   results.addResult({manager::Result(manager::Task(0, 0, 1, "1"), "1")});
   results.addResult({manager::Result(manager::Task(0, 0, 2, "2"), "4")});
@@ -139,7 +139,7 @@ void ManagerTest::job()
 {
 //  manager::JobManager job(1, 10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", "", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
   manager::JobManager manager("", "./../../../../../R-Pi-Cluster/Scripts/cloneUrl.sh");
-  int id = manager.addJob(10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git");
+  int id = manager.addJob(10, 10, 3, "https://github.com/cambamfransan/RPiCalc.git", 1);
  
   QVERIFY(manager.getJobName(id) == "RPiCalc");
   QVERIFY(manager.getJobExec(id) == "./bin/CalcPi.exe");

@@ -94,14 +94,14 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
   for (auto&& j : jobs.newJobs)
   {
     auto pJob = pToReturn->mutable_update()->add_newjobs();
-    pJob->set_id(j.getJobId());
-    pJob->set_size(j.getSize());
-    pJob->set_priority(j.getPriority());
-    pJob->set_taskperbundle(j.getTasksPerBundle());
-    pJob->set_giturl(j.getUrl());
-    pJob->set_name(j.getName());
-    pJob->set_toexec(j.getExec());
-    pJob->set_status(static_cast<int>(j.getStatus()));
+    pJob->set_id(j.id);
+    pJob->set_size(100);
+    pJob->set_priority(j.priority);
+    pJob->set_taskperbundle(j.tasksPerBundle);
+    pJob->set_giturl(j.gitUrl);
+    pJob->set_name(j.name);
+    pJob->set_toexec(j.bldLocation);
+    pJob->set_status(j.status);
   }
 
   for (auto&& j : jobs.lostJobs)
