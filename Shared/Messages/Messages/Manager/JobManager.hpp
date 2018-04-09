@@ -5,12 +5,13 @@
 #include <map>
 #include <mutex>
 #include <string>
+#include <memory>
 
 namespace manager
 {
   struct JobUpdateStruct
   {
-    std::vector<Job> newJobs;
+    std::vector<JobInfo> newJobs;
     std::vector<int> lostJobs;
     std::vector<std::vector<Result>> newResults;
     std::vector<ModifiedJob> modifiedJobs;
@@ -30,7 +31,8 @@ namespace manager
 #endif
     ~JobManager();
 
-    int addJob(int size, int pri, int taskpb, std::string gitUrl);
+    int getNextId();
+    int addJob(int size, int pri, int taskpb, std::string gitUrl, int id);
     std::vector<manager::Task> getTasks(int amount);
     void addJobResults(int id, std::vector<manager::Result> results);
     void removeJob(int id);
@@ -45,7 +47,7 @@ namespace manager
     JobUpdateStruct getUpdates();
 
   private:
-    std::map<int, Job> m_jobs;
+    std::map<int, std::shared_ptr<Job>> m_jobs;
     int m_nextJobId;
     std::string m_database;
 
@@ -54,7 +56,7 @@ namespace manager
     std::mutex m_jobsMutex;
 
     std::mutex m_updateMutex;
-    std::vector<Job> m_newJobs;
+    std::vector<JobInfo> m_newJobs;
     std::vector<int> m_lostJobs;
     std::vector<std::vector<Result>> m_newResults;
     std::vector<ModifiedJob> m_modifiedJobs;

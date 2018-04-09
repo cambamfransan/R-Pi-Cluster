@@ -36,8 +36,6 @@ void manager::ResultsManager::addResult(std::vector<Result> results)
     // Need to fix this
     std::string outFilePath(m_basePath + "/" +
       std::to_string(result.first.pageNumber) + ".txt");
-    std::cout << m_basePath << "/" <<
-      std::to_string(result.first.pageNumber) << ".txt" << std::endl;
     std::ofstream output(outFilePath, std::ios::app);
     output << result.first.taskId << ":~:" << result.first.toExecute
       << ":~:" << result.second << std::endl;

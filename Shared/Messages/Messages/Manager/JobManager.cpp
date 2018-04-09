@@ -17,9 +17,7 @@ manager::JobManager::JobManager(std::string database, std::string cloneScript)
     m_modifiedJobs(),
     m_cloneScript(cloneScript)
 {
-  if (m_database.back() == '\\')m_database.pop_back();
-  m_database += +"/Jobs";
-  std::cout << m_database << std::endl;
+  m_database += +"Jobs";
   system(std::string("mkdir " + m_database).c_str());
 }
 
@@ -28,24 +26,34 @@ manager::JobManager::~JobManager()
   // Can remove files
 }
 
+int manager::JobManager::getNextId()
+{
+  return m_nextJobId++;
+}
+
 int manager::JobManager::addJob(int size,
                                 int pri,
                                 int taskpb,
-                                std::string gitUrl)
+                                std::string gitUrl,
+                                int jobId)
 {
-  int jobId = m_nextJobId++;
-  Job newJob(jobId, size, pri, taskpb, gitUrl, m_database, m_cloneScript);
+  if(jobId == -1) jobId = m_nextJobId++;
+  
+    auto pNewJob = std::make_shared<Job>(jobId, size, pri, taskpb, gitUrl, m_database, m_cloneScript);
   {
     Logger::info("Added new Job");
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[newJob.getJobId()] = newJob;
+    m_jobs[pNewJob->getJobId()] = pNewJob;
     if (m_jobs.size() == 1) m_curJob = jobId;
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_newJobs.push_back(newJob);
+    manager::JobInfo info{pNewJob->getJobId(), pNewJob->getTasksPerBundle(), pNewJob->getUrl(),
+      pNewJob->getExec(),
+     static_cast<int>(pNewJob->getStatus()), pNewJob->getPriority(), pNewJob->getName()};
+    m_newJobs.push_back(info);
   }
-
+  
   return jobId;
 }
 
@@ -54,7 +62,7 @@ void manager::JobManager::addJobResults(int id,
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].addResults(results);
+    m_jobs[id]->addResults(results);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -70,7 +78,7 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
   while (toReturn.size() < am)
   {
     if (m_jobs.empty()) return toReturn;
-    int priority(m_jobs[m_curJob].getPriority());
+    int priority(m_jobs[m_curJob]->getPriority());
     if (m_curJobDone > priority)
     {
       if (m_jobs.empty()) return toReturn;
@@ -88,7 +96,7 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
     }
 
     auto nextBatch =
-      m_jobs[m_curJob].getTasks(std::min(amount, priority - m_curJobDone));
+      m_jobs[m_curJob]->getTasks(std::min(amount, priority - m_curJobDone));
     m_curJobDone += nextBatch.size();
   }
 
@@ -111,7 +119,7 @@ void manager::JobManager::pauseJob(int id)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setStatus(Status::PAUSE);
+    m_jobs[id]->setStatus(Status::PAUSE);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -123,7 +131,7 @@ void manager::JobManager::playJob(int id)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setStatus(Status::PLAY);
+    m_jobs[id]->setStatus(Status::PLAY);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -135,7 +143,7 @@ void manager::JobManager::stopJob(int id)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setStatus(Status::STOP);
+    m_jobs[id]->setStatus(Status::STOP);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -147,7 +155,7 @@ void manager::JobManager::setName(int id, std::string name)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setName(name);
+    m_jobs[id]->setName(name);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -157,19 +165,19 @@ void manager::JobManager::setName(int id, std::string name)
 
 std::string manager::JobManager::getJobName(int id)
 {
-  return m_jobs[id].getName();
+  return m_jobs[id]->getName();
 }
 
 std::string manager::JobManager::getJobExec(int id)
 {
-  return m_jobs[id].getExec();
+  return m_jobs[id]->getExec();
 }
 
 void manager::JobManager::modifyTasksPerBundle(int id, int taskPerBundle)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setTasksPerBundle(taskPerBundle);
+    m_jobs[id]->setTasksPerBundle(taskPerBundle);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
@@ -182,7 +190,7 @@ void manager::JobManager::modifyPriority(int id, int priority)
 {
   {
     std::lock_guard<std::mutex> lock(m_jobsMutex);
-    m_jobs[id].setPriority(priority);
+    m_jobs[id]->setPriority(priority);
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);

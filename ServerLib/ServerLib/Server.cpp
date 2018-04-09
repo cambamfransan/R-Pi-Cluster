@@ -10,6 +10,7 @@
 #include <qprocess.h>
 #include <qthreadpool.h>
 #include <qtimer.h>
+#include <thread>
 
 Server::Server(std::string arg)
   : m_pSender(std::make_shared<TCPSenderServer>()),
@@ -252,12 +253,17 @@ void Server::receiveMessageWeb(std::string msg)
     int tpb(std::stoi(map["/taskPerBundle"]));
     std::string remote(map["/remote"]);
     std::string name(map["/name"]);
-    int jobId = m_serverManager.addJob(100, // Need to switch this and next line
-                                    pri,
-                                    tpb,
-                                    remote);
+
+    int jobId = m_serverManager.getNextJobId();
     sendToWeb(json::makeJsonAddJobAck(convId, jobId, remote, name, pri, tpb), convId, std::chrono::seconds(3), false);
     Logger::info("Sent new Job Ack!");
+    std::thread thr([this, pri, tpb, remote, jobId](){
+        m_serverManager.addJob(100, // Need to switch this and next line
+            pri,
+            tpb,
+            remote, jobId);
+        });
+    thr.detach();
   }
 }
 

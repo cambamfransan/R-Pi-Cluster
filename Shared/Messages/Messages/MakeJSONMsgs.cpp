@@ -12,7 +12,7 @@ namespace
   const std::string JOB_ID = "JobId";
   const std::string CONV_ID = "convId";
   const std::string REMOTE = "remote";
-  const std::string NAME = "Name";
+  const std::string NAME = "name";
   const std::string PRIORITY = "priority";
   const std::string TASK_PER_BUNDLE = "taskPerBundle";
 

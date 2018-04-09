@@ -17,6 +17,7 @@ namespace manager
     int id;
     int tasksPerBundle;
     std::string bldLocation;
+    std::string gitUrl;
     int status;
     int priority;
     std::string name;

@@ -36,6 +36,7 @@ struct TaskFile
   {
   public:
     TaskManager(int id, int size, std::string database, std::string tasksList = "");
+    TaskManager();
 
     void populateFields(std::string taskList);
 
