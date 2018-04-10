@@ -7,6 +7,7 @@ var localData = {};
 localData.loc = {};
 localData.loc.ipAddress = process.argv[3];
 localData.loc.port = process.argv[4];
+localData.lastHeartBeat = new Date().getTime();
 
 appMain.get('/', function(req, res) {
     res.sendFile(__dirname + '/gui/index.html');
@@ -37,7 +38,7 @@ client.on('data', function(data) {
         var temp = JSON.parse(msg.toString());
         switch (temp.MsgType) {
             case "Heartbeat":
-                console.log("Recieved Heartbeat");
+                localData.lastHeartBeat = new Date().getTime();
                 client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}) + '~');
                 break;
             case 'AddJobAck':
@@ -85,3 +86,13 @@ ioMain.sockets.on('connection', function(socket) {
         console.log('disconnnected');
     });
 });
+
+var checkRefresh = function() {
+  if(localData.lastHeartBeat + 3000 < new Date()){
+    console.log('lost to the server, shutting down');
+    process.exit(0);
+  }
+}
+
+setInterval(checkRefresh, 1000);
+
