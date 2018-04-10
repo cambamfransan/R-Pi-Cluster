@@ -5,6 +5,9 @@
 // ------------------------------------------------------------------
 var System = {};
 System.socket = io();
+System.socket.on('disconnect', function(){
+  window.alert("Lost connection to the server");
+});
 
 var Menu = { screens : {} };
 var idle = {
