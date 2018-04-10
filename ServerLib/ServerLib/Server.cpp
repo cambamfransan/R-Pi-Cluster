@@ -58,7 +58,9 @@ Server::Server(std::string arg)
   QString program = "node";
   QStringList arguments;
   arguments << "../../R-Pi-Cluster/Web/main.js"
-            << QString::number(m_pWebSender->getServerPort());
+            << QString::number(m_pWebSender->getServerPort())
+            << QString::fromStdString(m_pSender->getServerIpAddress())
+            << QString::number(m_pSender->getServerPort());
 
   QProcess* myProcess = new QProcess(this);
   myProcess->startDetached(program, arguments);
