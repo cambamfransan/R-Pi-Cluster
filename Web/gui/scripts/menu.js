@@ -57,15 +57,6 @@ var unitsBody = unitsTable.getElementsByTagName('tbody')[0];
 var jobsSearch = null;
 var unitsSearch = null;
 
-var serverID;
-function saveListener(e) {
-	if (e.which === 13) // ENTER key
-		document.getElementById('server-IP-text').click();
-	else if (e.target.id != serverID)
-		document.getElementById('server-IP-text').click();
-	serverID = 'server-IP-value';
-}
-
 function addListener(e) {
 	if (e.which === 13) { // ENTER key
 		if (menuSystem.jobs)
@@ -192,41 +183,11 @@ Menu.system = (function(screens) {
 				}
 			}
 		});
-		var serverIPaddress;
-		var serverIPSave = false;
-		document.getElementById('server-IP-text').addEventListener('click', function() { 
-			if (!serverIPSave) {
-				if (document.getElementById('server-IP-text').innerText == 'IP:PORT MISSING!')
-					document.getElementById('server-IP-text').innerText = '###.###.###.###:####';
-				document.addEventListener('keydown', saveListener);
-				document.addEventListener('click', saveListener);
-				serverIPSave = true;
-				serverIPaddress = document.getElementById('server-IP-text').innerText;
-				document.getElementById('server-IP-text').style.display = 'none';
-				document.getElementById('server-IP-value').style.display = 'initial';
-				document.getElementById('server-IP-value').value = serverIPaddress;
-				document.getElementById('server-IP-value').focus();
-				document.getElementById('server-IP-icon').style.verticalAlign = 'middle';
-				serverID = 'server-IP-text';
-			}
-			else {
-				document.removeEventListener('keydown', saveListener);
-				document.removeEventListener('click', saveListener);
-				serverIPSave = false;
-				serverIPaddress = document.getElementById('server-IP-value').value;
-				document.getElementById('server-IP-text').style.display = 'initial';
-				document.getElementById('server-IP-value').style.display = 'none';
-				document.getElementById('server-IP-text').innerText = serverIPaddress;
-				document.getElementById('server-IP-icon').style.verticalAlign = 'bottom';
-			}
-		});
-		document.getElementById('server-IP-value').addEventListener('input', function () {
-			if (!document.getElementById('server-IP-value').validity.valid) {
-				var value = document.getElementById('server-IP-value').value;
-				value = value.slice(0,-1);
-				document.getElementById('server-IP-value').value = value;
-			}
-		});
+    document.getElementById('server-IP-text').innerText = 'IP:PORT MISSING!';
+    System.socket.on('RequestIpAck', function(data) {
+      document.getElementById('server-IP-text').innerText = data.ipAddress + ":" + data.port;
+    });
+    System.socket.emit('systemData', {MsgType: 'RequestIp'});
 		document.getElementById('search-text').addEventListener('input', function () {
 			// Search table for specified text.
 			if (!menuSystem.help) {
@@ -847,3 +808,4 @@ Menu.screens['help-screen'] = (function(system) {
 		run : run
 	};
 }(Menu.system));
+

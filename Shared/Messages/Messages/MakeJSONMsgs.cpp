@@ -43,3 +43,4 @@ std::string json::makeJsonAddJobAck(int convId, int jobId, std::string remote, s
   std::string msg(json::jsonToString(d));
   return msg;
 }
+

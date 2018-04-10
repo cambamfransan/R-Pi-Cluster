@@ -3,6 +3,10 @@ var appMain = express();
 var serverMain = require('http').Server(appMain);
 var fs = require('fs');
 var mySockets = [];
+var localData = {};
+localData.loc = {};
+localData.loc.ipAddress = process.argv[3];
+localData.loc.port = process.argv[4];
 
 appMain.get('/', function(req, res) {
     res.sendFile(__dirname + '/gui/index.html');
@@ -16,8 +20,8 @@ var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
     console.log('Connected');
     client.write(JSON.stringify({
-        convId: '0',
-        msg: 'Hello, server! Love, Client.'
+      convId: '0',
+      msg: 'Hello, server! Love, Client.'
     }));
 });
 
@@ -62,7 +66,6 @@ serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); 
 var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
     mySockets.push(socket);
-    console.log('connected');
     socket.on('systemData', function(data) {
         switch(data.MsgType) {
             case 'AddJob':
@@ -70,6 +73,11 @@ ioMain.sockets.on('connection', function(socket) {
                 client.write(JSON.stringify(data) + '~');
                 console.log("Adding Job");
                 break;
+            case 'RequestIp':
+                socket.emit('RequestIpAck', localData.loc);
+                break;
+          default:
+            console.log('cannot handle msgtype: ' + data.MsgType);
         }
     });
     socket.on('disconnect', function(){
