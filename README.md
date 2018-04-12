@@ -34,7 +34,7 @@ Navigate to ./_bld/bin.
 Run "./Server \<database\> &" where <database> is where all of the server’s database files will be stored. This should have at least 32 GBs of storage. If many jobs will be ran, additional storage may be required.
 Exit out of tmux by typing "tmux detach". 
 
-To add a client: \n
+To add a client: /n
 To start a Client, follow the above instructions on another Raspberry Pi, except instead of running "./Server \<database\>",
 run "./Client \<server IP\> \<server Port\> \<database\>", where \<server IP\> is the ip address of the server, and \<server Port\> 
 is the port the server is running on. \<database\> is where all the files will be stored on the client.
