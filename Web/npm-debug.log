@@ -1,0 +1,28 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'express',
+1 verbose cli   '--save' ]
+2 info using npm@1.4.21
+3 info using node@v4.8.2
+4 error Error: Invalid name: "RPi Cluster"
+4 error     at ensureValidName (/usr/lib/nodejs/normalize-package-data/lib/fixer.js:336:15)
+4 error     at Object.module.exports.fixNameField (/usr/lib/nodejs/normalize-package-data/lib/fixer.js:215:5)
+4 error     at /usr/lib/nodejs/normalize-package-data/lib/normalize.js:32:38
+4 error     at Array.forEach (native)
+4 error     at normalize (/usr/lib/nodejs/normalize-package-data/lib/normalize.js:31:15)
+4 error     at final (/usr/lib/nodejs/read-package-json/read-json.js:342:33)
+4 error     at then (/usr/lib/nodejs/read-package-json/read-json.js:126:33)
+4 error     at /usr/lib/nodejs/read-package-json/read-json.js:266:40
+4 error     at /usr/lib/nodejs/graceful-fs/graceful-fs.js:78:16
+4 error     at FSReqWrap.readFileAfterClose [as oncomplete] (fs.js:380:3)
+5 error If you need help, you may report this *entire* log,
+5 error including the npm and node versions, at:
+5 error     <http://github.com/npm/npm/issues>
+6 error System Linux 4.9.59-v7+
+7 error command "/usr/bin/nodejs" "/usr/bin/npm" "install" "express" "--save"
+8 error cwd /home/pi/dev/R-Pi-Cluster/R-Pi-Cluster/Web
+9 error node -v v4.8.2
+10 error npm -v 1.4.21
+11 verbose exit [ 1, true ]

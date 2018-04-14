@@ -44,7 +44,7 @@ manager::Job::Job(int id,
   system(std::string(cloneScript + " " + m_database + " " + m_gitUrl + " " + m_name).c_str());
   m_taskManager.populateFields(m_database + "/" + m_name + "/TasksList.txt");
   std::ifstream fin(m_database + "/" + m_name + "/Exec.txt");
-  std::getline(fin, m_toExec);
+  std::getline(fin, m_execName);
   m_resultManager = manager::ResultsManager(id, m_database);
 }
 
@@ -84,7 +84,7 @@ std::string manager::Job::getName()
 
 std::string manager::Job::getExec()
 {
-  return m_toExec;
+  return m_execName;
 }
 
 int manager::Job::getPriority()

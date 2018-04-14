@@ -77,6 +77,13 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   case msg::ProtoType::UPDATE:
     recieveUpdate(pMsg, convId);
     break;
+  case msg::ProtoType::TASK_MSG:
+    std::vector<manager::Task> tasks;
+    auto pTasks = pMsg->task().task();
+    for(const auto& pT : pTasks)
+      tasks.emplace_back(pT.jobid(), pT.pagenumber(), pT.id(), pT.toexecute());
+    m_clientManager.execute(tasks);
+    break;
   }
 }
 

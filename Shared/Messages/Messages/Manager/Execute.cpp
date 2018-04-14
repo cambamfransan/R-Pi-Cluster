@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <iostream>
 
 namespace
 {
@@ -52,8 +53,9 @@ manager::Execute::~Execute()
 
 void manager::Execute::run()
 {
+  std::cout << "loc: " << m_jobInfo.bldLocation << "exec: " << m_task.toExecute << std::endl;
   // TODO: cfrandsen mutex
-  auto result = exec(std::string(m_jobInfo.bldLocation + m_task.toExecute).c_str());
+  auto result = exec(std::string(m_jobInfo.bldLocation + m_jobInfo.execName + " " + m_task.toExecute).c_str());
   std::lock_guard<std::mutex> lock(*m_pMutex);
   m_pResults->emplace_back(m_task, result);
 }

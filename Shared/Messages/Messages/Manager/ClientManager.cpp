@@ -85,7 +85,7 @@ void manager::ClientManager::update(const msg::Update pMsg)
   }
 }
 
-void manager::ClientManager::execute(msg::TaskMsg* pMsg)
+void manager::ClientManager::execute(std::vector<manager::Task> tasks)
 {
-  m_executeManager.addTasks(pMsg);
+  m_executeManager.addTasks(tasks);
 }

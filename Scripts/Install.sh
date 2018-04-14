@@ -19,6 +19,7 @@ sudo apt-get install npm -y
 git clone https://github.com/Tencent/rapidjson.git
 sudo cp rapidjson/include/rapidjson /usr/include/ -r
 cd ./R-Pi-Cluster/Web && sudo npm install express --save
+npm install socket.io --save
 cd ./../../_bld && cmake ../R-Pi-Cluster
 make -j3 install
 #export DISPLAY=:0.0

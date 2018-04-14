@@ -19,7 +19,7 @@ namespace manager
 
     void update(const msg::Update pMsg);
 
-    void execute(msg::TaskMsg* pMsg);
+    void execute(std::vector<manager::Task> tasks);
 
   private:
     std::shared_ptr<TCPSenderClient> m_pSenderClient;

@@ -37,7 +37,6 @@ namespace manager
     STOP = 3
   };
 
-
   class Job
   {
   public:
@@ -69,7 +68,7 @@ namespace manager
     manager::TaskManager m_taskManager;
     manager::ResultsManager m_resultManager;
     std::string m_name;
-    std::string m_toExec;
+    std::string m_execName;
     Status m_status;
 
   };
