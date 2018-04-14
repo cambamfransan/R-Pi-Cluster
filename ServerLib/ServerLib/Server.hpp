@@ -43,6 +43,8 @@ private slots:
   void lostConnectionWeb();
   void sendTimedMsgs();
 
+  void sendTasksToSend(std::vector<manager::Task>, int);
+
 private:
   std::shared_ptr<TCPSenderServer> m_pSender;
   std::shared_ptr<TCPSenderWeb> m_pWebSender;
@@ -51,7 +53,7 @@ private:
 //  std::mutex m_clientInfosMutex;
   //std::map<int,manager::Pi> m_clientInfos;
   int m_myId;
-  manager::ServerManager m_serverManager;
+  std::shared_ptr<manager::ServerManager> m_pServerManager;
   bool connectedToWeb;
   
 #if (TESTING_GUIS == 1)

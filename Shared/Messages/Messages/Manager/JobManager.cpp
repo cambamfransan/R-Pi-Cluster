@@ -48,8 +48,9 @@ int manager::JobManager::addJob(int size,
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    manager::JobInfo info{pNewJob->getJobId(), pNewJob->getTasksPerBundle(), pNewJob->getUrl(),
+    manager::JobInfo info{pNewJob->getJobId(), pNewJob->getTasksPerBundle(),
       pNewJob->getExec(),
+      pNewJob->getUrl(),
      static_cast<int>(pNewJob->getStatus()), pNewJob->getPriority(), pNewJob->getName()};
     m_newJobs.push_back(info);
   }
@@ -97,6 +98,7 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
 
     auto nextBatch =
       m_jobs[m_curJob]->getTasks(std::min(amount, priority - m_curJobDone));
+    toReturn.insert(toReturn.end(), nextBatch.begin(), nextBatch.end());
     m_curJobDone += nextBatch.size();
   }
 
