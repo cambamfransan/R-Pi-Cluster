@@ -68,7 +68,7 @@ namespace manager
     manager::TaskManager m_taskManager;
     manager::ResultsManager m_resultManager;
     std::string m_name;
-    std::string m_execName;
+    std::string m_toExec;
     Status m_status;
 
   };

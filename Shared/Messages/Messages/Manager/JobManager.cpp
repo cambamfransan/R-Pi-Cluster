@@ -52,6 +52,7 @@ int manager::JobManager::addJob(int size,
       pNewJob->getExec(),
       pNewJob->getUrl(),
      static_cast<int>(pNewJob->getStatus()), pNewJob->getPriority(), pNewJob->getName()};
+    m_newJobs.push_back(info);
   }
   
   return jobId;

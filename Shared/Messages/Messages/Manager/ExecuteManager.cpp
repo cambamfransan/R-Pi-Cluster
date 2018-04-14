@@ -35,8 +35,7 @@ void manager::ExecuteManager::addJob(manager::Job job)
             job.getUrl(),
             static_cast<int>(job.getStatus()),
             job.getPriority(),
-            job.getName(),
-            job.getExecName()};
+            job.getName()};
   Logger::info("Job added: " + std::to_string(job.getJobId()));
   if(m_waitingJobs.find(job.getJobId()) != m_waitingJobs.end())
   {
