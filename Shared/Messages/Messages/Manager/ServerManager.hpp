@@ -9,6 +9,8 @@
 #include <string>
 #include <QObject>
 
+Q_DECLARE_METATYPE(std::vector<manager::Task>) // todo see if this is needed
+
 namespace manager
 {
   class ServerManager : public QObject
@@ -25,6 +27,8 @@ namespace manager
 
   signals:
     void tasksToSend(std::vector<manager::Task>, int);
+
+  public:
 
     void addResults(msg::MsgToSend* pMsg);
 

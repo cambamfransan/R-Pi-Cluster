@@ -77,6 +77,8 @@ Server::Server(std::string arg)
           &TCPSenderWeb::lostConnection,
           this,
           &Server::lostConnectionWeb);
+
+  qRegisterMetaType<std::vector<manager::Task>>("std::vector<manager::Task>");
   // connect ServerManager
   connect(m_pServerManager.get(), &manager::ServerManager::tasksToSend, this, &Server::sendTasksToSend);
 
