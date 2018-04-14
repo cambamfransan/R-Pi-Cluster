@@ -7,11 +7,16 @@
 #include "TCPSender/TCPSenderServer.hpp"
 #include "TCPSender/TCPSenderWeb.hpp"
 #include <string>
+#include <QObject>
+
+Q_DECLARE_METATYPE(std::vector<manager::Task>) // todo see if this is needed
 
 namespace manager
 {
-  class ServerManager
+  class ServerManager : public QObject
   {
+  Q_OBJECT
+
   public:
     ServerManager(int id,
                   std::shared_ptr<TCPSenderServer> pServerSender,
@@ -19,6 +24,11 @@ namespace manager
                   std::string database);
 
     ~ServerManager();
+
+  signals:
+    void tasksToSend(std::vector<manager::Task>, int);
+
+  public:
 
     void addResults(msg::MsgToSend* pMsg);
 

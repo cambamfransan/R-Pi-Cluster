@@ -1,5 +1,6 @@
 #include "PiServerManager.hpp"
 #include "Logger/Logger.hpp"
+#include <iostream>
 
 manager::PiServerManager::PiServerManager()
   : m_lastPriority(1),
@@ -67,8 +68,10 @@ int manager::PiServerManager::getAmountToSend(int id)
 int manager::PiServerManager::waitingPis()
 {
   std::lock_guard<std::mutex> lock(m_pisMutex);
+  std::cout << "Pi Size: " << m_pis.size() << std::endl;
   for (auto&& pi : m_pis)
   {
+    std::cout << "Tasks Size: " << pi.second.getTasks().size() << std::endl;
     if (pi.second.getTasks().empty())
     {
       return pi.first;

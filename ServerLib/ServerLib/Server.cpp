@@ -22,7 +22,7 @@ Server::Server(std::string arg)
     // m_clientInfosMutex(),
     // m_clientInfos(),
     m_myId(1),
-    m_serverManager(m_myId, m_pSender, m_pWebSender, arg),
+    m_pServerManager(std::make_shared<manager::ServerManager>(m_myId, m_pSender, m_pWebSender, arg)),
     connectedToWeb(false),
 #if (TESTING_GUIS == 1)
     m_window(new MainWindow()),
@@ -77,6 +77,11 @@ Server::Server(std::string arg)
           &TCPSenderWeb::lostConnection,
           this,
           &Server::lostConnectionWeb);
+
+  qRegisterMetaType<std::vector<manager::Task>>("std::vector<manager::Task>");
+  // connect ServerManager
+  connect(m_pServerManager.get(), &manager::ServerManager::tasksToSend, this, &Server::sendTasksToSend);
+
   // connect Timer
   connect(m_pTimer, &QTimer::timeout, this, &Server::sendTimedMsgs);
   m_pTimer->start(1000);
@@ -130,7 +135,7 @@ void Server::newConnection(int id)
 #endif
 
   // m_nextPriority++;
-  m_serverManager.addPi(
+  m_pServerManager->addPi(
     id, t->peerAddress().toString().toStdString(), t->peerPort());
 }
 
@@ -187,7 +192,7 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
 #if (TESTING_GUIS == 1)
   m_window->receivedMsg(pMsg->DebugString(), ip, port);
 #endif
-  m_serverManager.updateAck(pMsg->basicmsg().fromid());
+  m_pServerManager->updateAck(pMsg->basicmsg().fromid());
   switch (pMsg->basicmsg().msgtype())
   {
   case msg::ProtoType::UPDATE_ACK:
@@ -202,7 +207,7 @@ void Server::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     Logger::info("Tasks received");
     break;
   case msg::ProtoType::RESULTS:
-    m_serverManager.addResults(pMsg);
+    m_pServerManager->addResults(pMsg);
     Logger::info("Results added");
     break;
   default:
@@ -256,11 +261,11 @@ void Server::receiveMessageWeb(std::string msg)
     std::string remote(map["/remote"]);
     std::string name(map["/name"]);
 
-    int jobId = m_serverManager.getNextJobId();
+    int jobId = m_pServerManager->getNextJobId();
     sendToWeb(json::makeJsonAddJobAck(convId, jobId, remote, name, pri, tpb), convId, std::chrono::seconds(3), false);
     Logger::info("Sent new Job Ack!");
     std::thread thr([this, pri, tpb, remote, jobId](){
-        m_serverManager.addJob(100, // Need to switch this and next line
+        m_pServerManager->addJob(100, 
             pri,
             tpb,
             remote, jobId);
@@ -274,7 +279,7 @@ void Server::lostConnection(int id)
   // std::lock_guard<std::mutex> lock(m_outMessagesMutex);
   // if (auto itr = m_outMessages.find(id) != m_outMessages.end())
   //   m_outMessages.erase(itr);
-  m_serverManager.removePi(id);
+  m_pServerManager->removePi(id);
   Logger::info("erased successfully client with Id" + std::to_string(id));
 }
 
@@ -291,10 +296,10 @@ void Server::sendTimedMsgs()
   // if (times == 3)
   //{
   // std::cout << "Timed" << std::endl;
-  m_serverManager.sendUpdates();
+  m_pServerManager->sendUpdates();
   //}
 
-  m_serverManager.removeUnresponsive();
+  m_pServerManager->removeUnresponsive();
 
   // Resend Msgs
   /*  {
@@ -356,3 +361,10 @@ void Server::sendTimedMsgs()
   //  times++;
   // std::cout << "Done Timed" << std::endl;
 }
+
+void Server::sendTasksToSend(std::vector<manager::Task> tasks, int id)
+{
+  auto convId = m_pSender->getNextConvId();
+  send(make_msgs::makeTaskMsg(m_myId, id, convId, tasks), convId, std::chrono::seconds(3), false, id);
+}
+
