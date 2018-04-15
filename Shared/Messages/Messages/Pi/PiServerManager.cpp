@@ -17,15 +17,15 @@ manager::PiServerManager::~PiServerManager() {}
 
 void manager::PiServerManager::addPi(int id, std::string ip, int port)
 {
-  manager::Pi pi(ip, port, "", "", m_lastPriority++, id);
+  auto pPi = std::make_shared<manager::Pi>(ip, port, "", "", m_lastPriority++, id);
   {
     std::lock_guard<std::mutex> lock(m_pisMutex);
     Logger::info("Adding Pi: " + std::to_string(id));
-    m_pis[id] = pi;
+    m_pis[id] = pPi;
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_newPis.push_back(pi);
+    m_newPis.push_back(pPi);
   }
 }
 
@@ -38,11 +38,11 @@ void manager::PiServerManager::removePi(int id)
     std::lock_guard<std::mutex> lock(m_pisMutex);
     for (auto&& pi : m_pis)
     {
-      if (pi.second.getPriority() > m_pis[id].getPriority())
+      if (pi.second->getPriority() > m_pis[id]->getPriority())
       {
-        pi.second.decrementPriority();
+        pi.second->decrementPriority();
         m_modifiedPis.push_back(
-          manager::ModifiedPi{ pi.first, PI_PRIORITY, std::to_string(pi.second.getPriority()) });
+          manager::ModifiedPi{ pi.first, PI_PRIORITY, std::to_string(pi.second->getPriority()) });
       }
     }
     m_pis.erase(id);
@@ -56,13 +56,17 @@ void manager::PiServerManager::changePiTasks(
   std::vector<manager::Task> tasks)
 {
   std::lock_guard<std::mutex> lock(m_pisMutex);
-  m_pis[id].replaceTasks(completed, tasks);
+  for(auto pi : m_pis)
+  {
+    std::cout << pi.first << ":" << pi.second->getTasks().size();
+  }
+  m_pis[id]->replaceTasks(completed, tasks);
 }
 
 int manager::PiServerManager::getAmountToSend(int id)
 {
   std::lock_guard<std::mutex> lock(m_pisMutex);
-  return m_pis[id].getAmountToSend();
+  return m_pis[id]->getAmountToSend();
 }
 
 int manager::PiServerManager::waitingPis()
@@ -71,8 +75,8 @@ int manager::PiServerManager::waitingPis()
   std::cout << "Pi Size: " << m_pis.size() << std::endl;
   for (auto&& pi : m_pis)
   {
-    std::cout << "Tasks Size: " << pi.second.getTasks().size() << std::endl;
-    if (pi.second.getTasks().empty())
+    std::cout << "Tasks Size: " << pi.second->getTasks().size() << std::endl;
+    if (pi.second->getTasks().empty())
     {
       return pi.first;
     }
@@ -83,7 +87,7 @@ int manager::PiServerManager::waitingPis()
 void manager::PiServerManager::updateAck(int id)
 {
   std::lock_guard<std::mutex> lock(m_pisMutex);
-  m_pis[id].updateAck();
+  m_pis[id]->updateAck();
 }
 
 void manager::PiServerManager::removeUnresponsive()
@@ -93,7 +97,7 @@ void manager::PiServerManager::removeUnresponsive()
     std::lock_guard<std::mutex> lock(m_pisMutex);
     for (const auto& pi : m_pis)
     {
-      if (pi.second.getlastCom() + std::chrono::seconds(5) <
+      if (pi.second->getlastCom() + std::chrono::seconds(5) <
           std::chrono::steady_clock::now())
       {
         toDelete.push_back(pi.first);
@@ -129,7 +133,7 @@ std::vector<int> manager::PiServerManager::getClientIds()
 
 void manager::PiServerManager::modifyPriority(int id, int priority)
 {
-  m_pis[id].changePriority(priority);
+  m_pis[id]->changePriority(priority);
   std::lock_guard<std::mutex> lock(m_updateMutex);
   m_modifiedPis.push_back(
     manager::ModifiedPi{id, PI_PRIORITY, std::to_string(priority)});
@@ -137,7 +141,7 @@ void manager::PiServerManager::modifyPriority(int id, int priority)
 
 void manager::PiServerManager::modifyThreads(int id, int threads)
 {
-  m_pis[id].changeThreads(threads);
+  m_pis[id]->changeThreads(threads);
   std::lock_guard<std::mutex> lock(m_updateMutex);
   m_modifiedPis.push_back(
     manager::ModifiedPi{id, PI_THREADS, std::to_string(threads)});

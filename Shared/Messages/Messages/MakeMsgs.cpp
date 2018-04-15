@@ -24,7 +24,7 @@ msg::MsgToSend* make_msgs::makeTaskMsg(int fromId,
     msg::Task* pTask = pToReturn->mutable_task()->add_task();
     pTask->set_jobid(t.jobId);
     pTask->set_pagenumber(t.pageNumber);
-    pTask->set_jobid(t.taskId);
+    pTask->set_id(t.taskId);
     pTask->set_toexecute(t.toExecute);
   }
   pToReturn->set_allocated_basicmsg(
@@ -72,12 +72,12 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
   for (auto&& c : pis.newPis)
   {
     auto pClient = pToReturn->mutable_update()->add_newclients();
-    pClient->set_ipaddress(c.getIpAddress());
-    pClient->set_port(c.getPort());
-    pClient->set_username(c.getUsername());
-    pClient->set_password(c.getPassword());
-    pClient->set_priority(c.getPriority());
-    pClient->set_clientid(c.getClientId());
+    pClient->set_ipaddress(c->getIpAddress());
+    pClient->set_port(c->getPort());
+    pClient->set_username(c->getUsername());
+    pClient->set_password(c->getPassword());
+    pClient->set_priority(c->getPriority());
+    pClient->set_clientid(c->getClientId());
   }
 
   for (auto&& c : pis.lostPis)
