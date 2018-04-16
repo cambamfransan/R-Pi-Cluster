@@ -29,7 +29,7 @@ client.connect(process.argv[2], '127.0.0.1', function() {
 client.on('data', function(data) {
     var msgs = data.toString();
     var msg;
-//    console.log("received data" + mySockets.length);
+    console.log("received data" + mySockets.length);
     while (msgs) {
         var index = msgs.indexOf("~");
         if(index == -1)index = msgs.length;

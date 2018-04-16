@@ -80,19 +80,22 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
   {
     if (m_jobs.empty()) return toReturn;
     int priority(m_jobs[m_curJob]->getPriority());
-    if (m_curJobDone > priority)
+    if (m_curJobDone >= priority)
     {
-      if (m_jobs.empty()) return toReturn;
+      Logger::info("getting new job");
       // find next job
+      if (m_jobs.empty()) return toReturn;
       m_curJobDone = 0;
       auto itrCurJob = ++m_jobs.find(m_curJob);
       if (itrCurJob == m_jobs.end())
       {
         m_curJob = m_jobs.begin()->first;
+        Logger::info("m_curJob: " + std::to_string(m_curJob));
       }
       else
       {
         m_curJob = itrCurJob->first;
+        Logger::info("m_curJob1: " + std::to_string(m_curJob));
       }
     }
 

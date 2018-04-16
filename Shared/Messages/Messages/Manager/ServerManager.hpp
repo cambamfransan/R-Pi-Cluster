@@ -51,8 +51,8 @@ namespace manager
   private:
 
     int m_myId;
-    std::shared_ptr<manager::JobManager> m_pJobManager;
-    std::shared_ptr<manager::PiServerManager> m_pPiManager;
+    manager::JobManager m_jobManager;
+    manager::PiServerManager m_piManager;
     std::shared_ptr<TCPSenderServer> m_pServerSender;
     std::shared_ptr<TCPSenderWeb> m_pWebSender;
   };

@@ -56,14 +56,9 @@ void manager::Pi::replaceTasks(std::vector<manager::Task> completed,
                                std::vector<manager::Task> tasks)
 {
   std::vector<int> toDelete;
-  std::cout << "Trying to delete" << std::endl;
-  if(m_tasks.empty()) std::cout << "empty m_tasks" << std::endl;
-  if(completed.empty()) std::cout << "empty completed" << std::endl;
-  if(tasks.empty()) std::cout << "empty tasks" << std::endl;
   for (auto&& comp : completed)
   {
     m_tasks.erase(std::find(m_tasks.begin(), m_tasks.end(), comp));
-    std::cout << "deleted one" << std::endl;
   }
   m_tasks.insert(std::end(m_tasks), std::begin(tasks), std::end(tasks));
   std::cout << "m_tasks size: " << m_tasks.size() << std::endl;

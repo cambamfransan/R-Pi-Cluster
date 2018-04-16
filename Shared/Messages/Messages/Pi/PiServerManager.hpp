@@ -12,7 +12,7 @@ namespace manager
 {
   struct PiUpdateStruct
   {
-    std::vector<std::shared_ptr<Pi>> newPis;
+    std::vector<Pi> newPis;
     std::vector<int> lostPis;
     std::vector<ModifiedPi> modifiedPis;
   };
@@ -45,9 +45,9 @@ namespace manager
     int m_lastPriority;
     
     std::mutex m_pisMutex;
-    std::map<int, std::shared_ptr<manager::Pi>> m_pis;
+    std::map<int, manager::Pi> m_pis;
     std::mutex m_updateMutex;
-    std::vector<std::shared_ptr<Pi>> m_newPis;
+    std::vector<Pi> m_newPis;
     std::vector<int> m_lostPis;
     std::vector<ModifiedPi> m_modifiedPis;
   };

@@ -9,8 +9,8 @@ manager::ServerManager::ServerManager(
   std::shared_ptr<TCPSenderWeb> pWebSender,
   std::string database)
   : m_myId(id),
-    m_pJobManager(std::make_shared<manager::JobManager>(database)),
-    m_pPiManager(std::make_shared<manager::PiServerManager>()),
+    m_jobManager(database),
+    m_piManager(),
     m_pServerSender(pServerSender),
     m_pWebSender(pWebSender)
 {
@@ -27,11 +27,8 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
   for (auto&& result : results)
   {
     int job(result.task().jobid());
-    std::cout << "job" << job << std::endl;
     int page(result.task().pagenumber());
-    std::cout << "page" << page << std::endl;
     int id(result.task().id());
-    std::cout << "id" << id << std::endl;
     std::string execute(result.task().toexecute());
     manager::Task task(job, page, id, execute);
     toSave[job].emplace_back(task, result.result());
@@ -41,22 +38,20 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
 
   for (auto&& job : toSave)
   {
-    std::cout << "jobasdf" << std::endl;
-    m_pJobManager->addJobResults(job.first, job.second);
+    m_jobManager.addJobResults(job.first, job.second);
   }
 
   // find how many jobs to get
-    std::cout << "jobasdfasdf" << std::endl;
   int clientId(pMsg->basicmsg().fromid());
-    std::cout << "jobasd" << clientId << std::endl;
-  m_pPiManager->changePiTasks(clientId, tasksCompleted, {}); // this causes a seg fault
-  int tasksToGet(m_pPiManager->getAmountToSend(clientId));
+  m_piManager.changePiTasks(clientId, tasksCompleted, {});
+  int tasksToGet(m_piManager.getAmountToSend(clientId));
+  Logger::info("getting tasks: " + std::to_string(tasksToGet));
 
-  auto toSend = m_pJobManager->getTasks(tasksToGet);
-  std::cout << "Get Tasks" << std::endl;
+  auto toSend = m_jobManager.getTasks(tasksToGet);
+  std::cout << "Get Tasks: " << toSend.size() << std::endl;
   if (toSend.empty()) return;
   std::cout << "Get Tasks done" << std::endl;
-  m_pPiManager->changePiTasks(clientId, {}, toSend);
+  m_piManager.changePiTasks(clientId, {}, toSend);
   int nextConvId(m_pServerSender->getNextConvId());
   m_pServerSender->send(
     make_msgs::makeTaskMsg(m_myId, clientId, nextConvId, toSend), clientId);
@@ -65,17 +60,17 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
 void manager::ServerManager::addPi(int id, std::string ip, int port)
 {
   // Add pi and send tasks to it
-  m_pPiManager->addPi(id, ip, port);
+  m_piManager.addPi(id, ip, port);
   Logger::info("Pi added: " + std::to_string(id));
 
   int nextConvId(m_pServerSender->getNextConvId());
   m_pServerSender->send(make_msgs::makeIdMsg(m_myId, id, nextConvId), id);
 
-  auto tasks = m_pJobManager->getTasks(m_pPiManager->getAmountToSend(id));
+  auto tasks = m_jobManager.getTasks(m_piManager.getAmountToSend(id));
 
   if (tasks.empty()) return;
   Logger::info("sending Tasks");
-  m_pPiManager->changePiTasks(id, {}, tasks);
+  m_piManager.changePiTasks(id, {}, tasks);
 
   nextConvId = m_pServerSender->getNextConvId();
   m_pServerSender->send(
@@ -85,7 +80,7 @@ void manager::ServerManager::addPi(int id, std::string ip, int port)
 
 int manager::ServerManager::getNextJobId()
 {
-  return m_pJobManager->getNextId();
+  return m_jobManager.getNextId();
 }
 
 int manager::ServerManager::addJob(int size,
@@ -95,15 +90,15 @@ int manager::ServerManager::addJob(int size,
                                     int jobId)
 {
   // If active pis, send tasks to it
-  m_pJobManager->addJob(size, pri, taskpb, gitUrl, jobId);
+  m_jobManager.addJob(size, pri, taskpb, gitUrl, jobId);
 
   int id;
-  while ((id = m_pPiManager->waitingPis()) != -1)
+  while ((id = m_piManager.waitingPis()) != -1)
   {
     Logger::info("Id == " + std::to_string(id));
-    auto toSend = m_pJobManager->getTasks(m_pPiManager->getAmountToSend(id));
+    auto toSend = m_jobManager.getTasks(m_piManager.getAmountToSend(id));
     Logger::info("Size: " + std::to_string(toSend.size()));
-    m_pPiManager->changePiTasks(id, {}, toSend);
+    m_piManager.changePiTasks(id, {}, toSend);
     //int convId = m_pServerSender->getNextConvId();
     emit tasksToSend(toSend, id);
     //m_pServerSender->send(
@@ -115,9 +110,9 @@ int manager::ServerManager::addJob(int size,
 
 void manager::ServerManager::sendUpdates()
 {
-  std::vector<int> pis = m_pPiManager->getClientIds();
-  auto piUpdate = m_pPiManager->getUpdates();
-  auto jobUpdate = m_pJobManager->getUpdates();
+  std::vector<int> pis = m_piManager.getClientIds();
+  auto piUpdate = m_piManager.getUpdates();
+  auto jobUpdate = m_jobManager.getUpdates();
 
   auto pMsg = make_msgs::makeUpdateMsg(
     m_myId, 0, 0, piUpdate, jobUpdate);
@@ -132,15 +127,16 @@ void manager::ServerManager::sendUpdates()
 
 void manager::ServerManager::updateAck(int id)
 {
-  m_pPiManager->updateAck(id);
+  m_piManager.updateAck(id);
 }
 
 void manager::ServerManager::removePi(int id)
 {
-  m_pPiManager->removePi(id);
+  m_piManager.removePi(id);
 }
 
 void manager::ServerManager::removeUnresponsive()
 {
-  m_pPiManager->removeUnresponsive();
+  m_piManager.removeUnresponsive();
 }
+

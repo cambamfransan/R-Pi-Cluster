@@ -29,7 +29,6 @@ msg::MsgToSend* make_msgs::makeTaskMsg(int fromId,
   }
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::TASK_MSG, convId));
-  std::cout << "asdfjkl;" << pToReturn->DebugString() << std::endl;
   return pToReturn;
 }
 
@@ -72,12 +71,12 @@ msg::MsgToSend* make_msgs::makeUpdateMsg(
   for (auto&& c : pis.newPis)
   {
     auto pClient = pToReturn->mutable_update()->add_newclients();
-    pClient->set_ipaddress(c->getIpAddress());
-    pClient->set_port(c->getPort());
-    pClient->set_username(c->getUsername());
-    pClient->set_password(c->getPassword());
-    pClient->set_priority(c->getPriority());
-    pClient->set_clientid(c->getClientId());
+    pClient->set_ipaddress(c.getIpAddress());
+    pClient->set_port(c.getPort());
+    pClient->set_username(c.getUsername());
+    pClient->set_password(c.getPassword());
+    pClient->set_priority(c.getPriority());
+    pClient->set_clientid(c.getClientId());
   }
 
   for (auto&& c : pis.lostPis)
