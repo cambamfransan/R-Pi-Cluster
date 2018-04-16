@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <iostream>
 
 namespace
 {
@@ -40,7 +41,7 @@ namespace
 manager::Execute::Execute(JobInfo job,
                           Task task,
                           std::shared_ptr<std::mutex> pMutex,
-                          std::shared_ptr<std::vector<Result>> pResults)
+                          std::shared_ptr<std::map<int, std::vector<Result>>> pResults)
   : QRunnable(), m_jobInfo(job), m_task(task), m_pMutex(pMutex), m_pResults(pResults)
 {
 }
@@ -52,8 +53,8 @@ manager::Execute::~Execute()
 
 void manager::Execute::run()
 {
-  // TODO: cfrandsen mutex
-  auto result = exec(std::string(m_jobInfo.bldLocation + m_task.toExecute).c_str());
+  auto result = exec(std::string(m_jobInfo.bldLocation + " " + m_task.toExecute).c_str());
   std::lock_guard<std::mutex> lock(*m_pMutex);
-  m_pResults->emplace_back(m_task, result);
+  (*m_pResults)[m_jobInfo.id].emplace_back(m_task, result);
+  emit endTask(m_jobInfo.id);
 }

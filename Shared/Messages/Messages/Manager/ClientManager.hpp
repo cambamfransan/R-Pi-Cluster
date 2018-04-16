@@ -7,24 +7,33 @@
 #include "TCPSender/TCPSenderClient.hpp"
 #include "TCPSender/TCPSenderWeb.hpp"
 #include <string>
+#include <QObject>
 
 namespace manager
 {
-  class ClientManager
+  class ClientManager : public QObject
   {
+    Q_OBJECT
+    private slots:
+    void sendResults(std::vector<Result>);
+
+signals:
+    void sendResultsToClientMain(std::vector<Result>);
+
   public:
-    ClientManager(std::shared_ptr<TCPSenderClient> pSenderClient,
+    ClientManager(
+        std::shared_ptr<TCPSenderClient> pSenderClient,
                   std::string database);
     ~ClientManager();
 
     void update(const msg::Update pMsg);
 
-    void execute(msg::TaskMsg* pMsg);
+    void execute(std::vector<manager::Task> tasks);
 
   private:
     std::shared_ptr<TCPSenderClient> m_pSenderClient;
     std::string m_database;
-    manager::ExecuteManager m_executeManager;
+    std::shared_ptr<manager::ExecuteManager> m_pExecuteManager;
     manager::PiClientManager m_piManager;
     manager::ClientResultsManager m_resultsManager;
   };

@@ -152,3 +152,26 @@ msg::MsgToSend* make_msgs::makeIdMsgAck(int fromId, int toId, int convId)
     makeBasicMsg(fromId, toId, msg::ProtoType::ID_MSG_ACK, convId));
   return pToReturn;
 }
+
+msg::MsgToSend* make_msgs::makeResultsMsg(int fromId, 
+                                 int toId,
+                                 int convId,
+                                 std::vector<manager::Result> results)
+{
+  msg::MsgToSend* pToReturn = new msg::MsgToSend();
+  pToReturn->set_allocated_basicmsg(
+    makeBasicMsg(fromId, toId, msg::ProtoType::RESULTS, convId));
+  for (const auto& j : results)
+  {
+    auto pResult = pToReturn->mutable_results()->add_results();
+    msg::Task* pTask = new msg::Task();
+    pTask->set_id(j.first.taskId);
+    pTask->set_jobid(j.first.jobId);
+    pTask->set_pagenumber(j.first.pageNumber);
+    pTask->set_toexecute(j.first.toExecute);
+    pResult->set_allocated_task(pTask);
+    pResult->set_result(j.second);
+  }
+  return pToReturn;
+}
+

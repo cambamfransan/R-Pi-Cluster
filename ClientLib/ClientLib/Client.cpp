@@ -3,6 +3,7 @@
 #include "Messages/MakeMsgs.hpp"
 #include "Messages/MapHelpers.hpp"
 #include <iostream>
+#include <thread>
 
 Client::Client(QHostAddress addr, qint16 port, std::string arg)
   : m_pSender(std::make_shared<TCPSenderClient>(addr, port)),
@@ -16,7 +17,7 @@ Client::Client(QHostAddress addr, qint16 port, std::string arg)
 //    m_inputMessages(),
 //    m_allClientsInfo(),
     m_database(arg),
-  m_clientManager(m_pSender, m_database)
+  m_pClientManager(std::make_shared<manager::ClientManager>(m_pSender, m_database))
 {
 #if (TESTING_GUIS == 1)
   m_window->show();
@@ -34,6 +35,12 @@ Client::Client(QHostAddress addr, qint16 port, std::string arg)
           &TCPSenderClient::lostConnection,
           this,
           &Client::lostConnection);
+
+  //connect clientManager
+  connect(m_pClientManager.get(), 
+          &manager::ClientManager::sendResultsToClientMain, 
+          this, 
+          &Client::sendResults);
 }
 
 Client::~Client() {}
@@ -77,6 +84,13 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
   case msg::ProtoType::UPDATE:
     recieveUpdate(pMsg, convId);
     break;
+  case msg::ProtoType::TASK_MSG:
+    std::vector<manager::Task> tasks;
+    auto pTasks = pMsg->task().task();
+    for(const auto& pT : pTasks)
+      tasks.emplace_back(pT.jobid(), pT.pagenumber(), pT.id(), pT.toexecute());
+    m_pClientManager->execute(tasks);
+    break;
   }
 }
 
@@ -114,5 +128,16 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
     convId);/* ,
        std::chrono::seconds(1),
        false);*/
-  m_clientManager.update(pMsg->update());
+  std::thread thr([this, pMsg](){
+    m_pClientManager->update(pMsg->update());
+      });
+  thr.detach();
 }
+
+void Client::sendResults(std::vector<manager::Result> results)
+{
+  int convId(m_pSender->getNextConvId());
+  m_pSender->send(
+      make_msgs::makeResultsMsg(m_myId, m_serverId, convId, results));
+}
+

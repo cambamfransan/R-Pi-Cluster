@@ -37,7 +37,6 @@ namespace manager
     STOP = 3
   };
 
-
   class Job
   {
   public:

@@ -9,13 +9,19 @@
 #include <qrunnable.h>
 #include <memory>
 #include <mutex>
+#include <QObject>
 
 namespace manager
 {
-  class Execute : public QRunnable
+  class Execute : public QObject, public QRunnable
   {
+  Q_OBJECT
+
+  signals:
+    void endTask(int jobId);
+
   public:
-    Execute(JobInfo job, Task toExec, std::shared_ptr<std::mutex> pMutex, std::shared_ptr<std::vector<Result>> pResults);
+    Execute(JobInfo job, Task toExec, std::shared_ptr<std::mutex> pMutex, std::shared_ptr<std::map<int, std::vector<Result>>> pResults);
     ~Execute();
 
     void run();
@@ -24,7 +30,7 @@ namespace manager
     manager::JobInfo m_jobInfo;
     Task m_task;
     std::shared_ptr<std::mutex> m_pMutex;
-    std::shared_ptr<std::vector<Result>> m_pResults;
+    std::shared_ptr<std::map<int, std::vector<Result>>> m_pResults;
 
   };
 
