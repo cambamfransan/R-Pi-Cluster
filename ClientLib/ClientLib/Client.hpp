@@ -28,6 +28,7 @@ private slots:
             bool requireResponse)*/;
   void lostConnection();
   void recieveUpdate(msg::MsgToSend* pMsg, int convId);
+  void sendResults(std::vector<manager::Result>);
 
 private:
   std::shared_ptr<TCPSenderClient> m_pSender;
@@ -41,7 +42,7 @@ private:
 //  std::map<int, std::chrono::steady_clock::time_point> m_inputMessages;
 //  std::map<int, manager::Pi> m_allClientsInfo;
   std::string m_database;
-  manager::ClientManager m_clientManager;
+  std::shared_ptr<manager::ClientManager> m_pClientManager;
 };
 
 #endif

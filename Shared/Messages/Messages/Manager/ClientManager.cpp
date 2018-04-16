@@ -1,15 +1,17 @@
 #include "ClientManager.hpp"
+#include "Messages/MakeMsgs.hpp"
 
 manager::ClientManager::ClientManager(
   std::shared_ptr<TCPSenderClient> pServerClient,
   std::string database)
   : m_pSenderClient(pServerClient),
     m_database(database),
-    m_executeManager(database),
+    m_pExecuteManager(new manager::ExecuteManager(database)),
     m_piManager(database),
     m_resultsManager(database)
 {
-  // What to do ?
+  connect(m_pExecuteManager.get(), &manager::ExecuteManager::sendResults, this,
+      &manager::ClientManager::sendResults);
 }
 
 manager::ClientManager::~ClientManager()
@@ -48,7 +50,7 @@ void manager::ClientManager::update(const msg::Update pMsg)
   auto jobs = pMsg.newjobs();
   for (const auto& job : jobs)
   {
-    m_executeManager.addJob(manager::Job(job.id(),
+    m_pExecuteManager->addJob(manager::Job(job.id(),
                                          job.size(),
                                          job.priority(),
                                          job.taskperbundle(),
@@ -59,13 +61,13 @@ void manager::ClientManager::update(const msg::Update pMsg)
   auto lostJobs = pMsg.lostclients();
   for (const auto& job : lostJobs)
   {
-    m_executeManager.removeJob(job);
+    m_pExecuteManager->removeJob(job);
   }
   // modified jobs
   auto modifiedJobs = pMsg.modifiedjobs();
   for (const auto& job : modifiedJobs)
   {
-    m_executeManager.modifyJob(job.id(), job.field(), job.value());
+    m_pExecuteManager->modifyJob(job.id(), job.field(), job.value());
   }
   // Results
   auto results = pMsg.results();
@@ -87,5 +89,11 @@ void manager::ClientManager::update(const msg::Update pMsg)
 
 void manager::ClientManager::execute(std::vector<manager::Task> tasks)
 {
-  m_executeManager.addTasks(tasks);
+  m_pExecuteManager->addTasks(tasks);
 }
+
+void manager::ClientManager::sendResults(std::vector<Result> results)
+{
+  emit sendResultsToClientMain(results);
+}
+

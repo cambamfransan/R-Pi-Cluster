@@ -9,11 +9,23 @@
 #include "ProtoFiles/TaskMsg.pb.h"
 #include <atomic>
 #include <qthreadpool.h>
+#include <qtimer.h>
+#include <QObject>
+
+Q_DECLARE_METATYPE(std::vector<manager::Result>)
 
 namespace manager
 {
-  class ExecuteManager
+  class ExecuteManager : public QObject
   {
+    Q_OBJECT
+
+  signals:
+    void sendResults(std::vector<manager::Result>);
+
+  private slots:
+    void endTask(int id);
+
   public:
     ExecuteManager(std::string m_database);
     ~ExecuteManager();
@@ -31,8 +43,9 @@ namespace manager
     std::string m_database;
     std::atomic<int> m_size;
     std::shared_ptr<std::mutex> m_pResultsMutex;
-    std::shared_ptr<std::vector<Result>> m_pResults;
+    std::shared_ptr<std::map<int, std::vector<manager::Result>>> m_pResults;
     std::shared_ptr<QThreadPool> m_pThreadPool;
+    QTimer* m_pTimer;
   };
 
 } // namespace manager

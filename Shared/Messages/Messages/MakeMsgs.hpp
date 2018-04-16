@@ -37,6 +37,11 @@ namespace make_msgs
 
   msg::MsgToSend* makeIdMsgAck(int fromId, int toId, int convId);
 
+  msg::MsgToSend* makeResultsMsg(int fromId, 
+                                 int toId,
+                                 int convId,
+                                 std::vector<manager::Result> results);
+
 } // namespace make_msgs
 
 #endif
