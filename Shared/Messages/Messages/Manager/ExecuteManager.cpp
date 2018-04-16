@@ -107,7 +107,7 @@ void manager::ExecuteManager::modifyJob(int id,
 void manager::ExecuteManager::endTask(int jobId)
 {
   //todo: What if job ends
-  if(m_jobs[jobId].tasksPerBundle < (*m_pResults)[jobId].size())
+  if(m_jobs[jobId].tasksPerBundle <= (*m_pResults)[jobId].size())
   {
     int tpb(m_jobs[jobId].tasksPerBundle);
     std::vector<manager::Result> results;
