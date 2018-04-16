@@ -34,7 +34,8 @@ manager::TaskManager::TaskManager(int id,
     m_maxSize(size),
     m_valid(false),
     m_database(database + "/Tasks/"),
-    m_taskFiles()
+    m_taskFiles(),
+    m_total(0)
 {
   if (tasksList == "")return;
   populateFields(tasksList);
@@ -64,11 +65,16 @@ void manager::TaskManager::populateFields(std::string tasksList)
     for (int j = 0; j < m_maxSize; j++)
     {
       if (!std::getline(input, nextLine)) break;
-      if (nextLine != "") output << nextLine << "\n";
+      if (nextLine != "") 
+      {
+        m_total++;
+        output << nextLine << "\n";
+      }
     }
     output.close();
   }
   m_valid = true;
+  Logger::info("total: " + std::to_string(m_total));
 }
 
 manager::TaskManager::~TaskManager()
@@ -145,4 +151,9 @@ bool manager::TaskManager::removeFromResults(Task task)
 int manager::TaskManager::getSize()
 {
   return m_maxSize;
+}
+
+int manager::TaskManager::getTotal()
+{
+  return m_total;
 }

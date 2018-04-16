@@ -1,5 +1,6 @@
 #include "Pi.hpp"
 #include <algorithm>
+#include <iostream>
 
 manager::Pi::Pi()
   : m_ipAddress(),
@@ -47,6 +48,7 @@ manager::Pi::Pi(const Pi& pi)
 
 manager::Pi::~Pi()
 {
+  std::cout << "it deconstructed" << std::endl;
   // I don't think i need to do anything here yet
 }
 

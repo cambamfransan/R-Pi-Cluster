@@ -15,6 +15,7 @@ namespace
   const std::string NAME = "name";
   const std::string PRIORITY = "priority";
   const std::string TASK_PER_BUNDLE = "taskPerBundle";
+  const std::string PROGRESS = "progress";
 
 }
 
@@ -42,5 +43,22 @@ std::string json::makeJsonAddJobAck(int convId, int jobId, std::string remote, s
   json::addIntToDoc(d, TASK_PER_BUNDLE, tpb);
   std::string msg(json::jsonToString(d));
   return msg;
+}
+
+std::string json::makeJsonProgress(int convId, std::map<int, int> progress)
+{
+  rapidjson::Document d;
+  d.SetObject();
+  json::addStringToDoc(d, MSG_TYPE, "updateProgress");
+  rapidjson::Value arr(rapidjson::kArrayType);
+  for(const auto& pair : progress)
+  {
+    rapidjson::Value v(rapidjson::kObjectType);
+    json::addIntToObject(d, v, JOB_ID, pair.first);
+    json::addIntToObject(d, v, PROGRESS, pair.second);
+    json::addObjectToArray(d, arr, v);
+  }
+  json::addArrayToDoc(d, PROGRESS, arr);
+  return json::jsonToString(d);
 }
 

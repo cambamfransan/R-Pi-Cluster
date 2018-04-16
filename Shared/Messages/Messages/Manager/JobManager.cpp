@@ -80,24 +80,29 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
   {
     if (m_jobs.empty()) return toReturn;
     int priority(m_jobs[m_curJob]->getPriority());
-    if (m_curJobDone > priority)
+    if (m_curJobDone >= priority)
     {
-      if (m_jobs.empty()) return toReturn;
+      Logger::info("getting new job");
       // find next job
+      if (m_jobs.empty()) return toReturn;
       m_curJobDone = 0;
       auto itrCurJob = ++m_jobs.find(m_curJob);
       if (itrCurJob == m_jobs.end())
       {
         m_curJob = m_jobs.begin()->first;
+        Logger::info("m_curJob: " + std::to_string(m_curJob));
       }
       else
       {
         m_curJob = itrCurJob->first;
+        Logger::info("m_curJob1: " + std::to_string(m_curJob));
       }
     }
 
+//    auto nextBatch =
+//      m_jobs[m_curJob]->getTasks(std::min(amount, priority - m_curJobDone));
     auto nextBatch =
-      m_jobs[m_curJob]->getTasks(std::min(amount, priority - m_curJobDone));
+      m_jobs[m_curJob]->getTasks(m_jobs[m_curJob]->getTasksPerBundle());
     toReturn.insert(toReturn.end(), nextBatch.begin(), nextBatch.end());
     m_curJobDone += nextBatch.size();
   }
@@ -211,3 +216,14 @@ manager::JobUpdateStruct manager::JobManager::getUpdates()
 
   return job;
 }
+
+std::map<int, int> manager::JobManager::getProgress()
+{
+  std::map<int, int> toReturn;
+  for(const auto& job : m_jobs)
+  {
+    toReturn[job.first] = job.second->getProgress();
+  }
+  return toReturn;
+}
+

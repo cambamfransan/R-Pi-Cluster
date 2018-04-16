@@ -48,6 +48,8 @@ namespace manager
 
     void removeUnresponsive();
 
+    std::map<int, int> getProgress();
+
   private:
 
     int m_myId;

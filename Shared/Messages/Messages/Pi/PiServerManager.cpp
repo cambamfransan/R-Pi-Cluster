@@ -68,10 +68,8 @@ int manager::PiServerManager::getAmountToSend(int id)
 int manager::PiServerManager::waitingPis()
 {
   std::lock_guard<std::mutex> lock(m_pisMutex);
-  std::cout << "Pi Size: " << m_pis.size() << std::endl;
   for (auto&& pi : m_pis)
   {
-    std::cout << "Tasks Size: " << pi.second.getTasks().size() << std::endl;
     if (pi.second.getTasks().empty())
     {
       return pi.first;
@@ -142,3 +140,4 @@ void manager::PiServerManager::modifyThreads(int id, int threads)
   m_modifiedPis.push_back(
     manager::ModifiedPi{id, PI_THREADS, std::to_string(threads)});
 }
+

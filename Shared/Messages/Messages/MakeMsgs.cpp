@@ -24,12 +24,11 @@ msg::MsgToSend* make_msgs::makeTaskMsg(int fromId,
     msg::Task* pTask = pToReturn->mutable_task()->add_task();
     pTask->set_jobid(t.jobId);
     pTask->set_pagenumber(t.pageNumber);
-    pTask->set_jobid(t.taskId);
+    pTask->set_id(t.taskId);
     pTask->set_toexecute(t.toExecute);
   }
   pToReturn->set_allocated_basicmsg(
     makeBasicMsg(fromId, toId, msg::ProtoType::TASK_MSG, convId));
-  std::cout << "asdfjkl;" << pToReturn->DebugString() << std::endl;
   return pToReturn;
 }
 

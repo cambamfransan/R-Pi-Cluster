@@ -1,6 +1,7 @@
 #include "ServerManager.hpp"
 #include "Logger/Logger.hpp"
 #include "MakeMsgs.hpp"
+#include <iostream>
 
 manager::ServerManager::ServerManager(
   int id,
@@ -42,11 +43,13 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
 
   // find how many jobs to get
   int clientId(pMsg->basicmsg().fromid());
+  m_piManager.changePiTasks(clientId, tasksCompleted, {});
   int tasksToGet(m_piManager.getAmountToSend(clientId));
+  Logger::info("getting tasks: " + std::to_string(tasksToGet));
 
   auto toSend = m_jobManager.getTasks(tasksToGet);
   if (toSend.empty()) return;
-  m_piManager.changePiTasks(clientId, tasksCompleted, toSend);
+  m_piManager.changePiTasks(clientId, {}, toSend);
   int nextConvId(m_pServerSender->getNextConvId());
   m_pServerSender->send(
     make_msgs::makeTaskMsg(m_myId, clientId, nextConvId, toSend), clientId);
@@ -134,3 +137,9 @@ void manager::ServerManager::removeUnresponsive()
 {
   m_piManager.removeUnresponsive();
 }
+
+std::map<int, int> manager::ServerManager::getProgress()
+{
+  return m_jobManager.getProgress();
+}
+

@@ -22,12 +22,15 @@ namespace manager
 
     std::string getResults();
 
+    int getTotal();
+
   private:
 
     int m_myId;
     int m_size;
     std::set<std::string> m_resultFiles;
     std::string m_basePath;
+    int m_total;
   };
 } // namespace manager
 #endif

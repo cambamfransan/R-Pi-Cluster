@@ -48,6 +48,8 @@ struct TaskFile
 
     int getSize();
 
+    int getTotal();
+
   private:
     
     int m_myId;
@@ -55,6 +57,7 @@ struct TaskFile
     bool m_valid;
     std::string m_database;
     std::vector<TaskFile> m_taskFiles;
+    int m_total;
   };
 } // namespace manager
 #endif
