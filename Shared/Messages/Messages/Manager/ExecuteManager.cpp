@@ -106,11 +106,9 @@ void manager::ExecuteManager::modifyJob(int id,
 
 void manager::ExecuteManager::endTask(int jobId)
 {
-  std::cout << "End task reached" << jobId << std::endl;
   //todo: What if job ends
   if(m_jobs[jobId].tasksPerBundle < (*m_pResults)[jobId].size())
   {
-    std::cout <<"Sending Results" << std::endl;
     int tpb(m_jobs[jobId].tasksPerBundle);
     std::vector<manager::Result> results;
     std::lock_guard<std::mutex> lock(*m_pResultsMutex);
@@ -118,7 +116,6 @@ void manager::ExecuteManager::endTask(int jobId)
     {
       results.push_back(m_pResults->operator[](jobId)[0]);
       (*m_pResults)[jobId].erase((*m_pResults)[jobId].begin());
-      std::cout << results[i].second << std::endl;
     }
     emit sendResults(results);
   }

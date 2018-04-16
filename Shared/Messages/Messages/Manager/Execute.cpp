@@ -53,13 +53,8 @@ manager::Execute::~Execute()
 
 void manager::Execute::run()
 {
-  std::cout << "loc: " << m_jobInfo.bldLocation << "exec: " << m_task.toExecute << std::endl;
-  // TODO: cfrandsen mutex
   auto result = exec(std::string(m_jobInfo.bldLocation + " " + m_task.toExecute).c_str());
-  std::cout << "done!" << std::endl;
   std::lock_guard<std::mutex> lock(*m_pMutex);
-  std::cout << "lock!" << std::endl;
   (*m_pResults)[m_jobInfo.id].emplace_back(m_task, result);
-  std::cout << "yayy!" << m_jobInfo.id << std::endl;
   emit endTask(m_jobInfo.id);
 }
