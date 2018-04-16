@@ -332,6 +332,10 @@ void Server::sendTimedMsgs()
     int next(m_pWebSender->nextConvId());
     sendToWeb(
       json::makeJsonHeartbeat(next), next, std::chrono::seconds(2), true);
+
+    next = m_pWebSender->nextConvId();
+    sendToWeb(
+        json::makeJsonProgress(next, m_pServerManager->getProgress()), next, std::chrono::seconds(3), false);
   }
 
   // if (times == 3)

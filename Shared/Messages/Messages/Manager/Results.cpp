@@ -1,6 +1,7 @@
 #include "Results.hpp"
 #include <fstream>
 #include <iostream>
+#include "Logger/Logger.hpp"
 
 manager::ResultsManager::ResultsManager()
   : m_myId(-1), m_resultFiles(), m_basePath()
@@ -8,7 +9,7 @@ manager::ResultsManager::ResultsManager()
 }
 
 manager::ResultsManager::ResultsManager(int id, std::string database)
-  : m_myId(id), m_resultFiles(), m_basePath(database + "/Results")
+  : m_myId(id), m_resultFiles(), m_basePath(database + "/Results"), m_total(0)
 {
   init(id);
 }
@@ -41,7 +42,9 @@ void manager::ResultsManager::addResult(std::vector<Result> results)
       << ":~:" << result.second << std::endl;
     output.close();
     m_resultFiles.insert(outFilePath);
+    m_total++;
   }
+  Logger::info("total: " + std::to_string(m_total));
 }
 
 std::string manager::ResultsManager::getResults()
@@ -57,3 +60,9 @@ std::string manager::ResultsManager::getResults()
 
   return results;
 }
+
+int manager::ResultsManager::getTotal()
+{
+  return m_total;
+}
+

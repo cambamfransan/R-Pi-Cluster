@@ -8,6 +8,7 @@ localData.loc = {};
 localData.loc.ipAddress = process.argv[3];
 localData.loc.port = process.argv[4];
 localData.lastHeartBeat = new Date().getTime();
+localData.jobs = {};
 
 appMain.get('/', function(req, res) {
     res.sendFile(__dirname + '/gui/index.html');
@@ -46,9 +47,18 @@ client.on('data', function(data) {
                 for(var i = 0; i < mySockets.length; i++) {
                     console.log('Emitting' + temp.JobId);
                     mySockets[i].emit('AddJobAck', temp);
+                    localData.jobs[JSON.stringify(temp.JobId)] = temp;
                 }
                 break;
-            default:
+            case 'updateProgress':
+              for(var i = 0; i < mySockets.length; i++) {
+                mySockets[i].emit('jobsProgress', temp.progress);
+              }
+              for(var i = 0; i < temp.progress.length; i++) {
+                localData.jobs[temp.progress[i].JobId].progress = temp.progress[i].progress;
+              }
+              break;
+              default:
                 console.log("bad message received");
         }
     }
@@ -76,6 +86,10 @@ ioMain.sockets.on('connection', function(socket) {
                 break;
             case 'RequestIp':
                 socket.emit('RequestIpAck', localData.loc);
+                break;
+            case 'RequestCurrentJobs':
+                console.log('requesting current jobs');
+                socket.emit('RequestCurrentJobsAck', localData.jobs);
                 break;
           default:
             console.log('cannot handle msgtype: ' + data.MsgType);

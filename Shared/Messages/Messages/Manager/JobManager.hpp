@@ -45,6 +45,7 @@ namespace manager
     void modifyTasksPerBundle(int id, int taskPerBundle);
     void modifyPriority(int id, int priority);
     JobUpdateStruct getUpdates();
+    std::map<int, int> getProgress();
 
   private:
     std::map<int, std::shared_ptr<Job>> m_jobs;

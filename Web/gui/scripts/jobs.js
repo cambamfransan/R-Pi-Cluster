@@ -238,8 +238,9 @@ System.jobs = (function() {
 			// Create table cell for job progress.
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
+      var jobProgressIDBar = 'jobProgressBar' + jobIndex;
 			// will this work?
-			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
+			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -330,7 +331,6 @@ System.jobs = (function() {
 		};
 
 		System.socket.on('AddJobAck', function(data) {
-			console.log("adding job to table!!" + JSON.stringify(data));
 			that.add(data);
 		});
 
@@ -372,6 +372,13 @@ System.jobs = (function() {
 				}
 			}
 		};
+    // map: ids: progress
+    that.updateFromServer = function(data) {
+      for(let i = 0; i < data.length; i++){
+          document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
+          document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
+      }
+    }
 		that.update = function() {
 			// Check for job status and progress updates.
 				// Status = ( Idle, Active, Halted, Done )
@@ -389,6 +396,20 @@ System.jobs = (function() {
 						// Attach click event listerner to 'Ready' button.
 			}
 		};
+
+		System.socket.on('RequestCurrentJobsAck', function(data) {
+      for(var key in data) {
+        if(data.hasOwnProperty(key)){
+			    that.add(data[key]);
+        }
+      }
+		});
+    System.socket.emit('systemData', {MsgType:'RequestCurrentJobs'});
+
+    System.socket.on('jobsProgress', function(data) {
+      that.updateFromServer(data);
+    });
+
 		return that;
 	}
 

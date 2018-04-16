@@ -1,6 +1,7 @@
 #include "Job.hpp"
 #include <fstream>
 #include <iostream>
+#include "Logger/Logger.hpp"
 
 manager::Job::Job()
   : m_myId(-1),
@@ -122,3 +123,10 @@ int manager::Job::getSize()
 {
   return m_taskManager.getSize();
 }
+
+int manager::Job::getProgress()
+{
+  Logger::info("Progress: " + std::to_string(100*m_resultManager.getTotal()));
+  return (100 * m_resultManager.getTotal()) / m_taskManager.getTotal();
+}
+

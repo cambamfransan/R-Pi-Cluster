@@ -48,9 +48,7 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
   Logger::info("getting tasks: " + std::to_string(tasksToGet));
 
   auto toSend = m_jobManager.getTasks(tasksToGet);
-  std::cout << "Get Tasks: " << toSend.size() << std::endl;
   if (toSend.empty()) return;
-  std::cout << "Get Tasks done" << std::endl;
   m_piManager.changePiTasks(clientId, {}, toSend);
   int nextConvId(m_pServerSender->getNextConvId());
   m_pServerSender->send(
@@ -138,5 +136,10 @@ void manager::ServerManager::removePi(int id)
 void manager::ServerManager::removeUnresponsive()
 {
   m_piManager.removeUnresponsive();
+}
+
+std::map<int, int> manager::ServerManager::getProgress()
+{
+  return m_jobManager.getProgress();
 }
 

@@ -59,6 +59,7 @@ namespace manager
     void setName(std::string name);
     std::string getUrl();
     int getSize();
+    int getProgress();
 
   private:
     int m_myId;

@@ -61,7 +61,6 @@ void manager::Pi::replaceTasks(std::vector<manager::Task> completed,
     m_tasks.erase(std::find(m_tasks.begin(), m_tasks.end(), comp));
   }
   m_tasks.insert(std::end(m_tasks), std::begin(tasks), std::end(tasks));
-  std::cout << "m_tasks size: " << m_tasks.size() << std::endl;
 }
 
 std::string manager::Pi::toString()
