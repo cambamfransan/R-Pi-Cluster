@@ -34,8 +34,9 @@ namespace manager
   {
     PLAY = 1,
     PAUSE = 2,
-    STOP = 3
-  };
+    STOP = 3,
+    COMPLETED = 4
+ };
 
   class Job
   {
@@ -59,6 +60,7 @@ namespace manager
     std::string getUrl();
     int getSize();
     int getProgress();
+    bool isDone();
 
   private:
     int m_myId;

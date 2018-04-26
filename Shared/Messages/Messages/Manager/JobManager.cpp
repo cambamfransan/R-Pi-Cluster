@@ -84,7 +84,7 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
     {
       Logger::info("getting new job");
       // find next job
-      if (m_jobs.empty()) return toReturn;
+      if (!moreJobsToProcess()) return toReturn;
       m_curJobDone = 0;
       auto itrCurJob = ++m_jobs.find(m_curJob);
       if (itrCurJob == m_jobs.end())
@@ -99,15 +99,30 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
       }
     }
 
-//    auto nextBatch =
-//      m_jobs[m_curJob]->getTasks(std::min(amount, priority - m_curJobDone));
+    int tpb = m_jobs[m_curJob]->getTasksPerBundle();
     auto nextBatch =
-      m_jobs[m_curJob]->getTasks(m_jobs[m_curJob]->getTasksPerBundle());
+      m_jobs[m_curJob]->getTasks(tpb);
+    if(nextBatch.size() != tpb)
+    {
+      m_curJobDone = priority;
+      std::lock_guard<std::mutex> lock(m_updateMutex);
+      m_modifiedJobs.push_back(manager::ModifiedJob{m_curJob, STATUS, "4"});
+    }
     toReturn.insert(toReturn.end(), nextBatch.begin(), nextBatch.end());
     m_curJobDone += nextBatch.size();
   }
 
   return toReturn;
+}
+
+bool manager::JobManager::moreJobsToProcess()
+{
+  for(const auto& job : m_jobs)
+  {
+    if(!job.second->isDone())
+      return true;
+  }
+  return false;
 }
 
 void manager::JobManager::removeJob(int id)
@@ -130,7 +145,7 @@ void manager::JobManager::pauseJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, std::string("PAUSE") });
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, "2"});
   }
 }
 
@@ -142,7 +157,7 @@ void manager::JobManager::playJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, std::string("PLAY") });
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, "1"});
   }
 }
 
@@ -154,7 +169,7 @@ void manager::JobManager::stopJob(int id)
   }
   {
     std::lock_guard<std::mutex> lock(m_updateMutex);
-    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, "STOP" });
+    m_modifiedJobs.push_back(manager::ModifiedJob{ id, STATUS, "3" });
   }
 }
 

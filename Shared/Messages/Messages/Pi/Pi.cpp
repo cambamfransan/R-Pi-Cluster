@@ -171,7 +171,7 @@ void manager::Pi::changeThreads(int threads)
 
 int manager::Pi::getAmountToSend() const
 {
-  return m_threads * 3 - m_tasks.size();
+  return std::max(static_cast<int>(m_threads * 3 - m_tasks.size()), 0);
 }
 
 std::chrono::steady_clock::time_point manager::Pi::getlastCom() const
