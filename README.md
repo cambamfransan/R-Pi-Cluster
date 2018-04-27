@@ -7,7 +7,7 @@ https://github.com/cambamfransan/RPiCalc
 # Install Instructions
 
 Step 1:
-Navigate to the directory where the cluster will run from.
+Navigate to the directory where the cluster will run.
 Verify that git is installed by running **git –-version**. If it is not installed, it will say "git is not installed". To install git, run **sudo apt-get install git**
 
 To download the cluster, run **git clone https://github.com/cambamfransan/R-Pi-Cluster**
