@@ -375,8 +375,15 @@ System.jobs = (function() {
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
-          document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
-          document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
+        document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
+        document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
+        if(data[i].progress == 100) 
+        {
+          // Change control images
+          document.getElementById('jobStatus'+data[i].JobId).innerText = 'Done';
+          // Enable download button
+          document.getElementById('jobResults'+data[i].JobId).innerText = 'Ready';
+        }
       }
     }
 		that.update = function() {

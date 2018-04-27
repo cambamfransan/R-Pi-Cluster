@@ -58,8 +58,8 @@ client.on('data', function(data) {
                 localData.jobs[temp.progress[i].JobId].progress = temp.progress[i].progress;
               }
               break;
-              default:
-                console.log("bad message received");
+            default:
+              console.log("bad message received");
         }
     }
 });
