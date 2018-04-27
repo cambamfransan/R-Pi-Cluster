@@ -60,6 +60,7 @@ namespace manager
     std::string getUrl();
     int getSize();
     int getProgress();
+    bool isDone();
 
   private:
     int m_myId;

@@ -61,7 +61,10 @@ void manager::Job::addResults(std::vector<manager::Result> results)
 
 std::vector<manager::Task> manager::Job::getTasks(int amount)
 {
-  return m_taskManager.getNextTasks(amount);
+  auto toReturn = m_taskManager.getNextTasks(amount);
+  if(toReturn.size() != amount)
+    m_status = manager::Status::COMPLETED;
+  return toReturn;
 }
 
 int manager::Job::getJobId()
@@ -128,5 +131,10 @@ int manager::Job::getProgress()
 {
   Logger::info("Progress: " + std::to_string(100*m_resultManager.getTotal()));
   return (100 * m_resultManager.getTotal()) / m_taskManager.getTotal();
+}
+
+bool manager::Job::isDone()
+{
+  return m_status==manager::Status::COMPLETED;
 }
 
