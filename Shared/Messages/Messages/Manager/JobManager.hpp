@@ -46,6 +46,7 @@ namespace manager
     void modifyPriority(int id, int priority);
     JobUpdateStruct getUpdates();
     std::map<int, int> getProgress();
+    bool moreJobsToProcess();
 
   private:
     std::map<int, std::shared_ptr<Job>> m_jobs;
