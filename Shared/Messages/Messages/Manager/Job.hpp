@@ -36,7 +36,7 @@ namespace manager
     PAUSE = 2,
     STOP = 3,
     COMPLETED = 4
- };
+  };
 
   class Job
   {

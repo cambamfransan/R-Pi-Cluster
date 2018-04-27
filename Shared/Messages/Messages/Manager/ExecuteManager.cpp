@@ -44,6 +44,10 @@ void manager::ExecuteManager::addJob(manager::Job job)
   Logger::info("Job added: " + std::to_string(job.getJobId()));
   if(m_waitingJobs.find(job.getJobId()) != m_waitingJobs.end())
   {
+    if(m_waitingJobs[job.getJobId()].size() % job.getTasksPerBundle() != 0)
+    {
+      m_jobs[job.getJobId()].status = 4;
+    }
     for(const auto& task : m_waitingJobs[job.getJobId()])
     {
       addTasksToQueue(task);
@@ -54,9 +58,12 @@ void manager::ExecuteManager::addJob(manager::Job job)
 void manager::ExecuteManager::addTasks(std::vector<manager::Task> tasks)
 {
   Logger::info("Adding Tasks");
+  std::map<int, std::vector<manager::Task>> tasksReceived;
   for (const auto& t : tasks)
   {
-    if(m_jobs.find(t.jobId) != m_jobs.end()){
+    if(m_jobs.find(t.jobId) != m_jobs.end())
+    {
+      tasksReceived[t.jobId].push_back(t);
       addTasksToQueue(t);
       Logger::info("Added task to queue");
     }
@@ -64,6 +71,15 @@ void manager::ExecuteManager::addTasks(std::vector<manager::Task> tasks)
     {
       Logger::info("Added task to waiting queue");
       m_waitingJobs[t.jobId].push_back(t);
+    }
+  }
+  for(const auto& job : tasksReceived)
+  {
+    if(job.second.size() % m_jobs[job.first].tasksPerBundle != 0)
+    {
+      Logger::info("setting job as done" + std::to_string(job.second.size()) + 
+           " " + std::to_string(m_jobs[job.first].tasksPerBundle));
+      m_jobs[job.first].status = 4;
     }
   }
 }
@@ -107,9 +123,11 @@ void manager::ExecuteManager::modifyJob(int id,
 void manager::ExecuteManager::endTask(int jobId)
 {
   //todo: What if job ends
-  if(m_jobs[jobId].tasksPerBundle <= (*m_pResults)[jobId].size())
+  if(m_jobs[jobId].tasksPerBundle <= (*m_pResults)[jobId].size() || m_jobs[jobId].status == 4)
   {
-    int tpb(m_jobs[jobId].tasksPerBundle);
+    int tpb;
+    if(m_jobs[jobId].status == 4) tpb = 1;
+    else tpb = m_jobs[jobId].tasksPerBundle;
     std::vector<manager::Result> results;
     std::lock_guard<std::mutex> lock(*m_pResultsMutex);
     for(int i = 0; i < tpb; i++)
