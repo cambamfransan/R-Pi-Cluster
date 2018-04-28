@@ -243,9 +243,9 @@ Menu.system = (function(screens) {
 				}
 			}
 		});
-    document.getElementById('server-IP-text').innerText = 'IP:PORT MISSING!';
+    document.getElementById('serverIP').innerText = 'IP:PORT MISSING!';
     System.socket.on('RequestIpAck', function(data) {
-      document.getElementById('server-IP-text').innerText = data.ipAddress + ":" + data.port;
+      document.getElementById('serverIP').innerText = data.ipAddress + ":" + data.port;
     });
     System.socket.emit('systemData', {MsgType: 'RequestIp'});
 		document.getElementById('search-input').addEventListener('input', function () {

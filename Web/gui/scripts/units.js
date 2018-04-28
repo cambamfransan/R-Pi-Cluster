@@ -131,7 +131,7 @@ System.units = (function() {
 			// Create table cell for unit status.
 			var unitStatus  = unitRow.insertCell(4);
 			var unitStatusID = 'unitStatus' + unitIndex;
-			unitStatus.innerHTML = '<span id="' + unitStatusID + '"><span class="error">ERROR!</span></span>';
+			unitStatus.innerHTML = '<span id="' + unitStatusID + '">ONLINE</span>';
 			// Create table cell for unit CPU load.
 			var unitCPU  = unitRow.insertCell(5);
 			var unitCPUID = 'unitCPU' + unitIndex;
@@ -248,7 +248,7 @@ System.units = (function() {
 					document.getElementById(unitCoresNumberID).value = value;
 				}
 			});
-      Menu.system.empty('unit');
+      Menu.system.emptyTable('unit');
 		};
     System.socket.on('newClient', function(data) {
       that.add(data);

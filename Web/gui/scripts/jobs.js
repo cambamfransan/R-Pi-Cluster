@@ -120,9 +120,10 @@ System.jobs = (function() {
 			});
 			// Create table cell for job source.
 			var jobSource  = jobRow.insertCell(2);
-			var jobSourceValue;
+			var jobSourceValue,
+          jobSourceType;
 			jobSourceValue = job.remote;
-			if('http'.test(jobSourceValue))
+			if(jobSourceValue.startsWith("http"))
 				jobSourceType = 'URL';
 			else 
 				jobSourceType = 'File';
@@ -227,8 +228,8 @@ System.jobs = (function() {
 			// Create table cell for job progress.
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
-            var jobProgressIDBar = 'jobProgressBar' + jobIndex;
-			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
+      var jobProgressIDBar = 'jobProgressBar' + jobIndex;
+			jobProgress.innerHTML = '<div class="progress"><div class="bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="percent">0%</div></div></div>';
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -341,7 +342,7 @@ System.jobs = (function() {
 			document.getElementById(jobTPBID).addEventListener('input', function () {
 				// ! Update tasks per bundle of job in the cluster.
 			});
-			Menu.system.empty('job');			
+			Menu.system.emptyTable('job');			
 		};
 
 		System.socket.on('AddJobAck', function(data) {
@@ -389,8 +390,7 @@ System.jobs = (function() {
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
-        document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
-        document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
+        updateBar("jobProgressBar" + data[i].JobId, "progress");
         if(data[i].progress == 100) 
         {
           // Change control images
