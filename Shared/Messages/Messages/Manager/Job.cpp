@@ -129,7 +129,7 @@ int manager::Job::getSize()
 
 int manager::Job::getProgress()
 {
-  Logger::info("Progress: " + std::to_string(100*m_resultManager.getTotal()));
+  Logger::info("Progress: " + std::to_string(m_resultManager.getTotal()));
   return (100 * m_resultManager.getTotal()) / m_taskManager.getTotal();
 }
 
