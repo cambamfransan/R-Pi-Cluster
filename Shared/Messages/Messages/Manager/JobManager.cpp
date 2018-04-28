@@ -86,17 +86,20 @@ std::vector<manager::Task> manager::JobManager::getTasks(int amount)
       // find next job
       if (!moreJobsToProcess()) return toReturn;
       m_curJobDone = 0;
-      auto itrCurJob = ++m_jobs.find(m_curJob);
-      if (itrCurJob == m_jobs.end())
+      //this can be improved
+      std::map<int, std::shared_ptr<Job>>::iterator itrCurJob;
+      do 
       {
-        m_curJob = m_jobs.begin()->first;
-        Logger::info("m_curJob: " + std::to_string(m_curJob));
-      }
-      else
-      {
+        itrCurJob = ++m_jobs.find(m_curJob);
+        if (itrCurJob == m_jobs.end())
+        {
+          m_curJob = m_jobs.begin()->first;
+          itrCurJob = m_jobs.begin();
+          Logger::info("m_curJob: " + std::to_string(m_curJob));
+        }
         m_curJob = itrCurJob->first;
-        Logger::info("m_curJob1: " + std::to_string(m_curJob));
-      }
+      } while(m_jobs[m_curJob]->getStatus() != manager::Status::PLAY);
+      Logger::info("m_curJob1: " + std::to_string(m_curJob));
     }
 
     int tpb = m_jobs[m_curJob]->getTasksPerBundle();
