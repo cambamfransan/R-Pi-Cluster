@@ -1,0 +1,124 @@
+:root {
+    --protocol-width: 64px;
+    --progress-width: calc(0.080 * var(--main-tableWidth));
+    --progress-divWidth: calc(var(--progress-width) - 12px);
+    --progress-divOffset: calc((var(--progress-width) - var(--progress-divWidth))/2);
+    --tpb-width: calc(0.160 * var(--main-tableWidth));
+    --tpb-inputWidth: calc(var(--tpb-width) - 10px);
+}
+/* Add Job */
+.job-source input[type="radio"] {
+    width: 15px;
+    height: 15px;
+}
+.job-source input[type="radio"]:hover {
+    cursor: pointer;
+}
+#job-source {
+    height: 25px;
+}
+#job-source table {
+    width: 100%;
+}
+#job-source td:nth-child(2) {
+    width: 1%;
+}
+#job-source input[type="file"] {
+    display: none;
+}
+#job-protocol {
+    width: var(--protocol-width);
+    font-size: var(--font-text6);
+    color: #FFFFFF;
+    background-color: #000000;
+    border-width: 0px;
+    padding: 1px;
+}
+#job-protocol:hover {
+    cursor: pointer;
+}
+#job-remote {
+    width: calc(var(--main-addWidth) - var(--protocol-width) - 2px);
+    padding-left: 2px;
+    text-align: left;
+}
+#job-name {
+    width: var(--main-addWidth);
+}
+#job-priority {
+    width: calc(var(--main-addWidth) - 14px);
+    padding-left: 14px;
+}
+#job-tpb {
+    width: var(--main-addWidth);
+}
+.job-tpb {
+    text-align: center;
+}
+.job-tpb tr:nth-child(1) {
+    height: 160px;
+}
+.job-tpb .scale {
+    position: relative;
+    width: 80px;
+    height: 150px;
+}
+.job-tpb .bar {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+#speed-bar {
+    background: linear-gradient(#F15A24,#FBB03B);
+}
+#update-bar {
+    background: linear-gradient(#2E3192,#29ABE2);
+}
+/* Jobs */
+#jobs-table th:nth-child(2), #jobs-table td:nth-child(2) {
+    width: calc(0.190 * var(--main-tableWidth)); /* Name */
+}
+#jobs-table td:nth-child(2) {
+    text-align: left;
+}
+#jobs-table th:nth-child(3), #jobs-table td:nth-child(3) {
+    width: calc(0.070 * var(--main-tableWidth)); /* Source */
+}
+#jobs-table th:nth-child(4), #jobs-table td:nth-child(4) {
+    width: calc(0.080 * var(--main-tableWidth)); /* Priority */
+}
+#jobs-table th:nth-child(5), #jobs-table td:nth-child(5) {
+    width: calc(0.080 * var(--main-tableWidth)); /* Status */
+}
+#jobs-table th:nth-child(6), #jobs-table td:nth-child(6) {
+    width: var(--progress-width); /* Progress */
+}
+#jobs-table td:nth-child(6) .progress {
+    margin-left: var(--progress-divOffset);
+    width: var(--progress-divWidth);
+}
+#jobs-table td:nth-child(6) .percent {
+    width: var(--progress-divWidth);
+}
+#jobs-table th:nth-child(7), #jobs-table td:nth-child(7) {
+    width: calc(0.105 * var(--main-tableWidth)); /* Controls */
+}
+#jobs-table td:nth-child(7) img {
+    width: 20px;
+    margin: 3px;
+}
+#jobs-table td:nth-child(7) img:hover {
+    cursor: pointer;
+}
+#jobs-table th:nth-child(8), #jobs-table td:nth-child(8) {
+    width: calc(0.080 * var(--main-tableWidth)); /* Results */
+}
+#jobs-table th:nth-child(9), #jobs-table td:nth-child(9) {
+    width: calc(0.060 * var(--main-tableWidth)); /* Units */
+}
+#jobs-table th:nth-child(10), #jobs-table td:nth-child(10) {
+    width: var(--tpb-width) /* Tasks per Bundle */
+}
+#jobs-table td:nth-child(10) input {
+    width: var(--tpb-inputWidth);
+}

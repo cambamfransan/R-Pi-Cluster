@@ -85,7 +85,7 @@ client.on('close', function() {
     console.log('Connection closed');
 });
 
-serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
+serverMain.listen(process.env.PORT || 8080);
 
 var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
