@@ -20,38 +20,9 @@ System.units = (function() {
 			active: [], 
 			reuse: [] 
 		};
-		that.index = function() {
-			// Assign an index value to the unit.
-			var unitIndex;
-			if (IDs.reuse.length == 0) {
-				if (IDs.active.length == 0)
-					unitIndex = unitsBody.rows.length.toString();
-				else {
-					if (IDs.active.length >= 2) {
-						IDs.active.sort(function(a,b){return a-b});
-						for (var index = 0; index < IDs.active.length-1; index++) {
-							if (IDs.active[index+1] - IDs.active[index] >= 2)
-								unitIndex = (IDs.active[index] + 1).toString();
-						}
-					}
-					else
-						unitIndex = (IDs.active[0] + 1).toString();
-				}
-				if (unitIndex == null)
-					unitIndex = (IDs.active[IDs.active.length-1] + 1).toString();
-				IDs.active.push(Number(unitIndex));
-			}
-			else {
-				IDs.reuse.sort(function(a,b){return a-b});
-				unitIndex = IDs.reuse[0].toString();
-				IDs.reuse.splice(0,1);
-				IDs.active.push(Number(unitIndex));
-			}
-			return unitIndex;
-		}
-		that.add = function() {
+		that.add = function(client) {
 			// Add a unit to the interface table.
-			var unitIndex = that.index();
+			var unitIndex = client.clientId;
 			var unitRow = unitsBody.insertRow(0);
 			unitRow.id = 'unitRow' + unitIndex;
 			// Create table cell for unit checkbox.
@@ -64,7 +35,7 @@ System.units = (function() {
 			});
 			// Create table cell for unit name.
 			var unitName  = unitRow.insertCell(1);
-			var unitNameValue = document.getElementById('unit-name').value;
+			var unitNameValue = unitIndex;
 			unitName.id = 'unitNameCell'+ unitIndex;
 			var unitNameID = 'unitName' + unitIndex;
 			var unitNameIconID = 'unitNameIcon' + unitIndex;
@@ -145,7 +116,7 @@ System.units = (function() {
 			});
 			// Create table cell for unit IP address.
 			var unitIP  = unitRow.insertCell(2);
-			var unitIPValue = document.getElementById('unit-IP1').value + '.' + document.getElementById('unit-IP2').value + '.' + document.getElementById('unit-IP3').value + '.' + document.getElementById('unit-IP4').value;
+			var unitIPValue = client.ipaddress;
 			var unitIPID = 'unitIP' + unitIndex;
 			unitIP.innerHTML = '<dt id="' + unitIPID + '">' + unitIPValue + '</dt>';
 			// Create table cell for unit MAC address.
@@ -253,29 +224,17 @@ System.units = (function() {
 					document.getElementById(unitCoresNumberID).value = value;
 				}
 			});
+      Menu.system.empty('unit');
 		};
-		that.remove = function() {
+    System.socket.on('newClient', function(data) {
+      that.add(data);
+    });
+		that.remove = function(id) {
 			// Remove a unit(s) from the interface table.
 			document.removeEventListener('keydown', saveListener);
 			document.removeEventListener('click', saveListener);
-			for (var index = 0; index < unitsBody.rows.length; index++) {
-				var row = unitsBody.rows[index];
-				var checkbox = row.cells[0].getElementsByTagName('input')[0];
-				if (checkbox.type == 'checkbox' && checkbox.checked) {
-					var unitNumber = row.id.split('unitRow');
-					unitNumber = Number(unitNumber[1]);
-					for (var item = 0; item < IDs.active.length; item++) {
-						if (unitNumber == IDs.active[item]) {
-							IDs.active.splice(item,1);
-							item = IDs.active.length;
-						}
-					}
-					IDs.reuse.push(unitNumber);
-					unitsBody.deleteRow(index);
-					// ! Remove checked unit from the cluster.
-					index--;
-				}
-			}
+      var row = document.getElementById('unitRow' + id);
+      row.parentNode.removeChild(row);
 		};
 		that.all = function() {
 			// Check or uncheck all units in the table.
@@ -307,6 +266,20 @@ System.units = (function() {
 					// Do nothing.
 			}
 		};
+    System.socket.emit('systemData', {MsgType: 'RequestCurrentClients'});
+
+    System.socket.on('RequestCurrentClientsAck', function(data) {
+      for(var key in data) {
+        if(data.hasOwnProperty(key)){
+          that.add(data[key]);
+        }
+      }
+    });
+
+    System.socket.on('lostClient', function (data) {
+      that.remove(data.clientId);
+    });
+
 		return that;
 	}
 
@@ -314,3 +287,4 @@ System.units = (function() {
 		Units : Units 
 	};
 }());
+

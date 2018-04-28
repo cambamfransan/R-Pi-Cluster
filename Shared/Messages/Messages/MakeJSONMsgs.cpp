@@ -11,11 +11,13 @@ namespace
   const std::string MSG_TYPE = "MsgType";
   const std::string JOB_ID = "JobId";
   const std::string CONV_ID = "convId";
+  const std::string CLIENT_ID = "clientId";
   const std::string REMOTE = "remote";
   const std::string NAME = "name";
   const std::string PRIORITY = "priority";
   const std::string TASK_PER_BUNDLE = "taskPerBundle";
   const std::string PROGRESS = "progress";
+  const std::string IP_ADDRESS = "ipaddress";
 
 }
 
@@ -59,6 +61,27 @@ std::string json::makeJsonProgress(int convId, std::map<int, int> progress)
     json::addObjectToArray(d, arr, v);
   }
   json::addArrayToDoc(d, PROGRESS, arr);
+  return json::jsonToString(d);
+}
+
+std::string json::makeJsonNewClient(int convId, int clientId, std::string ip)
+{
+  rapidjson::Document d;
+  d.SetObject();
+  json::addStringToDoc(d, MSG_TYPE, "newClient");
+  json::addIntToDoc(d, CONV_ID, convId);
+  json::addIntToDoc(d, CLIENT_ID, clientId);
+  json::addStringToDoc(d, IP_ADDRESS, ip);
+  return json::jsonToString(d);
+}
+
+std::string json::makeJsonLostClient(int convId, int clientId)
+{
+  rapidjson::Document d;
+  d.SetObject();
+  json::addStringToDoc(d, MSG_TYPE, "lostClient");
+  json::addIntToDoc(d, CONV_ID, convId);
+  json::addIntToDoc(d, CLIENT_ID, clientId);
   return json::jsonToString(d);
 }
 
