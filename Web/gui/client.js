@@ -1,3 +1,4 @@
+/*
 socket.on('systemData', function(data) {
     //console.log('Received Data from Server');
     if (data !== null) {
@@ -26,3 +27,4 @@ socket.on('defaultSystem', function(data) {
         System.main.systemData('load');
     }
 });
+*/

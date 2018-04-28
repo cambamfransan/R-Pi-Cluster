@@ -1,18 +1,5 @@
-~ Create tooltip error when attempting to add job/unit form that is not complete.
-~ Validate job source input that checks the URL or local file is valid.
-~ Fix number input validation to ignore the e,+,-,. characters.
-~ Create tooltip for the 'view' button in job/unit tables.
-~ Make the job/unit table columns sortable.
-~ Complete the 'Help' section of the interface.
-~ Create popup for the 'About' section of the interface.
-~ Link master controls to jobs on cluster.
-~ Link results to all available results that can be downloaded.
-~ Fix side header text to match the background.
-~ Fix progress bar text to change color.
-~ Link side panel stats to source information from cluster.
-~ Fix text edit fields in job/unit table to focus on click.
-~ Fix validation checking of the server IP address field.
-
-! Disable adding unit manually in favor of automatic adding without approval.
-! Allow user to specify IP address of server and show listening port number.
-! The MAC address could be used for hardware firewall filtering.
+Poster
+~ Remove lists from Node and Server boxes.
+~ Make Node both HTTP and SocketIO.
+~ Make Server both HTTP and TCP.
+~ Edit "online/offline" diagram wording for clarity.

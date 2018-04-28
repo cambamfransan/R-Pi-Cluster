@@ -1,0 +1,51 @@
+:root {
+    --load-width: calc(0.092 * var(--main-tableWidth));
+    --load-divWidth: calc(var(--load-width) - 16px);
+    --load-divOffset: calc((var(--load-width) - var(--load-divWidth))/2);
+}
+/* Add Unit */
+#unit-name, #unit-username, #unit-password {
+    width: var(--main-addWidth);
+}
+.unit-IP {
+    width: calc(0.19 * var(--main-addWidth));
+}
+#unit-cores {
+    width: calc(var(--main-addWidth) - 14px);
+    padding-left: 14px;
+}
+/* Units */
+#units-table th:nth-child(2), #units-table td:nth-child(2) {
+    width: calc(0.190 * var(--main-tableWidth)); /* Name */
+}
+#units-table td:nth-child(2) {
+    text-align: left;
+}
+#units-table th:nth-child(3), #units-table td:nth-child(3) {
+    width: calc(0.125 * var(--main-tableWidth)); /* IP Address */
+}
+#units-table th:nth-child(4), #units-table td:nth-child(4) {
+    width: calc(0.160 * var(--main-tableWidth)); /* MAC Address */
+}
+#units-table th:nth-child(5), #units-table td:nth-child(5) {
+    width: calc(0.080 * var(--main-tableWidth)); /* Status */
+}
+#units-table th:nth-child(6), #units-table td:nth-child(6) {
+    width: var(--load-width) /* CPU Load */
+}
+#units-table th:nth-child(7), #units-table td:nth-child(7) {
+    width: var(--load-width) /* RAM Load */
+}
+#units-table td:nth-child(6) .load, #units-table td:nth-child(7) .load {
+    margin-left: var(--load-divOffset);
+    width: var(--load-divWidth);
+}
+#units-table td:nth-child(6) .percent, #units-table td:nth-child(7) .percent {
+    width: var(--load-divWidth);
+}
+#units-table th:nth-child(8), #units-table td:nth-child(8) {
+    width: calc(0.060 * var(--main-tableWidth)); /* Jobs */
+}
+#units-table th:nth-child(9), #units-table td:nth-child(9) {
+    width: calc(0.110 * var(--main-tableWidth)); /* Cores */
+}

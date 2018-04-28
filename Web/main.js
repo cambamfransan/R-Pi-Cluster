@@ -9,7 +9,7 @@ appMain.get('/', function(req, res) {
 appMain.use('/gui', express.static(__dirname + '/gui'));
 
 var net = require('net');
-
+/*
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
     console.log('Connected');
@@ -46,8 +46,8 @@ client.on("error", function(err) {
 client.on('close', function() {
     console.log('Connection closed');
 });
-
-serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
+*/
+serverMain.listen(process.env.PORT || 8080);
 
 var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
