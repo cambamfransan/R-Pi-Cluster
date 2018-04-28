@@ -1,0 +1,299 @@
+<div id="hide-screen">
+    <div id="add-job" class="popup">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Add Job
+                        <span class="close">
+                            <img id="close-job" src="../../gui/images/close_mouseout.svg">
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td align="center">
+                        <table class="job-source">
+                            <tr>
+                                <td>
+                                    <input id="remote-source" type="radio" name="source">
+                                </td>
+                                <td>
+                                    GitHub URL
+                                </td>
+                                <td>
+                                    <input id="local-source" type="radio" name="source">
+                                </td>
+                                <td>
+                                    Local File
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="job-source">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Name
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="job-name" type="text" maxlength="20" pattern="[a-zA-Z0-9]+" placeholder="Character Limit: 20">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Priority
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="job-priority" type="number" maxlength="2" min="1" max="99" pattern="[0-9]+" placeholder="1 (High) — 99 (Low)">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Tasks per Bundle
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="job-tpb" type="range" min="1" max="9" value="5">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <table class="job-tpb">
+                            <tr>
+                                <td>
+                                    <div class="scale">
+                                        <div id="speed-bar" class="bar">
+
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="scale">
+                                        <div id="update-bar" class="bar">
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Speed
+                                </td>
+                                <td>
+                                    Update
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <button id="add-job-button" class="small">
+                            ADD
+                        </button>
+                        <span id="add-job-error" class="error-tip">
+
+                        </span>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div id="add-unit" class="popup">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Add Unit
+                        <span class="close">
+                            <img id="close-unit" src="../../gui/images/close_mouseout.svg">
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Name
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="unit-name" type="text" maxlength="20" pattern="[a-zA-Z0-9]+" placeholder="Character Limit: 20">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        IP Address
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="unit-IP1" class="unit-IP" type="text" maxlength="3" pattern="[0-9]+" placeholder="###">
+                        .
+                        <input id="unit-IP2" class="unit-IP" type="text" maxlength="3" pattern="[0-9]+" placeholder="###">
+                        .
+                        <input id="unit-IP3" class="unit-IP" type="text" maxlength="3" pattern="[0-9]+" placeholder="###">
+                        .
+                        <input id="unit-IP4" class="unit-IP" type="text" maxlength="3" pattern="[0-9]+" placeholder="###">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Username
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="unit-username" type="text" pattern="[a-zA-Z0-9]+">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Password
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="unit-password" type="password">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Cores Limit
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="unit-cores" type="number" maxlength="1" min="1" max="4" value="4" pattern="[1-4]+">
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <button id="add-unit-button" class="small">
+                            ADD
+                        </button>
+                        <span id="add-unit-error" class="error-tip">
+
+                        </span>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div id="view-popup" class="popup">
+        <table id="view-table">
+            <thead>
+                <tr>
+                    <th id="view-type">
+
+                    </th>
+                </tr>
+                <tr>
+                    <th id="view-name">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <span class="close">
+            <img id="close-view" src="../../gui/images/close_mouseout.svg">
+        </span>
+    </div>
+    <div id="offline-popup" class="popup">
+        <table class="table">
+            <tr>
+                <td>
+                    <span class="warning">
+                        UNIT OFFLINE!
+                    </span>
+                    <span class="close">
+                        <img id="close-offline" src="../../gui/images/close_mouseout.svg">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <dt class="message">
+                        <span id="offline-name"><span class="error">ERROR!</span></span>
+                    </dt>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="about-popup" class="popup">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        <span class="title">
+                            RPi Cluster
+                        </span>
+                        <span class="close">
+                            <img id="close-about" src="../../gui/images/close_mouseout.svg">
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <dt class="large">
+                            Version 1.0
+                        </dt>
+                        <dt class="small">
+                            5/3/2018
+                        </dt>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <dt class="small">
+                            Cluster Program
+                        </dt>
+                        <dt class="large">
+                            Cameron Frandsen
+                        </dt>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <dt class="small">
+                            System GUI
+                        </dt>
+                        <dt class="large">
+                            Joel Meine
+                        </dt>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <button id="email-support-button" class="small" onclick="location.href='mailto:support@rpi-cluster.com';">
+                            support@rpi-cluster.com
+                        </button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

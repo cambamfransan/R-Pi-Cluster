@@ -17,8 +17,12 @@ appMain.get('/', function(req, res) {
 appMain.use('/gui', express.static(__dirname + '/gui'));
 
 var net = require('net');
+<<<<<<< HEAD
 var nextConvId = 1;
 
+=======
+/*
+>>>>>>> joel/newedits
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
     console.log('Connected');
@@ -84,8 +88,8 @@ client.on("error", function(err) {
 client.on('close', function() {
     console.log('Connection closed');
 });
-
-serverMain.listen(process.env.PORT || 8080); //console.log('Start mainServer'); // MAIN = 6246
+*/
+serverMain.listen(process.env.PORT || 8080);
 
 var ioMain = require('socket.io')(serverMain, {});
 ioMain.sockets.on('connection', function(socket) {
@@ -116,6 +120,7 @@ ioMain.sockets.on('connection', function(socket) {
         mySockets.splice(mySockets.indexOf(socket), 1);
         console.log('disconnnected');
     });
+<<<<<<< HEAD
 });
 
 var checkRefresh = function() {
@@ -127,3 +132,6 @@ var checkRefresh = function() {
 
 setInterval(checkRefresh, 1000);
 
+=======
+});
+>>>>>>> joel/newedits
