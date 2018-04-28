@@ -747,7 +747,7 @@ Menu.screens['units-screen'] = (function(system) {
 		document.getElementById('add-unit-button').addEventListener('click', function () {
 			// Add new unit to the cluster.
 			if (submit()) {
-				System.main.systemEvent('add_unit');
+				//System.main.systemEvent('add_unit');
 				document.getElementById('close-unit').click();
 			}
 		});

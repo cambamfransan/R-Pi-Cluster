@@ -137,6 +137,11 @@ void Server::newConnection(int id)
   // m_nextPriority++;
   m_pServerManager->addPi(
     id, t->peerAddress().toString().toStdString(), t->peerPort());
+  auto convId = m_pSender->getNextConvId();
+  sendToWeb(json::makeJsonNewClient(convId, id, t->peerAddress().toString().toStdString()),
+            convId,
+            std::chrono::seconds(2),
+            false);
 }
 
 void Server::newWebConnection()
@@ -281,6 +286,8 @@ void Server::lostConnection(int id)
   //   m_outMessages.erase(itr);
   m_pServerManager->removePi(id);
   Logger::info("erased successfully client with Id" + std::to_string(id));
+  int next(m_pWebSender->nextConvId());
+  sendToWeb(json::makeJsonLostClient(next, id), next, std::chrono::seconds(2), false);  
 }
 
 void Server::lostConnectionWeb()

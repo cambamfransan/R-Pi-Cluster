@@ -12,6 +12,10 @@ namespace json
 
   std::string makeJsonProgress(int convId, std::map<int, int> progress);
 
+  std::string makeJsonNewClient(int convId, int clientId, std::string ip);
+
+  std::string makeJsonLostClient(int convId, int clientId);
+
 } // namespace json
 
 #endif
