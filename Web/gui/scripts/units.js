@@ -275,22 +275,6 @@ System.units = (function() {
 				}
 			}
 		};
-<<<<<<< HEAD
-		that.update = function() {
-			// Check for unit status and load updates.
-				// Status = ( Online, Offline )
-				// Load = 0% -> 100%
-			for (var index = 0; index < unitsBody.rows.length; index++) {
-				// ! Load status of unit in cluster.
-				// Load last known status of unit in table.
-				// If status of unit in cluster is different from it's status in the table...
-					// Then change unit status in table to match unit status from cluster.
-				// ! Load CPU/RAM activity load of unit from cluster.
-				// Update unit load bar width and text label of unit in table.
-				// If load of unit in cluster is 100%...
-					// Do nothing.
-			}
-		};
     System.socket.emit('systemData', {MsgType: 'RequestCurrentClients'});
 
     System.socket.on('RequestCurrentClientsAck', function(data) {
@@ -305,8 +289,6 @@ System.units = (function() {
       that.remove(data.clientId);
     });
 
-=======
->>>>>>> joel/newedits
 		return that;
 	}
 
@@ -315,7 +297,4 @@ System.units = (function() {
 	};
 }());
 
-<<<<<<< HEAD
-=======
 loadSystem();
->>>>>>> joel/newedits

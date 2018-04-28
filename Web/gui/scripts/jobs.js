@@ -120,33 +120,12 @@ System.jobs = (function() {
 			});
 			// Create table cell for job source.
 			var jobSource  = jobRow.insertCell(2);
-<<<<<<< HEAD
 			var jobSourceValue;
 			jobSourceValue = job.remote;
-			// if (document.getElementById('remote-source').checked) {
-			// 	jobSourceValue = document.getElementById('job-remote').value;
-			// 	if (document.getElementById('job-protocol').value == 'http')
-			// 		jobSourceValue = 'http://' + jobSourceValue;
-			// 	else if (document.getElementById('job-protocol').value == 'https')
-			// 		jobSourceValue = 'https://' + jobSourceValue;
-			// }
-			// else if (document.getElementById('local-source').checked)
-			// 	jobSourceValue = document.getElementById('job-local').innerText;
-=======
-			var jobSourceValue; var jobSourceType;
-			if (document.getElementById('remote-source').checked) {
+			if('http'.test(jobSourceValue))
 				jobSourceType = 'URL';
-				jobSourceValue = document.getElementById('job-remote').value;
-				if (document.getElementById('job-protocol').value == 'http')
-					jobSourceValue = 'http://' + jobSourceValue;
-				else if (document.getElementById('job-protocol').value == 'https')
-					jobSourceValue = 'https://' + jobSourceValue;
-			}
-			else if (document.getElementById('local-source').checked) {
+			else 
 				jobSourceType = 'File';
-				jobSourceValue = document.getElementById('job-local').innerText;
-			}
->>>>>>> joel/newedits
 			var jobSourceID = 'jobSource' + jobIndex;
 			jobSource.innerHTML = '<span id="' + jobSourceID + '" title="' + jobSourceValue + '">' + jobSourceType + '</span>';
 			// Create table cell for job priority.
@@ -244,21 +223,12 @@ System.jobs = (function() {
 			// Create table cell for job status.
 			var jobStatus  = jobRow.insertCell(4);
 			var jobStatusID = 'jobStatus' + jobIndex;
-<<<<<<< HEAD
 			jobStatus.innerHTML = '<dt id="' + jobStatusID + '">Active</dt>';
 			// Create table cell for job progress.
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
-      var jobProgressIDBar = 'jobProgressBar' + jobIndex;
-			// will this work?
+            var jobProgressIDBar = 'jobProgressBar' + jobIndex;
 			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
-=======
-			jobStatus.innerHTML = '<span id="' + jobStatusID + '"><span class="error">ERROR!</span></span>';
-			// Create table cell for job progress.
-			var jobProgress  = jobRow.insertCell(5);
-			var jobProgressID = 'jobProgress' + jobIndex;
-			jobProgress.innerHTML = '<div class="progress"><div class="bar"><div id="' + jobProgressID + '" class="percent"><span class="error">ERROR!</span></div></div></div>';
->>>>>>> joel/newedits
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -416,7 +386,6 @@ System.jobs = (function() {
 				}
 			}
 		};
-<<<<<<< HEAD
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
@@ -431,25 +400,8 @@ System.jobs = (function() {
         }
       }
     }
-		that.update = function() {
-			// Check for job status and progress updates.
-				// Status = ( Idle, Active, Halted, Done )
-				// Progress = 0% -> 100%
-			for (var index = 0; index < jobsBody.rows.length; index++) {
-				// ! Load status of job in cluster.
-				// Load last known status of job in table.
-				// If status of job in cluster is different from it's status in the table...
-					// Then change job status in table to match job status from cluster.
-				// ! Load progress percentage completed of job from cluster.
-				// Update job progress bar width and text label of job in table.
-				// If progress of job in cluster is 100%...
-					// Then change job status in table to 'Done'...
-					// And display 'Ready' button in job results column in table.
-						// Attach click event listerner to 'Ready' button.
-			}
-		};
 
-		System.socket.on('RequestCurrentJobsAck', function(data) {
+	System.socket.on('RequestCurrentJobsAck', function(data) {
       for(var key in data) {
         if(data.hasOwnProperty(key)){
 			    that.add(data[key]);
@@ -462,18 +414,12 @@ System.jobs = (function() {
       that.updateFromServer(data);
     });
 
-=======
->>>>>>> joel/newedits
 		return that;
 	}
 
 	return {
 		Jobs : Jobs 
 	};
-<<<<<<< HEAD
 }(System));
-=======
-}());
 
 loadSystem();
->>>>>>> joel/newedits

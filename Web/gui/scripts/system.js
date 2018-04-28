@@ -28,7 +28,4 @@ System.main = (function(jobs, units) {
  
 }(System.jobs, System.units));
 
-<<<<<<< HEAD
-=======
 Menu.system.initialize();
->>>>>>> joel/newedits

@@ -3,8 +3,6 @@
 // This is the menu handler used to load system, menus, jobs, and units.
 //
 // ------------------------------------------------------------------
-<<<<<<< HEAD
-var System = {};
 System.socket = io();
 System.socket.on('disconnect', function(){
   window.alert("Lost connection to the server");
@@ -16,8 +14,6 @@ var idle = {
 	units: true
 };
 
-=======
->>>>>>> joel/newedits
 var menuSystem = {
 	jobs: true, 
 	units: false, 
@@ -72,7 +68,6 @@ var viewBody = viewTable.getElementsByTagName('tbody')[0];
 var jobsSearch = null;
 var unitsSearch = null;
 
-<<<<<<< HEAD
 function addListener(e) {
 	if (e.which === 13) { // ENTER key
 		if (menuSystem.jobs)
@@ -81,7 +76,6 @@ function addListener(e) {
 			document.getElementById('add-unit-button').click();
 	}
 }
-=======
 var sortColor = '#C51A4A';
 
 var sortJobs = {
@@ -105,7 +99,6 @@ var controlAll = {
 };
 
 var errorHTML = '<dt>ERROR!</dt>Missing or Invalid Input';
->>>>>>> joel/newedits
 
 Menu.system = (function(screens) {
 	'use strict';
@@ -250,18 +243,13 @@ Menu.system = (function(screens) {
 				}
 			}
 		});
-<<<<<<< HEAD
     document.getElementById('server-IP-text').innerText = 'IP:PORT MISSING!';
     System.socket.on('RequestIpAck', function(data) {
       document.getElementById('server-IP-text').innerText = data.ipAddress + ":" + data.port;
     });
     System.socket.emit('systemData', {MsgType: 'RequestIp'});
-		document.getElementById('search-text').addEventListener('input', function () {
-			// Search table for specified text.
-=======
 		document.getElementById('search-input').addEventListener('input', function () {
-			// Search the job or unit table for specified text.
->>>>>>> joel/newedits
+			// Search table for specified text.
 			if (!menuSystem.help) {
 				if ((menuSystem.jobs && jobsBody.rows.length != 0) || (menuSystem.units && unitsBody.rows.length != 0)) {
 					var input = document.getElementById('search-input');
@@ -753,8 +741,7 @@ Menu.screens['jobs-screen'] = (function(system) {
 		});
 		document.getElementById('add-job-button').addEventListener('click', function () {
 			// Add new job to the cluster.
-<<<<<<< HEAD
-			if (submit()) {
+			if (submitJob()) {
 				var toSend = {MsgType: 'AddJob'};
 				if (document.getElementById('remote-source').checked) {
 					var jobSourceValue;
@@ -774,10 +761,6 @@ Menu.screens['jobs-screen'] = (function(system) {
 				//console.log(toSend);
 
 				//System.main.systemEvent('add_job');
-=======
-			if (submitJob()) {
-				System.main.systemEvent('add_job');
->>>>>>> joel/newedits
 				document.getElementById('close-job').click();
 				if (jobsBody.rows.length > 1) {
 					if (sortJobs.name)
@@ -1089,13 +1072,7 @@ Menu.screens['units-screen'] = (function(system) {
 		});
 		document.getElementById('add-unit-button').addEventListener('click', function () {
 			// Add new unit to the cluster.
-<<<<<<< HEAD
-			if (submit()) {
-				//System.main.systemEvent('add_unit');
-=======
 			if (submitUnit()) {
-				System.main.systemEvent('add_unit');
->>>>>>> joel/newedits
 				document.getElementById('close-unit').click();
 				if (unitsBody.rows.length > 1) {
 					if (sortUnits.name)
@@ -1289,7 +1266,4 @@ Menu.screens['help-screen'] = (function(system) {
 	};
 }(Menu.system));
 
-<<<<<<< HEAD
-=======
 loadSystem();
->>>>>>> joel/newedits
