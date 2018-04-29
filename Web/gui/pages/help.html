@@ -1,0 +1,360 @@
+<div id="help">
+    <table class="links">
+        <tr>
+            <td width="33%"></td><td width="34%"></td><td width="33%"></td>
+        </tr>
+        <tr>
+            <td>
+                <a id="help-link1" class="link">
+                    How do I <b>add</b> a <b>job</b> to the cluster?
+                </a>
+            </td>
+            <td>
+                <a id="help-link2" class="link">
+                    How do I <b>remove</b> a <b>job</b> from the cluster?
+                </a>
+            </td>
+            <td>
+                <a id="help-link3" class="link">
+                    What does the <b>status</b> of a <b>job</b> mean?
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a id="help-link4" class="link">
+                    How do I <b>add</b> a <b>unit</b> to the cluster?
+                </a>
+            </td>
+            <td>
+                <a id="help-link5" class="link">
+                    How do I <b>remove</b> a <b>unit</b> from the cluster?
+                </a>
+            </td>
+            <td>
+                <a id="help-link6" class="link">
+                    What does the <b>status</b> of a <b>unit</b> mean?
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a id="help-link7" class="link">
+                    How do I <b>start, pause, or stop a job</b>?
+                </a>
+            </td>
+            <td>
+                <a id="help-link8" class="link">
+                    How do I <b>start, pause, or stop all jobs</b>?
+                </a>
+            </td>
+            <td>
+                <a id="help-link9" class="link">
+                    How do I <b>get the results</b> of a job?
+                </a>
+            </td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr id="help-header1">
+            <td>
+                <dt class="header">
+                    How do I add a job to the cluster?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content1" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Jobs</b> menu in the left panel.
+                    </li>
+                    <li>
+                        Click the <b>Add</b> button in the top header.
+                    </li>
+                    <li>
+                        Fill out the <b>Add Job</b> form:
+                    </li>
+                        <ul class="terms">
+                            <li>
+                                <b>GitHub URL</b>: web address of the job's source code.
+                            </li>
+                            <li>
+                                <b>Local File</b>: local address of the job's source code.
+                            </li>
+                            <li>
+                                <b>Name</b>: user specified name for the job.
+                            </li>
+                            <li>
+                                <b>Priority</b>: the rank of the job on the cluster.
+                                <ul class="details">
+                                    <li>
+                                        Lower numbers denote higher priority for faster job completion.
+                                    </li>
+                                    <li>
+                                        Higher numbers denote lower priority for slower job completion.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <b>Tasks per Bundle</b>: tasks per network message of the job.
+                            </li>
+                            <ul class="details">
+                                <li>
+                                    Increase <b>Tasks per Bundle</b> for more speed and less updates.
+                                </li>
+                                <li>
+                                    Decrease <b>Tasks per Bundle</b> for less speed and more updates.
+                                </li>
+                            </ul>
+                        </ul>
+                    <li>
+                        Click the <b>ADD</b> button to add the job to the <b>Jobs</b> table.
+                    </li>
+                </ol>
+                <ul class="result">
+                    <li>
+                        The added job will immediately begin running on the cluster.<br>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header2">
+            <td>
+                <dt class="header">
+                    How do I remove a job from the cluster?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content2" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Jobs</b> menu in the left panel.
+                    </li>
+                    <li>
+                        Check the job(s) to be removed.
+                    </li>
+                    <li>
+                        Click the <b>Remove</b> button in the top header.
+                    </li>
+                </ol>
+                <ul class="result">
+                    <li>
+                        The checked job(s) are now removed from the <b>Jobs</b> table.<br>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header3">
+            <td>
+                <dt class="header">
+                    What does the status of a job mean?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content3" class="content">
+            <td>
+                <ul class="terms">
+                    <li>
+                        <b>Verify</b>: the server is verifying the job's tasks and source code.
+                    </li>
+                    <li>
+                        <b>Build</b>: the server is sending the job's tasks to the clients to be built.
+                    </li>
+                    <li>
+                        <b>Idle</b>: the job is at rest and is not progressing towards completion.
+                    </li>
+                    <li>
+                        <b>Active</b>: the job is running and progressing towards completion.
+                    </li>
+                    <li>
+                        <b>Paused</b>: the job is paused and not progressing towards completion.
+                    </li>
+                    <li>
+                        <b>Done</b>: the job has finished running and is now completed.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header4">
+            <td>
+                <dt class="header">
+                    How do I add a unit to the cluster?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content4" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Units</b> menu in the left panel.
+                    </li>
+                    <li>
+                        Click the <b>Add</b> button in the top header.
+                    </li>
+                    <li>
+                        Fill out the <b>Add Unit</b> form:
+                    </li>
+                        <ul class="terms">
+                            <li>
+                                <b>Name</b>: user specified name for the unit.
+                            </li>
+                            <li>
+                                <b>IP Address</b>: network address of the connected unit.
+                            </li>
+                            <li>
+                                <b>Username</b>: user account on the connected unit.
+                            </li>
+                            <li>
+                                <b>Password</b>: user password of account on the connected unit.
+                            </li>
+                            <li>
+                                <b>Cores Limit</b>: sets limit on the number of active cpu cores on the unit.
+                            </li>
+                            <ul class="details">
+                                <li>
+                                    Increase <b>Cores Limit</b> for more resources and more load on unit.
+                                </li>
+                                <li>
+                                    Decrease <b>Cores Limit</b> for less resources and less load on unit.
+                                </li>
+                            </ul>
+                        </ul>
+                    <li>
+                        Click the <b>ADD</b> button to add unit to <b>Units</b> table.
+                    </li>
+                </ol>
+                <ul class="result">
+                    <li>
+                        The added unit will immediately increase cluster resources and run jobs.<br>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header5">
+            <td>
+                <dt class="header">
+                    How do I remove a unit from the cluster?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content5" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Units</b> menu in the left panel.
+                    </li>
+                    <li>
+                        Check the unit(s) to be removed.
+                    </li>
+                    <li>
+                        Click the <b>Remove</b> button in the top header.
+                    </li>
+                </ol>
+                <ul class="result">
+                    <li>
+                        The checked unit(s) are now removed from the <b>Units</b> table.<br>
+                    </li>
+                </ul>
+            </td>
+        </tr>    
+        <tr id="help-header6">
+            <td>
+                <dt class="header">
+                    What does the status of a unit mean?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content6" class="content">
+            <td>
+                <ul class="terms">
+                    <li>
+                        <b>Online</b>: the unit is connected and being used on the cluster.
+                    </li>
+                    <li>
+                        <b>Offline</b>: the unit is not connected and not being used on the cluster.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header7">
+            <td>
+                <dt class="header">
+                    How do I start, pause, or stop a job?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content7" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Jobs</b> menu in the left panel.
+                    </li>
+                    <li>
+                        View the <b>Controls</b> column and the row of the desired job:
+                    </li>
+                        <ul class="terms">
+                            <li>
+                                <b>Start</b>: will run or resume the job from an idle state when clicked.
+                            </li>
+                            <li>
+                                <b>Pause</b>: will suspend the job from a running state when clicked.
+                            </li>
+                            <li>
+                                <b>Stop</b>: will return the job to the initial state when clicked.
+                                <ul class="details">
+                                    <li>
+                                        <span style="color:#FF1D25"><b>CAUTION!</b></span> Results of the job will be cleared when stopped.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                </ol>
+            </td>
+        </tr>
+        <tr id="help-header8">
+            <td>
+                <dt class="header">
+                    How do I start, pause, or stop all jobs?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content8" class="content">
+            <td>
+                <ul class="result">
+                    <li>
+                        View left side of interface above the <b>Download</b> button.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr id="help-header9">
+            <td>
+                <dt class="header">
+                    How do I get the results of a job?
+                </dt>
+            </td>
+        </tr>
+        <tr id="help-content9" class="content">
+            <td>
+                <ol class="steps">
+                    <li>
+                        Select the <b>Jobs</b> menu from the left panel.
+                    </li>
+                    <li>
+                        View the <b>Results</b> column and the row of the desired job.
+                    </li>
+                    <li>
+                        Click the <b>Ready</b> button.
+                    </li>
+                </ol>
+                <ul class="result">
+                    <li>
+                        The job's results will be download to user's local computer.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

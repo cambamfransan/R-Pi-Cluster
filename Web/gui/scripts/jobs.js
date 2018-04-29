@@ -28,7 +28,7 @@ System.jobs = (function() {
 			// Create table cell for job checkbox.
 			var jobCheckbox  = jobRow.insertCell(0);
 			var jobCheckboxID = 'jobCheckbox' + jobIndex;
-			jobCheckbox.innerHTML = '<input type="checkbox" id="' + jobCheckboxID + '" class="check-box">';
+			jobCheckbox.innerHTML = '<input id="' + jobCheckboxID + '" type="checkbox">';
 			document.getElementById(jobCheckboxID).addEventListener('click', function () {
 				if (!document.getElementById(jobCheckboxID).checked)
 					document.getElementById('checkAllJobs').checked = false;
@@ -42,7 +42,7 @@ System.jobs = (function() {
 			var jobNameIconID = 'jobNameIcon' + jobIndex;
 			var jobNameTextID = 'jobNameText' + jobIndex;
 			var jobNameSave = false;
-			jobName.innerHTML = '<dt id="' + jobNameID + '">' + jobNameValue + '</dt><input type="search" id="' + jobNameTextID + '"><img src="gui/images/edit_mouseout.svg" id="' + jobNameIconID + '" class="icon3">';
+			jobName.innerHTML = '<span id="' + jobNameID + '">' + jobNameValue + '</span><input id="' + jobNameTextID + '" type="search"><img id="' + jobNameIconID + '" class="icon" src="gui/images/edit_mouseout.svg" title="Edit Name">';
 			document.getElementById(jobNameID).style.cssFloat = 'left';
 			document.getElementById(jobNameID).style.marginLeft = '3px';
 			document.getElementById(jobNameID).style.marginTop = '2px';
@@ -92,8 +92,10 @@ System.jobs = (function() {
 					document.getElementById(jobNameTextID).value = jobNameValue;
 					document.getElementById(jobNameID).style.display = 'none';
 					document.getElementById(jobNameTextID).style.display = 'initial';
+					document.getElementById(jobNameTextID).focus();
 					document.getElementById(jobNameIconID).style.visibility = 'visible';
 					document.getElementById(jobNameIconID).src = menuImages.save.image.mouseout.src;
+					document.getElementById(jobNameIconID).title = 'Save Name';
 				}
 				else {
 					imageID = null; inputID = null;
@@ -104,8 +106,9 @@ System.jobs = (function() {
 					document.getElementById(jobNameID).innerText = jobNameValue;
 					document.getElementById(jobNameID).style.display = 'initial';
 					document.getElementById(jobNameTextID).style.display = 'none';
-					document.getElementById(jobNameIconID).style.visibility = 'visible';
+					document.getElementById(jobNameIconID).style.visibility = 'hidden';
 					document.getElementById(jobNameIconID).src = menuImages.edit.image.mouseout.src;
+					document.getElementById(jobNameIconID).title = 'Edit Name';
 				}
 			});
 			document.getElementById(jobNameTextID).addEventListener('input', function () {
@@ -117,31 +120,15 @@ System.jobs = (function() {
 			});
 			// Create table cell for job source.
 			var jobSource  = jobRow.insertCell(2);
-			var jobSourceValue;
+			var jobSourceValue,
+          jobSourceType;
 			jobSourceValue = job.remote;
-			// if (document.getElementById('remote-source').checked) {
-			// 	jobSourceValue = document.getElementById('job-remote').value;
-			// 	if (document.getElementById('job-protocol').value == 'http')
-			// 		jobSourceValue = 'http://' + jobSourceValue;
-			// 	else if (document.getElementById('job-protocol').value == 'https')
-			// 		jobSourceValue = 'https://' + jobSourceValue;
-			// }
-			// else if (document.getElementById('local-source').checked)
-			// 	jobSourceValue = document.getElementById('job-local').innerText;
+			if(jobSourceValue.startsWith("http"))
+				jobSourceType = 'URL';
+			else 
+				jobSourceType = 'File';
 			var jobSourceID = 'jobSource' + jobIndex;
-			jobSource.innerHTML = '<dt id="' + jobSourceID + '" class="tooltip">' + jobSourceValue + '<span class="tooltip-text">' + jobSourceValue + '</span></dt>';
-			document.getElementById(jobSourceID).style.marginLeft = '3px';
-			document.getElementById(jobSourceID).style.maxWidth = '55px';
-			document.getElementById(jobSourceID).style.verticalAlign = 'middle';
-			document.getElementById(jobSourceID).style.textOverflow = 'ellipsis';
-			document.getElementById(jobSourceID).style.whiteSpace = 'nowrap';
-			document.getElementById(jobSourceID).style.overflow = 'hidden';
-			document.getElementById(jobSourceID).addEventListener('mouseover', function () {
-				document.getElementById(jobSourceID).style.overflow = 'visible';
-			});
-			document.getElementById(jobSourceID).addEventListener('mouseout', function () {
-				document.getElementById(jobSourceID).style.overflow = 'hidden';
-			});
+			jobSource.innerHTML = '<span id="' + jobSourceID + '" title="' + jobSourceValue + '">' + jobSourceType + '</span>';
 			// Create table cell for job priority.
 			var jobPriority  = jobRow.insertCell(3);
 			var jobPriorityValue = job.priority;
@@ -151,7 +138,7 @@ System.jobs = (function() {
 			var jobPriorityIconID = 'jobPriorityIcon' + jobIndex;
 			var jobPriorityNumberID = 'jobPriorityNumber' + jobIndex;
 			var jobPrioritySave = false;
-			jobPriority.innerHTML = '<dt id="' + jobPriorityID + '">' + jobPriorityValue + '</dt><input type="number" id="' + jobPriorityNumberID + '"><img src="gui/images/push_mouseout.svg" id="' + jobPriorityIconID + '" class="icon3">';
+			jobPriority.innerHTML = '<span id="' + jobPriorityID + '">' + jobPriorityValue + '</span><input id="' + jobPriorityNumberID + '" type="number"><img id="' + jobPriorityIconID + '" class="icon" src="gui/images/push_mouseout.svg" title="Edit Priority">';
 			document.getElementById(jobPriority.id).style.position = 'relative';
 			document.getElementById(jobPriorityID).style.display = 'inline';
 			document.getElementById(jobPriorityNumberID).style.cssFloat = 'left';
@@ -197,9 +184,11 @@ System.jobs = (function() {
 					document.getElementById(jobPriorityNumberID).value = jobPriorityValue;
 					document.getElementById(jobPriorityID).style.display = 'none';
 					document.getElementById(jobPriorityNumberID).style.display = 'initial';
+					document.getElementById(jobPriorityNumberID).focus();
 					document.getElementById(jobPriorityIconID).style.visibility = 'visible';
 					document.getElementById(jobPriorityIconID).src = menuImages.save.image.mouseout.src;
 					document.getElementById(jobPriorityIconID).style.right = '3px';
+					document.getElementById(jobPriorityIconID).title = 'Save Priority';
 				}
 				else {
 					imageID = null; inputID = null;
@@ -210,9 +199,10 @@ System.jobs = (function() {
 					document.getElementById(jobPriorityID).innerText = jobPriorityValue;
 					document.getElementById(jobPriorityID).style.display = 'initial';
 					document.getElementById(jobPriorityNumberID).style.display = 'none';
-					document.getElementById(jobPriorityIconID).style.visibility = 'visible';
+					document.getElementById(jobPriorityIconID).style.visibility = 'hidden';
 					document.getElementById(jobPriorityIconID).src = menuImages.push.image.mouseout.src;
 					document.getElementById(jobPriorityIconID).style.right = '0px';
+					document.getElementById(jobPriorityIconID).title = 'Edit Priority';
 				}
 			});
 			document.getElementById(jobPriorityNumberID).addEventListener('input', function () {
@@ -239,8 +229,7 @@ System.jobs = (function() {
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
       var jobProgressIDBar = 'jobProgressBar' + jobIndex;
-			// will this work?
-			jobProgress.innerHTML = '<div class="main-progress"><div class="main-bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="main-percentage">0%</div></div></div>';
+			jobProgress.innerHTML = '<div class="progress"><div class="main-table bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="percent">0%</div></div></div>';
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -251,7 +240,7 @@ System.jobs = (function() {
 			var jobPlayID = 'jobPlay' + jobIndex;
 			var jobPauseID = 'jobPause' + jobIndex;
 			var jobStopID = 'jobStop' + jobIndex;
-			jobControls.innerHTML = '<img src="gui/images/play_mouseover.svg" id="' + jobPlayID + '" class="icon2" title="Run Job"><img src="gui/images/pause_mouseout.svg" id="' + jobPauseID + '" class="icon2" title="Halt Job"><img src="gui/images/stop_mouseout.svg" id="' + jobStopID + '" class="icon2" title="Clear Job">';
+			jobControls.innerHTML = '<img id="' + jobPlayID + '" src="gui/images/play_mouseover.svg" title="Start Job"><img id="' + jobPauseID + '" src="gui/images/pause_mouseout.svg" title="Pause Job"><img id="' + jobStopID + '" src="gui/images/stop_mouseout.svg" title="Stop Job">';
 			document.getElementById(jobPlayID).addEventListener('mouseover', function () {
 				if (!jobControl.play)
 					document.getElementById(jobPlayID).src = menuImages.play.image.mouseover.src;
@@ -283,7 +272,7 @@ System.jobs = (function() {
 					document.getElementById(jobPlayID).src = menuImages.play.image.mouseout.src;
 					document.getElementById(jobPauseID).src = menuImages.pause.image.mouseover.src;
 					document.getElementById(jobStopID).src = menuImages.stop.image.mouseout.src;
-					// ! Halt Job
+					// ! Pause Job
 				}
 			});
 			document.getElementById(jobStopID).addEventListener('mouseover', function () {
@@ -306,28 +295,54 @@ System.jobs = (function() {
 			// Create table cell for job results.
 			var jobResults  = jobRow.insertCell(7);
 			var jobResultsID = 'jobResults' + jobIndex;
-			jobResults.innerHTML = '<dt id="' + jobResultsID + '">None</dt>';
+			jobResults.innerHTML = '<span id="' + jobResultsID + '">None</span>';
+			document.getElementById(jobStatusID).addEventListener('change', function () {
+				if (document.getElementById(jobStatusID).innerText == 'Done') {
+					document.getElementById(jobResultsID).remove();
+					jobResults.innerHTML = '<button id="' + jobResultsID + '" class="small"><span>Ready</span></button>';
+				}
+			});
 			// Create table cell for job units.
 			var jobUnits  = jobRow.insertCell(8);
 			var jobUnitsID = 'jobUnits' + jobIndex;
-			jobUnits.innerHTML = '<button id="' + jobUnitsID + '" class="small"><dt class="text4">View</dt></button>';
+			jobUnits.innerHTML = '<button id="' + jobUnitsID + '" class="small"><span>View</span></button>';
 			document.getElementById(jobUnitsID).addEventListener('click', function () {
-				// ! Load list of units that job is running on from cluster.
-				// Show tooltip popup of list of units that job is running on.
+				document.getElementById('system').style.visibility = 'hidden';
+				document.getElementById('popup-screen').style.visibility = 'visible';
+				document.getElementById('hide-screen').style.visibility = 'visible';
+				if (!menuSystem.help) {
+					document.getElementById('add-button').style.visibility = 'hidden';
+					document.getElementById('remove-button').style.visibility = 'hidden';
+					document.getElementById('search-image').style.visibility = 'hidden';
+					document.getElementById('search-input').style.visibility = 'hidden';
+					document.getElementById('empty-table').style.visibility = 'hidden';
+				}
+				document.getElementById('view-type').innerText = 'Job';
+				document.getElementById('view-name').innerText = jobNameValue;
+				var viewRow; var viewCell; var cellsPerRow = 2;
+				for (var index = 0; index < unitsBody.rows.length; index++) {
+					var viewPosition = index % cellsPerRow;
+					if (viewPosition == 0)
+						viewRow = viewBody.insertRow(viewBody.rows.length);
+					viewCell = viewRow.insertCell(viewPosition);
+					viewCell.innerText = unitsBody.rows[index].cells[1].innerText;
+				}
+				drawCenter(false);
+				document.getElementById('view-popup').style.visibility = 'visible';
 			});
 			// Create table cell for job tpb.
 			var jobTPB = jobRow.insertCell(9);
 			var jobTPBValue = job.taskPerBundle;
 			// var jobTPBValue = Number(document.getElementById('job-tpb').value);
 			var jobTPBID = 'jobTPB' + jobIndex;
-			jobTPB.innerHTML = '<input type="range" id="' + jobTPBID + '" class="tpb-field">';
+			jobTPB.innerHTML = '<input id="' + jobTPBID + '" type="range">';
 			document.getElementById(jobTPBID).min = '1';
 			document.getElementById(jobTPBID).max = '9';
 			document.getElementById(jobTPBID).value = jobTPBValue;
 			document.getElementById(jobTPBID).addEventListener('input', function () {
 				// ! Update tasks per bundle of job in the cluster.
 			});
-			Menu.system.empty('job');			
+			Menu.system.emptyTable('job');			
 		};
 
 		System.socket.on('AddJobAck', function(data) {
@@ -375,8 +390,11 @@ System.jobs = (function() {
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
-        document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
-        document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
+		//updateBar("jobProgressBar" + data[i].JobId, "progress"); Not working
+		document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
+
+   console.log(document.getElementById('jobProgressBar' + data[i].JobId));
+		document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
         if(data[i].progress == 100) 
         {
           // Change control images
@@ -386,25 +404,8 @@ System.jobs = (function() {
         }
       }
     }
-		that.update = function() {
-			// Check for job status and progress updates.
-				// Status = ( Idle, Active, Halted, Done )
-				// Progress = 0% -> 100%
-			for (var index = 0; index < jobsBody.rows.length; index++) {
-				// ! Load status of job in cluster.
-				// Load last known status of job in table.
-				// If status of job in cluster is different from it's status in the table...
-					// Then change job status in table to match job status from cluster.
-				// ! Load progress percentage completed of job from cluster.
-				// Update job progress bar width and text label of job in table.
-				// If progress of job in cluster is 100%...
-					// Then change job status in table to 'Done'...
-					// And display 'Ready' button in job results column in table.
-						// Attach click event listerner to 'Ready' button.
-			}
-		};
 
-		System.socket.on('RequestCurrentJobsAck', function(data) {
+	System.socket.on('RequestCurrentJobsAck', function(data) {
       for(var key in data) {
         if(data.hasOwnProperty(key)){
 			    that.add(data[key]);
@@ -424,3 +425,5 @@ System.jobs = (function() {
 		Jobs : Jobs 
 	};
 }(System));
+
+loadSystem();
