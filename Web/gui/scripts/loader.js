@@ -232,7 +232,7 @@ function sortTable(columnIndex,columnType) {
 }
 
 // Update the color of the selected load/progress bar.
-function updateBar(id,progress, type) {
+function updateBar(id, type) {
 	var color1 = '#3F7123'; // green
 	var color2 = '#D6A211'; // yellow
 	var color3 = '#FF4C0F'; // orange
