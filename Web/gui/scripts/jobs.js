@@ -390,7 +390,7 @@ System.jobs = (function() {
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
-        updateBar("jobProgressBar" + data[i].JobId, "progress");
+        updateBar("jobProgressBar" + data[i].JobId, data.progress, "progress");
         if(data[i].progress == 100) 
         {
           // Change control images

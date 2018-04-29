@@ -232,31 +232,29 @@ function sortTable(columnIndex,columnType) {
 }
 
 // Update the color of the selected load/progress bar.
-function updateBar(id,type) {
+function updateBar(id,progress, type) {
 	var color1 = '#3F7123'; // green
 	var color2 = '#D6A211'; // yellow
 	var color3 = '#FF4C0F'; // orange
 	var color4 = '#FF0F13'; // red
 	if (type == 'load') {
-		var percentage = parseInt(document.getElementById(id).style.width);
-		if (percentage >= 0 && percentage < 25)
+		if (progress >= 0 && progress < 25)
 			document.getElementById(id).style.backgroundColor = color1;
-		else if (percentage >= 25 && percentage < 50)
+		else if (progress >= 25 && progress < 50)
 			document.getElementById(id).style.backgroundColor = color2;
-		else if (percentage >= 50 && percentage < 75)
+		else if (progress >= 50 && progress < 75)
 			document.getElementById(id).style.backgroundColor = color3;
-		else if (percentage >= 75 && percentage <= 100)
+		else if (progress >= 75 && progress <= 100)
 			document.getElementById(id).style.backgroundColor = color4;
 	}
 	else if (type == 'progress') {
-		var percentage = parseInt(document.getElementById(id).style.width);
-		if (percentage >= 0 && percentage < 25)
+		if (progress >= 0 && progress < 25)
 			document.getElementById(id).style.backgroundColor = color4;
-		else if (percentage >= 25 && percentage < 50)
+		else if (progress >= 25 && progress < 50)
 			document.getElementById(id).style.backgroundColor = color3;
-		else if (percentage >= 50 && percentage < 75)
+		else if (progress >= 50 && progress < 75)
 			document.getElementById(id).style.backgroundColor = color2;
-		else if (percentage >= 75 && percentage <= 100)
+		else if (progress >= 75 && progress <= 100)
 			document.getElementById(id).style.backgroundColor = color1;
 	}	
 }
