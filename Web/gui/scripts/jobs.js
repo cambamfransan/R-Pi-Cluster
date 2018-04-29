@@ -229,7 +229,7 @@ System.jobs = (function() {
 			var jobProgress  = jobRow.insertCell(5);
 			var jobProgressID = 'jobProgress' + jobIndex;
       var jobProgressIDBar = 'jobProgressBar' + jobIndex;
-			jobProgress.innerHTML = '<div class="progress"><div class="bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="percent">0%</div></div></div>';
+			jobProgress.innerHTML = '<div class="progress"><div class="main-table bar" id="' + jobProgressIDBar + '"><div id="' + jobProgressID + '" class="percent">0%</div></div></div>';
 			// Create table cell for job controls.
 			var jobControls  = jobRow.insertCell(6);
 			var jobControl = {
@@ -390,9 +390,10 @@ System.jobs = (function() {
     // map: ids: progress
     that.updateFromServer = function(data) {
       for(let i = 0; i < data.length; i++){
-		//updateBar("jobProgressBar" + data[i].JobId, "progress");
+		//updateBar("jobProgressBar" + data[i].JobId, "progress"); Not working
 		document.getElementById('jobProgress' + data[i].JobId).innerText = data[i].progress + '%';
 
+   console.log(document.getElementById('jobProgressBar' + data[i].JobId));
 		document.getElementById('jobProgressBar' + data[i].JobId).style.width = data[i].progress + '%';
         if(data[i].progress == 100) 
         {
