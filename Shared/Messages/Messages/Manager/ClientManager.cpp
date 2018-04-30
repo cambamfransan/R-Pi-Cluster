@@ -1,15 +1,17 @@
 #include "ClientManager.hpp"
+#include <iostream>
 #include "Messages/MakeMsgs.hpp"
 
 manager::ClientManager::ClientManager(
   std::shared_ptr<TCPSenderClient> pServerClient,
   std::string database)
   : m_pSenderClient(pServerClient),
-    m_database(database),
+    m_database(database + "Jobs"),
     m_pExecuteManager(new manager::ExecuteManager(database)),
     m_piManager(database),
     m_resultsManager(database)
 {
+  system(std::string("mkdir " + m_database).c_str());
   connect(m_pExecuteManager.get(), &manager::ExecuteManager::sendResults, this,
       &manager::ClientManager::sendResults);
 }
@@ -50,12 +52,13 @@ void manager::ClientManager::update(const msg::Update pMsg)
   auto jobs = pMsg.newjobs();
   for (const auto& job : jobs)
   {
-    m_pExecuteManager->addJob(manager::Job(job.id(),
-                                         job.size(),
-                                         job.priority(),
-                                         job.taskperbundle(),
-                                         job.giturl(),
-                                         m_database));
+    m_pExecuteManager->addJob(job.id(),
+        job.size(),
+        job.priority(),
+        job.taskperbundle(),
+        job.giturl(),
+        m_database);
+    std::cout <<"here1" << std::endl;
   }
   // lost jobs
   auto lostJobs = pMsg.lostclients();

@@ -138,3 +138,9 @@ bool manager::Job::isDone()
   return m_status==manager::Status::COMPLETED;
 }
 
+std::string manager::Job::getBldLoc()
+{
+  return m_database + "/_bld/" + m_toExec;
+}
+
+

@@ -61,6 +61,7 @@ namespace manager
     int getSize();
     int getProgress();
     bool isDone();
+    std::string getBldLoc();
 
   private:
     int m_myId;

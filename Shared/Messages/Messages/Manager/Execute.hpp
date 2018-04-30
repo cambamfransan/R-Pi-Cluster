@@ -21,13 +21,14 @@ namespace manager
     void endTask(int jobId);
 
   public:
-    Execute(JobInfo job, Task toExec, std::shared_ptr<std::mutex> pMutex, std::shared_ptr<std::map<int, std::vector<Result>>> pResults);
+    Execute(int jobId, std::string bldLoc, Task toExec, std::shared_ptr<std::mutex> pMutex, std::shared_ptr<std::map<int, std::vector<Result>>> pResults);
     ~Execute();
 
     void run();
 
   private:
-    manager::JobInfo m_jobInfo;
+    int m_jobId;
+    std::string m_bldLoc;
     Task m_task;
     std::shared_ptr<std::mutex> m_pMutex;
     std::shared_ptr<std::map<int, std::vector<Result>>> m_pResults;
