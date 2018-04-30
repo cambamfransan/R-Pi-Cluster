@@ -35,7 +35,6 @@ void manager::ExecuteManager::addJob(int id, int size, int pri, int tpb, std::st
 {
   auto pJob = std::make_shared<Job>(id, size, pri, tpb, url, database);
   m_jobs[id] = pJob;
-  std::cout << "here" << std::endl;
   Logger::info("Job added: " + std::to_string(id));
   if(m_waitingJobs.find(id) != m_waitingJobs.end())
   {
@@ -132,6 +131,15 @@ void manager::ExecuteManager::endTask(int jobId)
       (*m_pResults)[jobId].erase((*m_pResults)[jobId].begin());
     }
     emit sendResults(results);
+  }
+}
+
+void manager::ExecuteManager::addResults(int id, std::vector<Result> results)
+{
+  m_jobs[id]->addResults(results);
+  for(const auto& res : results)
+  {
+    m_jobs[id]->removeTask(res.first);
   }
 }
 

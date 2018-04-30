@@ -142,10 +142,16 @@ bool manager::TaskManager::removeFromResults(Task task)
   if (spot == std::string::npos) return false;
   str.erase(spot, task.toExecute.size()+1);
 
-  std::ofstream output(nextFile);
-  output << str;
-  output.close();
-
+  if(str.empty())
+  {
+    remove(nextFile.c_str());
+  }
+  else
+  {
+    std::ofstream output(nextFile);
+    output << str;
+    output.close();
+  }
   return true;
 }
 
@@ -158,3 +164,14 @@ int manager::TaskManager::getTotal()
 {
   return m_total;
 }
+
+bool manager::TaskManager::removeFromResults(std::vector<Task> tasks)
+{
+//can be more efficient
+  for(const auto& task : tasks)
+  {
+    removeFromResults(task);
+  }
+
+}
+

@@ -34,6 +34,7 @@ namespace manager
     void addTasks(std::vector<manager::Task> tasks);
     void removeJob(int id);
     void modifyJob(int id, std::string field, std::string value);
+    void addResults(int id, std::vector<Result>);
 
   private:
     void addTasksToQueue(manager::Task task);

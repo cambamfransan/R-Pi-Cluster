@@ -8,8 +8,7 @@ manager::ClientManager::ClientManager(
   : m_pSenderClient(pServerClient),
     m_database(database + "Jobs"),
     m_pExecuteManager(new manager::ExecuteManager(database)),
-    m_piManager(database),
-    m_resultsManager(database)
+    m_piManager(database)
 {
   system(std::string("mkdir " + m_database).c_str());
   connect(m_pExecuteManager.get(), &manager::ExecuteManager::sendResults, this,
@@ -58,7 +57,6 @@ void manager::ClientManager::update(const msg::Update pMsg)
         job.taskperbundle(),
         job.giturl(),
         m_database);
-    std::cout <<"here1" << std::endl;
   }
   // lost jobs
   auto lostJobs = pMsg.lostclients();
@@ -86,7 +84,7 @@ void manager::ClientManager::update(const msg::Update pMsg)
       toImport.emplace_back(Task(task.jobid(), task.pagenumber(), task.id(), task.toexecute()), jobr.result());
     }
     
-    m_resultsManager.addResults(id, toImport);
+    m_pExecuteManager->addResults(id, toImport);
   }
 }
 
