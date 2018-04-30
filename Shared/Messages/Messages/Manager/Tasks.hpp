@@ -46,6 +46,8 @@ struct TaskFile
 
     bool removeFromResults(Task task);
 
+    bool removeFromResults(std::vector<Task> task);
+
     int getSize();
 
     int getTotal();

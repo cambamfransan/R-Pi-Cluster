@@ -61,6 +61,9 @@ namespace manager
     int getSize();
     int getProgress();
     bool isDone();
+    std::string getBldLoc();
+    bool removeTasks(std::vector<Task> tasks);
+    bool removeTask(Task task);
 
   private:
     int m_myId;

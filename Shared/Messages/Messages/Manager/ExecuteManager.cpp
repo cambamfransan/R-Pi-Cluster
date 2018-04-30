@@ -31,24 +31,18 @@ manager::ExecuteManager::~ExecuteManager()
   // Can remove files
 }
 
-void manager::ExecuteManager::addJob(manager::Job job)
+void manager::ExecuteManager::addJob(int id, int size, int pri, int tpb, std::string url, std::string database)
 {
-  m_jobs[job.getJobId()] =
-    JobInfo{job.getJobId(),
-            job.getTasksPerBundle(),
-           m_database + std::to_string(job.getJobId()) + "/_bld/" + job.getExec(),
-            job.getUrl(),
-            static_cast<int>(job.getStatus()),
-            job.getPriority(),
-            job.getName()};
-  Logger::info("Job added: " + std::to_string(job.getJobId()));
-  if(m_waitingJobs.find(job.getJobId()) != m_waitingJobs.end())
+  auto pJob = std::make_shared<Job>(id, size, pri, tpb, url, database);
+  m_jobs[id] = pJob;
+  Logger::info("Job added: " + std::to_string(id));
+  if(m_waitingJobs.find(id) != m_waitingJobs.end())
   {
-    if(m_waitingJobs[job.getJobId()].size() % job.getTasksPerBundle() != 0)
+    if(m_waitingJobs[id].size() % tpb != 0)
     {
-      m_jobs[job.getJobId()].status = 4;
+      m_jobs[id]->setStatus(Status::COMPLETED);
     }
-    for(const auto& task : m_waitingJobs[job.getJobId()])
+    for(const auto& task : m_waitingJobs[id])
     {
       addTasksToQueue(task);
     }
@@ -75,11 +69,11 @@ void manager::ExecuteManager::addTasks(std::vector<manager::Task> tasks)
   }
   for(const auto& job : tasksReceived)
   {
-    if(job.second.size() % m_jobs[job.first].tasksPerBundle != 0)
+    if(job.second.size() % m_jobs[job.first]->getTasksPerBundle() != 0)
     {
       Logger::info("setting job as done" + std::to_string(job.second.size()) + 
-           " " + std::to_string(m_jobs[job.first].tasksPerBundle));
-      m_jobs[job.first].status = 4;
+           " " + std::to_string(m_jobs[job.first]->getTasksPerBundle()));
+      m_jobs[job.first]->setStatus(Status::COMPLETED);
     }
   }
 }
@@ -88,7 +82,8 @@ void manager::ExecuteManager::addTasksToQueue(manager::Task task)
 {
   Logger::info("Adding Task to Queue: " + task.toExecute);
   manager::Execute* toEx = new manager::Execute(
-    m_jobs[task.jobId], task, m_pResultsMutex, m_pResults);
+      task.jobId, m_jobs[task.jobId]->getBldLoc(),
+    task, m_pResultsMutex, m_pResults);
   connect(toEx, &manager::Execute::endTask, this, &ExecuteManager::endTask);
   m_pThreadPool->start(toEx);
 }
@@ -104,30 +99,30 @@ void manager::ExecuteManager::modifyJob(int id,
 {
   if (field == manager::STATUS)
   {
-    m_jobs[id].status = std::stoi(value);
+    m_jobs[id]->setStatus(static_cast<Status>(std::stoi(value)));
   }
   else if (field == manager::PRIORITY)
   {
-    m_jobs[id].priority = std::stoi(value);
+    m_jobs[id]->setPriority(std::stoi(value));
   }
   if (field == manager::NAME)
   {
-    m_jobs[id].name = value;
+    m_jobs[id]->setName(value);
   }
   if (field == manager::TASKS_PER_BUNDLE)
   {
-    m_jobs[id].tasksPerBundle = std::stoi(value);
+    m_jobs[id]->setTasksPerBundle(std::stoi(value));
   }
 }
 
 void manager::ExecuteManager::endTask(int jobId)
 {
   //todo: What if job ends
-  if(m_jobs[jobId].tasksPerBundle <= (*m_pResults)[jobId].size() || m_jobs[jobId].status == 4)
+  if(m_jobs[jobId]->getTasksPerBundle() <= (*m_pResults)[jobId].size() || m_jobs[jobId]->getStatus() == Status::COMPLETED)
   {
     int tpb;
-    if(m_jobs[jobId].status == 4) tpb = 1;
-    else tpb = m_jobs[jobId].tasksPerBundle;
+    if(m_jobs[jobId]->getStatus() == Status::COMPLETED) tpb = 1;
+    else tpb = m_jobs[jobId]->getTasksPerBundle();
     std::vector<manager::Result> results;
     std::lock_guard<std::mutex> lock(*m_pResultsMutex);
     for(int i = 0; i < tpb; i++)
@@ -136,6 +131,15 @@ void manager::ExecuteManager::endTask(int jobId)
       (*m_pResults)[jobId].erase((*m_pResults)[jobId].begin());
     }
     emit sendResults(results);
+  }
+}
+
+void manager::ExecuteManager::addResults(int id, std::vector<Result> results)
+{
+  m_jobs[id]->addResults(results);
+  for(const auto& res : results)
+  {
+    m_jobs[id]->removeTask(res.first);
   }
 }
 

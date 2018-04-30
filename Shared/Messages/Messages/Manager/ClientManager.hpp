@@ -1,7 +1,6 @@
 #ifndef CLIENT_MANAGER_H
 #define CLIENT_MANAGER_H
 
-#include "ClientResultsManager.hpp"
 #include "ExecuteManager.hpp"
 #include "Messages/Pi/PiClientManager.hpp"
 #include "TCPSender/TCPSenderClient.hpp"
@@ -35,7 +34,6 @@ signals:
     std::string m_database;
     std::shared_ptr<manager::ExecuteManager> m_pExecuteManager;
     manager::PiClientManager m_piManager;
-    manager::ClientResultsManager m_resultsManager;
   };
 } // namespace manager
 

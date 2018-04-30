@@ -79,6 +79,7 @@ void manager::TaskManager::populateFields(std::string tasksList)
 
 manager::TaskManager::~TaskManager()
 {
+  std::cout << "deleted file" << std::endl;
   // I should remove the files here
   for (size_t i = 0; i < m_taskFiles.size(); i++)
     remove(m_taskFiles[i].pageName.c_str());
@@ -141,10 +142,16 @@ bool manager::TaskManager::removeFromResults(Task task)
   if (spot == std::string::npos) return false;
   str.erase(spot, task.toExecute.size()+1);
 
-  std::ofstream output(nextFile);
-  output << str;
-  output.close();
-
+  if(str.empty())
+  {
+    remove(nextFile.c_str());
+  }
+  else
+  {
+    std::ofstream output(nextFile);
+    output << str;
+    output.close();
+  }
   return true;
 }
 
@@ -157,3 +164,14 @@ int manager::TaskManager::getTotal()
 {
   return m_total;
 }
+
+bool manager::TaskManager::removeFromResults(std::vector<Task> tasks)
+{
+//can be more efficient
+  for(const auto& task : tasks)
+  {
+    removeFromResults(task);
+  }
+
+}
+

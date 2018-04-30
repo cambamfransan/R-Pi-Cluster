@@ -30,15 +30,16 @@ namespace manager
     ExecuteManager(std::string m_database);
     ~ExecuteManager();
 
-    void addJob(manager::Job job);
+    void addJob(int, int, int, int, std::string, std::string);
     void addTasks(std::vector<manager::Task> tasks);
     void removeJob(int id);
     void modifyJob(int id, std::string field, std::string value);
+    void addResults(int id, std::vector<Result>);
 
   private:
     void addTasksToQueue(manager::Task task);
 
-    std::map<int, JobInfo> m_jobs;
+    std::map<int, std::shared_ptr<Job>> m_jobs;
     std::map<int, std::vector<manager::Task>> m_waitingJobs;
     std::string m_database;
     std::atomic<int> m_size;

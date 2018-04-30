@@ -138,3 +138,18 @@ bool manager::Job::isDone()
   return m_status==manager::Status::COMPLETED;
 }
 
+std::string manager::Job::getBldLoc()
+{
+  return m_database + "/_bld/" + m_toExec;
+}
+
+bool manager::Job::removeTasks(std::vector<Task> tasks)
+{
+  m_taskManager.removeFromResults(tasks);
+}
+
+bool manager::Job::removeTask(Task task)
+{
+  m_taskManager.removeFromResults(task);
+}
+
