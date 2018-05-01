@@ -48,7 +48,7 @@ namespace make_msgs
       int convId,
       std::vector<manager::JobInfo> jobInfo,
       std::vector<manager::Pi> pis,
-      std::vector<std::string> results,
+      std::vector<std::pair<int, std::string>> results,
       int resultId);
 
 } // namespace make_msgs

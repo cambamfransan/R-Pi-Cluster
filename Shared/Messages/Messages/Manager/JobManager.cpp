@@ -271,7 +271,7 @@ std::vector<int> manager::JobManager::getJobIds()
   return toReturn;
 }
 
-std::vector<std::string> manager::JobManager::getResults(int id)
+std::vector<std::pair<int, std::string>> manager::JobManager::getResults(int id)
 {
   return m_jobs[id]->getResults();
 }

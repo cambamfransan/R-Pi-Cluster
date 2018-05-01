@@ -65,7 +65,7 @@ namespace manager
     std::string getBldLoc();
     bool removeTasks(std::vector<Task> tasks);
     bool removeTask(Task task);
-    std::vector<std::string> getResults();
+    std::vector<std::pair<int, std::string>> getResults();
 
   private:
     int m_myId;

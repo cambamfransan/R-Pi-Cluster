@@ -22,7 +22,7 @@ namespace manager
 
     std::string getResults();
 
-    std::vector<std::string> getResultsVector();
+    std::vector<std::pair<int, std::string>> getResultsVector();
 
     int getTotal();
 
