@@ -143,3 +143,8 @@ void manager::ExecuteManager::addResults(int id, std::vector<Result> results)
   }
 }
 
+void manager::ExecuteManager::addResults(int id, std::string result)
+{
+  m_jobs[id]->addResults(result);
+}
+

@@ -46,6 +46,7 @@ namespace manager
     ~Job();
 
     void addResults(std::vector<manager::Result> results);
+    void addResults(std::string results);
     std::vector<manager::Task> getTasks(int amount);
     std::string getName();
     std::string getExec();

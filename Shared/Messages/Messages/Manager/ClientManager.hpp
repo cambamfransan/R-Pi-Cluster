@@ -29,6 +29,8 @@ signals:
 
     void execute(std::vector<manager::Task> tasks);
 
+    void receiveCurState(msg::CurrentState* pMsg);
+
   private:
     std::shared_ptr<TCPSenderClient> m_pSenderClient;
     std::string m_database;

@@ -59,6 +59,11 @@ void manager::Job::addResults(std::vector<manager::Result> results)
   m_resultManager.addResult(results);
 }
 
+void manager::Job::addResults(std::string results)
+{
+  m_resultManager.addResult(result);
+}
+
 std::vector<manager::Task> manager::Job::getTasks(int amount)
 {
   auto toReturn = m_taskManager.getNextTasks(amount);
