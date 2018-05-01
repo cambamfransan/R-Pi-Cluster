@@ -48,7 +48,7 @@ namespace manager
     std::map<int, int> getProgress();
     bool moreJobsToProcess();
     std::vector<JobInfo> getCurrentJobs();
-    std::vector<std::string> getResults(int id);
+    std::vector<std::pair<int, std::string>> getResults(int id);
     std::vector<int> getJobIds();
 
   private:

@@ -153,7 +153,7 @@ bool manager::Job::removeTask(Task task)
   m_taskManager.removeFromResults(task);
 }
 
-std::vector<std::string> manager::Job::getResults()
+std::vector<std::pair<int, std::string>> manager::Job::getResults()
 {
   return m_resultManager.getResultsVector();
 }

@@ -42,10 +42,15 @@ message ModifyJob {
   string value = 3;
 }
 
+message ResultPage {
+  string result = 1;
+  int32 pageId = 2;
+}
+
 message CurrentState {
   repeated Client clients = 1;
   repeated Job jobs = 2;
-  repeated string results = 3;
+  repeated ResultPage page = 3;
   int32 resultId = 4;
 }
 

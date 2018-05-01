@@ -180,7 +180,7 @@ msg::MsgToSend* make_msgs::makeCurrentStateMsg(int fromId,
       int convId,
       std::vector<manager::JobInfo> jobInfo,
       std::vector<manager::Pi> pis,
-      std::vector<std::string> results,
+      std::vector<std::pair<int, std::string>> results,
       int resultId)
 {
   msg::MsgToSend* pToReturn = new msg::MsgToSend();
@@ -212,7 +212,9 @@ msg::MsgToSend* make_msgs::makeCurrentStateMsg(int fromId,
 
   for (const auto& i : results)
   {
-    pToReturn->mutable_state()->add_results(i);
+    auto result = pToReturn->mutable_state()->add_page();
+    result->set_pageid(i.first);
+    result->set_result(i.second);
   }
   pToReturn->mutable_state()->set_resultid(resultId);
   return pToReturn;
