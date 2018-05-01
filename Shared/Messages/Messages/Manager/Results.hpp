@@ -22,6 +22,8 @@ namespace manager
 
     std::string getResults();
 
+    std::vector<std::string> getResultsVector();
+
     int getTotal();
 
   private:

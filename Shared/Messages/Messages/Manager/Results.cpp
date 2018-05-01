@@ -66,3 +66,17 @@ int manager::ResultsManager::getTotal()
   return m_total;
 }
 
+std::vector<std::string> manager::ResultsManager::getResultsVector()
+{
+  std::vector<std::string> results;
+
+  for (const auto& file : m_resultFiles)
+  {
+    std::ifstream input(file);
+    results.emplace_back((std::istreambuf_iterator<char>(input)),
+                   std::istreambuf_iterator<char>());
+  }
+
+  return results;
+}
+

@@ -18,6 +18,7 @@ enum ProtoType {
   ID_MSG_ACK = 7;
   RESULTS = 8;
   RESULTS_ACK = 9;
+  CURRENT_STATE = 10;
 }
 
 message MsgToSend {
@@ -26,4 +27,5 @@ message MsgToSend {
   TaskMsg task = 3;
   ResultsMsg results = 4;
   TestMsg test = 5;
+  CurrentState state = 6;
 }

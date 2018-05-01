@@ -2,6 +2,7 @@
 #define MAKE_MSGS_H
 
 #include "Manager/JobManager.hpp"
+//#include "Manager/Results.hpp"
 #include "Pi/Pi.hpp"
 #include "Pi/PiServerManager.hpp"
 #include "ProtoFiles/MsgToSend.pb.h"
@@ -41,6 +42,14 @@ namespace make_msgs
                                  int toId,
                                  int convId,
                                  std::vector<manager::Result> results);
+
+  msg::MsgToSend* makeCurrentStateMsg(int fromId,
+      int toId,
+      int convId,
+      std::vector<manager::JobInfo> jobInfo,
+      std::vector<manager::Pi> pis,
+      std::vector<std::string> results,
+      int resultId);
 
 } // namespace make_msgs
 

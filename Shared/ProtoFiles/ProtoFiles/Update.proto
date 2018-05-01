@@ -42,6 +42,13 @@ message ModifyJob {
   string value = 3;
 }
 
+message CurrentState {
+  repeated Client clients = 1;
+  repeated Job jobs = 2;
+  repeated string results = 3;
+  int32 resultId = 4;
+}
+
 message Update {
   repeated Client newclients = 1;
   repeated int32 lostclients = 2[packed = true];

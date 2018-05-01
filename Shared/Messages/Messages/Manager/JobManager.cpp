@@ -235,6 +235,22 @@ manager::JobUpdateStruct manager::JobManager::getUpdates()
   return job;
 }
 
+std::vector<manager::JobInfo> manager::JobManager::getCurrentJobs()
+{
+  std::vector<manager::JobInfo> forReturn;
+  for(const auto& job : m_jobs)
+  {
+    forReturn.push_back({job.first, job.second->getTasksPerBundle(),
+        job.second->getExec(),
+        job.second->getUrl(),
+        static_cast<int>(job.second->getStatus()),
+          job.second->getPriority(),
+          job.second->getName()});
+
+  }
+  return forReturn;
+}
+
 std::map<int, int> manager::JobManager::getProgress()
 {
   std::map<int, int> toReturn;
@@ -243,5 +259,20 @@ std::map<int, int> manager::JobManager::getProgress()
     toReturn[job.first] = job.second->getProgress();
   }
   return toReturn;
+}
+
+std::vector<int> manager::JobManager::getJobIds()
+{
+  std::vector<int> toReturn;
+  for(const auto& job : m_jobs)
+  {
+    toReturn.push_back(job.first);
+  }
+  return toReturn;
+}
+
+std::vector<std::string> manager::JobManager::getResults(int id)
+{
+  return m_jobs[id]->getResults();
 }
 
