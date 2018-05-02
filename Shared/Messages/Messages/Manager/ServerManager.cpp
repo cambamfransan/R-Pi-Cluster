@@ -43,8 +43,11 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
 
   // find how many jobs to get
   int clientId(pMsg->basicmsg().fromid());
+  std::cout << "1" << std::endl;
   m_piManager.changePiTasks(clientId, tasksCompleted, {});
+  std::cout << "2" << std::endl;
   int tasksToGet(m_piManager.getAmountToSend(clientId));
+  std::cout << "3" << std::endl;
   Logger::info("getting tasks: " + std::to_string(tasksToGet));
 
   auto toSend = m_jobManager.getTasks(tasksToGet);
@@ -85,17 +88,17 @@ void manager::ServerManager::addPi(int id, std::string ip, int port)
         -1), id);
 
   auto jobIds = m_jobManager.getJobIds();
-  for(const auto& job : jobIds)
-  {
-    m_pServerSender->send(
-        make_msgs::makeCurrentStateMsg(m_myId, 
-          id, 
-          nextConvId,
-          {},
-          {},
-          m_jobManager.getResults(job),
-          job), id);
-  }
+//  for(const auto& job : jobIds)
+//  {
+//    Logger::info("sent! " + std::to_string(m_pServerSender->send(
+//        make_msgs::makeCurrentStateMsg(m_myId, 
+//          id, 
+//          nextConvId,
+//          {},
+//          {},
+//          m_jobManager.getResults(job),
+//          job), id)));
+//  }
 
 }
 
@@ -120,10 +123,10 @@ int manager::ServerManager::addJob(int size,
     auto toSend = m_jobManager.getTasks(m_piManager.getAmountToSend(id));
     Logger::info("Size: " + std::to_string(toSend.size()));
     m_piManager.changePiTasks(id, {}, toSend);
-    int convId = m_pServerSender->getNextConvId();
+    //int convId = m_pServerSender->getNextConvId();
     emit tasksToSend(toSend, id);
-    m_pServerSender->send(
-      make_msgs::makeTaskMsg(m_myId, id, convId, toSend), id);
+    //m_pServerSender->send(
+    //  make_msgs::makeTaskMsg(m_myId, id, convId, toSend), id);
   }
   Logger::info("Adding Job in Server Manager as: " + std::to_string(jobId));
   return jobId;
