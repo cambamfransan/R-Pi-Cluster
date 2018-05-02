@@ -46,6 +46,7 @@ namespace manager
     ~Job();
 
     void addResults(std::vector<manager::Result> results);
+    void addResults(int id, std::string results);
     std::vector<manager::Task> getTasks(int amount);
     std::string getName();
     std::string getExec();
@@ -64,6 +65,7 @@ namespace manager
     std::string getBldLoc();
     bool removeTasks(std::vector<Task> tasks);
     bool removeTask(Task task);
+    std::vector<std::pair<int, std::string>> getResults();
 
   private:
     int m_myId;

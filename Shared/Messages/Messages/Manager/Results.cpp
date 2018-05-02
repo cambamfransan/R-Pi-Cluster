@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "Logger/Logger.hpp"
+#include <algorithm>
 
 manager::ResultsManager::ResultsManager()
   : m_myId(-1), m_resultFiles(), m_basePath()
@@ -47,6 +48,16 @@ void manager::ResultsManager::addResult(std::vector<Result> results)
   Logger::info("total: " + std::to_string(m_total));
 }
 
+void manager::ResultsManager::addResult(int pageId, std::string results)
+{
+  std::string outFilePath(m_basePath + "/" + std::to_string(pageId) + ".txt");
+  std::ofstream output(outFilePath, std::ios::app);
+  output << results;
+  output.close();
+  m_resultFiles.insert(outFilePath);
+  m_total += std::count(results.begin(), results.end(), '\n');
+}
+
 std::string manager::ResultsManager::getResults()
 {
   std::string results;
@@ -64,5 +75,22 @@ std::string manager::ResultsManager::getResults()
 int manager::ResultsManager::getTotal()
 {
   return m_total;
+}
+
+std::vector<std::pair<int, std::string>> manager::ResultsManager::getResultsVector()
+{
+  std::vector<std::pair<int, std::string>> results;
+
+  for (const auto& file : m_resultFiles)
+  {
+    int loc = file.find_last_of("/");
+    std::string ids = file.substr(loc+1, file.size()-4);
+    std::cout << std::stoi(ids) << std::endl;
+    std::ifstream input(file);
+    results.emplace_back(std::stoi(ids), std::string(std::istreambuf_iterator<char>(input),
+                   std::istreambuf_iterator<char>()));
+  }
+
+  return results;
 }
 

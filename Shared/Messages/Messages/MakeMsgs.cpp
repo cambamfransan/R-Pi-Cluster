@@ -175,3 +175,48 @@ msg::MsgToSend* make_msgs::makeResultsMsg(int fromId,
   return pToReturn;
 }
 
+msg::MsgToSend* make_msgs::makeCurrentStateMsg(int fromId,
+      int toId,
+      int convId,
+      std::vector<manager::JobInfo> jobInfo,
+      std::vector<manager::Pi> pis,
+      std::vector<std::pair<int, std::string>> results,
+      int resultId)
+{
+  msg::MsgToSend* pToReturn = new msg::MsgToSend();
+  pToReturn->set_allocated_basicmsg(
+      makeBasicMsg(fromId, toId, msg::ProtoType::CURRENT_STATE, convId));
+  for(const auto& c : pis)
+  {
+    auto pClient = pToReturn->mutable_state()->add_clients();
+    pClient->set_ipaddress(c.getIpAddress());
+    pClient->set_port(c.getPort());
+    pClient->set_username(c.getUsername());
+    pClient->set_password(c.getPassword());
+    pClient->set_priority(c.getPriority());
+    pClient->set_clientid(c.getClientId());
+  }
+
+  for (const auto& j : jobInfo)
+  {
+    auto pJob = pToReturn->mutable_state()->add_jobs();
+    pJob->set_id(j.id);
+    pJob->set_size(100);
+    pJob->set_priority(j.priority);
+    pJob->set_taskperbundle(j.tasksPerBundle);
+    pJob->set_giturl(j.gitUrl);
+    pJob->set_name(j.name);
+    pJob->set_toexec(j.bldLocation);
+    pJob->set_status(j.status);
+  }
+
+  for (const auto& i : results)
+  {
+    auto result = pToReturn->mutable_state()->add_page();
+    result->set_pageid(i.first);
+    result->set_result(i.second);
+  }
+  pToReturn->mutable_state()->set_resultid(resultId);
+  return pToReturn;
+}
+

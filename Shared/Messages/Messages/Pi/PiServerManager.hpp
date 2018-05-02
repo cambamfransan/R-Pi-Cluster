@@ -40,6 +40,7 @@ namespace manager
     std::vector<int> getClientIds();
     void modifyPriority(int id, int priority);
     void modifyThreads(int id, int threads);
+    std::vector<Pi> getCurrentState();
 
   private:
     int m_lastPriority;

@@ -47,6 +47,9 @@ namespace manager
     JobUpdateStruct getUpdates();
     std::map<int, int> getProgress();
     bool moreJobsToProcess();
+    std::vector<JobInfo> getCurrentJobs();
+    std::vector<std::pair<int, std::string>> getResults(int id);
+    std::vector<int> getJobIds();
 
   private:
     std::map<int, std::shared_ptr<Job>> m_jobs;

@@ -59,6 +59,11 @@ void manager::Job::addResults(std::vector<manager::Result> results)
   m_resultManager.addResult(results);
 }
 
+void manager::Job::addResults(int pageId, std::string results)
+{
+  m_resultManager.addResult(pageId, results);
+}
+
 std::vector<manager::Task> manager::Job::getTasks(int amount)
 {
   auto toReturn = m_taskManager.getNextTasks(amount);
@@ -151,5 +156,10 @@ bool manager::Job::removeTasks(std::vector<Task> tasks)
 bool manager::Job::removeTask(Task task)
 {
   m_taskManager.removeFromResults(task);
+}
+
+std::vector<std::pair<int, std::string>> manager::Job::getResults()
+{
+  return m_resultManager.getResultsVector();
 }
 

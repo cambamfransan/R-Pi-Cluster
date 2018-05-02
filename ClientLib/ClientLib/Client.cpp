@@ -85,11 +85,16 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     recieveUpdate(pMsg, convId);
     break;
   case msg::ProtoType::TASK_MSG:
-    std::vector<manager::Task> tasks;
-    auto pTasks = pMsg->task().task();
-    for(const auto& pT : pTasks)
-      tasks.emplace_back(pT.jobid(), pT.pagenumber(), pT.id(), pT.toexecute());
-    m_pClientManager->execute(tasks);
+    {
+      std::vector<manager::Task> tasks;
+      auto pTasks = pMsg->task().task();
+      for(const auto& pT : pTasks)
+        tasks.emplace_back(pT.jobid(), pT.pagenumber(), pT.id(), pT.toexecute());
+      m_pClientManager->execute(tasks);
+    }
+    break;
+  case msg::ProtoType::CURRENT_STATE:
+    receiveCurState(pMsg);
     break;
   }
 }
@@ -132,6 +137,14 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
     m_pClientManager->update(pMsg->update());
       });
   thr.detach();
+}
+
+void Client::receiveCurState(msg::MsgToSend* pMsg)
+{
+//  std::thread thr([this, pMsg](){
+      m_pClientManager->receiveCurState(pMsg->state());
+//      });
+//  thr.detach();
 }
 
 void Client::sendResults(std::vector<manager::Result> results)

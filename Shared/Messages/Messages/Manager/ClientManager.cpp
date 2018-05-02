@@ -98,3 +98,33 @@ void manager::ClientManager::sendResults(std::vector<Result> results)
   emit sendResultsToClientMain(results);
 }
 
+void manager::ClientManager::receiveCurState(const msg::CurrentState pMsg)
+{
+  for(const auto& job : pMsg.jobs())
+  {
+    m_pExecuteManager->addJob(job.id(),
+        job.size(),
+        job.priority(),
+        job.taskperbundle(),
+        job.giturl(),
+        m_database);
+  }
+  for (const auto& client : pMsg.clients())
+  {
+    manager::Pi pi(client.ipaddress(),
+                   client.port(),
+                   client.username(),
+                   client.password(),
+                   client.priority(),
+                   client.clientid());
+    m_piManager.addPi(pi);
+  }
+
+  for(const auto& result : pMsg.page())
+  {
+    m_pExecuteManager->addResults(pMsg.resultid(),
+        result.pageid(), 
+        result.result());
+  }
+
+}

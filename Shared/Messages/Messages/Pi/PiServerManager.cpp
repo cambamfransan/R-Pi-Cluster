@@ -141,3 +141,13 @@ void manager::PiServerManager::modifyThreads(int id, int threads)
     manager::ModifiedPi{id, PI_THREADS, std::to_string(threads)});
 }
 
+std::vector<manager::Pi> manager::PiServerManager::getCurrentState()
+{
+  std::vector<manager::Pi> forReturn;
+  for(const auto& pi : m_pis)
+  {
+    forReturn.push_back(pi.second);
+  }
+  return forReturn;
+}
+    
