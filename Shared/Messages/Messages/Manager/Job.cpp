@@ -59,9 +59,9 @@ void manager::Job::addResults(std::vector<manager::Result> results)
   m_resultManager.addResult(results);
 }
 
-void manager::Job::addResults(std::string results)
+void manager::Job::addResults(int pageId, std::string results)
 {
-  m_resultManager.addResult(result);
+  m_resultManager.addResult(pageId, results);
 }
 
 std::vector<manager::Task> manager::Job::getTasks(int amount)

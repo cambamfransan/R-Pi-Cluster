@@ -94,7 +94,6 @@ void Client::recieveMessage(msg::MsgToSend* pMsg, QHostAddress ip, qint16 port)
     }
     break;
   case msg::ProtoType::CURRENT_STATE:
-    std::cout << "msg: " + pMsg->DebugString();
     receiveCurState(pMsg);
     break;
   }
@@ -142,8 +141,10 @@ void Client::recieveUpdate(msg::MsgToSend* pMsg, int convId)
 
 void Client::receiveCurState(msg::MsgToSend* pMsg)
 {
-  // this would be good to thread
-  m_pClientManager->receiveCurState(pMsg->state);
+//  std::thread thr([this, pMsg](){
+      m_pClientManager->receiveCurState(pMsg->state());
+//      });
+//  thr.detach();
 }
 
 void Client::sendResults(std::vector<manager::Result> results)

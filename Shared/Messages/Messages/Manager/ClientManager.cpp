@@ -98,9 +98,9 @@ void manager::ClientManager::sendResults(std::vector<Result> results)
   emit sendResultsToClientMain(results);
 }
 
-void manager::ClientManager::receiveCurState(msg::CurrentState* pMsg)
+void manager::ClientManager::receiveCurState(const msg::CurrentState pMsg)
 {
-  for(const auto& job : pMsg->jobs())
+  for(const auto& job : pMsg.jobs())
   {
     m_pExecuteManager->addJob(job.id(),
         job.size(),
@@ -109,7 +109,7 @@ void manager::ClientManager::receiveCurState(msg::CurrentState* pMsg)
         job.giturl(),
         m_database);
   }
-  for (const auto& client : pMsg->clients())
+  for (const auto& client : pMsg.clients())
   {
     manager::Pi pi(client.ipaddress(),
                    client.port(),
@@ -120,9 +120,11 @@ void manager::ClientManager::receiveCurState(msg::CurrentState* pMsg)
     m_piManager.addPi(pi);
   }
 
-  for(const auto& result : pMsg.results)
+  for(const auto& result : pMsg.page())
   {
-    m_pExecuteManager->addResults(pMsg.resultid, result);
+    m_pExecuteManager->addResults(pMsg.resultid(),
+        result.pageid(), 
+        result.result());
   }
 
 }
