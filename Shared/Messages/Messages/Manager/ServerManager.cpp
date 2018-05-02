@@ -43,11 +43,8 @@ void manager::ServerManager::addResults(msg::MsgToSend* pMsg)
 
   // find how many jobs to get
   int clientId(pMsg->basicmsg().fromid());
-  std::cout << "1" << std::endl;
   m_piManager.changePiTasks(clientId, tasksCompleted, {});
-  std::cout << "2" << std::endl;
   int tasksToGet(m_piManager.getAmountToSend(clientId));
-  std::cout << "3" << std::endl;
   Logger::info("getting tasks: " + std::to_string(tasksToGet));
 
   auto toSend = m_jobManager.getTasks(tasksToGet);

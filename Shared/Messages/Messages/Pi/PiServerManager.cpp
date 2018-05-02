@@ -17,9 +17,7 @@ manager::PiServerManager::~PiServerManager() {}
 
 void manager::PiServerManager::addPi(int id, std::string ip, int port)
 {
-  std::cout << "adding pi" << std::endl;
   auto pi = std::make_shared<manager::Pi>(ip, port, "", "", m_lastPriority++, id);
-  std::cout << ":(" << std::endl;
   {
     std::lock_guard<std::mutex> lock(m_pisMutex);
     Logger::info("Adding Pi: " + std::to_string(id));
@@ -57,11 +55,6 @@ void manager::PiServerManager::changePiTasks(
   std::vector<manager::Task> completed,
   std::vector<manager::Task> tasks)
 {
-  std::cout << "pis" << std::endl;
-  for(auto&& pi : m_pis)
-  {
-    std::cout << pi.first << std::endl;
-  }
   std::lock_guard<std::mutex> lock(m_pisMutex);
   m_pis[id]->replaceTasks(completed, tasks);
 }
