@@ -153,7 +153,9 @@ void manager::ServerManager::updateAck(int id)
 
 void manager::ServerManager::removePi(int id)
 {
+  auto tasks = m_piManager.getTasks(id);
   m_piManager.removePi(id);
+  m_jobManager.addTasks(tasks);
 }
 
 void manager::ServerManager::removeUnresponsive()

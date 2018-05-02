@@ -41,6 +41,7 @@ namespace manager
     void modifyPriority(int id, int priority);
     void modifyThreads(int id, int threads);
     std::vector<Pi> getCurrentState();
+    std::vector<Task> getTasks(int id);
 
   private:
     int m_lastPriority;

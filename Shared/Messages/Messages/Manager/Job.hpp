@@ -66,6 +66,7 @@ namespace manager
     bool removeTasks(std::vector<Task> tasks);
     bool removeTask(Task task);
     std::vector<std::pair<int, std::string>> getResults();
+    void addTempTask(Task);
 
   private:
     int m_myId;
@@ -78,6 +79,7 @@ namespace manager
     std::string m_name;
     std::string m_toExec;
     Status m_status;
+    std::vector<Task> m_tempTasks;
 
   };
 } // namespace manager
