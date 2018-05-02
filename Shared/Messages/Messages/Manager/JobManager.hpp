@@ -50,6 +50,7 @@ namespace manager
     std::vector<JobInfo> getCurrentJobs();
     std::vector<std::pair<int, std::string>> getResults(int id);
     std::vector<int> getJobIds();
+    void addTasks(std::vector<Task> tasks);
 
   private:
     std::map<int, std::shared_ptr<Job>> m_jobs;

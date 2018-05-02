@@ -152,3 +152,8 @@ std::vector<manager::Pi> manager::PiServerManager::getCurrentState()
   return forReturn;
 }
     
+std::vector<manager::Task> manager::PiServerManager::getTasks(int id)
+{
+  return m_pis[id]->getTasks();
+}
+    

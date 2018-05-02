@@ -276,3 +276,11 @@ std::vector<std::pair<int, std::string>> manager::JobManager::getResults(int id)
   return m_jobs[id]->getResults();
 }
 
+void manager::JobManager::addTasks(std::vector<Task> tasks)
+{
+  for(const auto& task : tasks)
+  {
+    m_jobs[task.jobId]->addTempTask(task);
+  }
+}
+
