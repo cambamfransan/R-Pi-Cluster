@@ -13,6 +13,7 @@ manager::Pi::Pi()
     m_lastCom(std::chrono::steady_clock::now()),
     m_tasks()
 {
+  std::cout << "danger" << std::endl;
 }
 
 manager::Pi::Pi(std::string ip,
@@ -42,13 +43,13 @@ manager::Pi::Pi(const Pi& pi)
     m_clientId(pi.getClientId()),
     m_threads(pi.getThreads()),
     m_lastCom(std::chrono::steady_clock::now()),
-    m_tasks()
+    m_tasks(pi.getTasks())
 {
 }
 
 manager::Pi::~Pi()
 {
-  std::cout << "it deconstructed" << std::endl;
+  std::cout << "pi deconstructed" << std::endl;
   // I don't think i need to do anything here yet
 }
 
@@ -183,3 +184,52 @@ void manager::Pi::updateAck()
 {
   m_lastCom = std::chrono::steady_clock::now();
 }
+
+manager::Pi manager::Pi::makeCopy()
+{
+  manager::Pi forReturn;
+  forReturn.setAddress(m_ipAddress);
+  forReturn.setPort(m_port);
+  forReturn.setUsername(m_username);
+  forReturn.setPassword(m_password);
+  forReturn.setPriority(m_priority);
+  forReturn.setClientId(m_clientId);
+  forReturn.setThreads(m_threads);
+  return forReturn;
+}
+
+void manager::Pi::setAddress(std::string ip)
+{
+  m_ipAddress = ip;
+}
+
+void manager::Pi::setPort(int port)
+{
+  m_port = port;
+}
+
+void manager::Pi::setUsername(std::string user)
+{
+  m_username = user;
+}
+
+void manager::Pi::setPassword(std::string pass)
+{
+  m_password = pass;
+}
+
+void manager::Pi::setPriority(int pr)
+{
+  m_priority = pr;
+}
+
+void manager::Pi::setClientId(int id)
+{
+  m_clientId = id;
+}
+
+void manager::Pi::setThreads(int thr)
+{
+  m_threads = thr;
+}
+

@@ -306,7 +306,7 @@ void Server::sendTimedMsgs()
   m_pServerManager->sendUpdates();
   //}
 
-  m_pServerManager->removeUnresponsive();
+  m_pServerManager->removeUnresponsive(); 
 
   // Resend Msgs
   /*  {

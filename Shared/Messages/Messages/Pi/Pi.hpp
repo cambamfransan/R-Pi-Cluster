@@ -42,6 +42,14 @@ namespace manager
     int getAmountToSend() const;
     void updateAck();
     std::chrono::steady_clock::time_point getlastCom() const;
+    Pi makeCopy();
+    void setAddress(std::string ip);
+    void setPort(int port);
+    void setUsername(std::string user);
+    void setPassword(std::string pass);
+    void setPriority(int pr);
+    void setClientId(int id);
+    void setThreads(int thr);
 
   private:  
     /** Ip Address of the client */

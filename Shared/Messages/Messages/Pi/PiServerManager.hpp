@@ -46,7 +46,7 @@ namespace manager
     int m_lastPriority;
     
     std::mutex m_pisMutex;
-    std::map<int, manager::Pi> m_pis;
+    std::map<int, std::shared_ptr<manager::Pi>> m_pis;
     std::mutex m_updateMutex;
     std::vector<Pi> m_newPis;
     std::vector<int> m_lostPis;
