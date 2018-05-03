@@ -144,3 +144,8 @@ void manager::ExecuteManager::addResults(int id, std::vector<Result> results)
   Logger::info("Removed Tasks");
 }
 
+void manager::ExecuteManager::addResults(int id, int pageId, std::string result)
+{
+  m_jobs[id]->addResults(pageId, result);
+}
+

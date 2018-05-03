@@ -59,8 +59,19 @@ void manager::Job::addResults(std::vector<manager::Result> results)
   m_resultManager.addResult(results);
 }
 
+void manager::Job::addResults(int pageId, std::string results)
+{
+  m_resultManager.addResult(pageId, results);
+}
+
 std::vector<manager::Task> manager::Job::getTasks(int amount)
 {
+  if(!m_tempTasks.empty())
+  {
+    auto temp = m_tempTasks;
+    m_tempTasks.clear();
+    return temp;
+  }
   auto toReturn = m_taskManager.getNextTasks(amount);
   if(toReturn.size() != amount)
     m_status = manager::Status::COMPLETED;
@@ -158,3 +169,8 @@ std::vector<std::pair<int, std::string>> manager::Job::getResults()
   return m_resultManager.getResultsVector();
 }
 
+void manager::Job::addTempTask(Task task)
+{
+  m_tempTasks.push_back(task);
+}
+    

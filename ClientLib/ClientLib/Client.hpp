@@ -29,6 +29,7 @@ private slots:
   void lostConnection();
   void recieveUpdate(msg::MsgToSend* pMsg, int convId);
   void sendResults(std::vector<manager::Result>);
+  void receiveCurState(msg::MsgToSend* pMsg);
 
 private:
   std::shared_ptr<TCPSenderClient> m_pSender;

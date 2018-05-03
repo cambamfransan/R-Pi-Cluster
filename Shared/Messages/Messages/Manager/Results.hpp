@@ -20,6 +20,8 @@ namespace manager
 
     void addResult(std::vector<Result> results);
 
+    void addResult(int, std::string);
+
     std::string getResults();
 
     std::vector<std::pair<int, std::string>> getResultsVector();

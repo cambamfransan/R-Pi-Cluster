@@ -56,7 +56,6 @@ manager::Pi::~Pi()
 void manager::Pi::replaceTasks(std::vector<manager::Task> completed,
                                std::vector<manager::Task> tasks)
 {
-  std::cout << "Replacing tasks" << std::endl;
   std::vector<int> toDelete;
   for (auto&& comp : completed)
   {

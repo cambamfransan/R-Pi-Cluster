@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "Logger/Logger.hpp"
+#include <algorithm>
 
 manager::ResultsManager::ResultsManager()
   : m_myId(-1), m_resultFiles(), m_basePath()
@@ -45,6 +46,16 @@ void manager::ResultsManager::addResult(std::vector<Result> results)
     m_total++;
   }
   Logger::info("total: " + std::to_string(m_total));
+}
+
+void manager::ResultsManager::addResult(int pageId, std::string results)
+{
+  std::string outFilePath(m_basePath + "/" + std::to_string(pageId) + ".txt");
+  std::ofstream output(outFilePath, std::ios::app);
+  output << results;
+  output.close();
+  m_resultFiles.insert(outFilePath);
+  m_total += std::count(results.begin(), results.end(), '\n');
 }
 
 std::string manager::ResultsManager::getResults()
