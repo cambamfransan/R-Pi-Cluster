@@ -15,7 +15,7 @@ void ManagerTest::cleanupTestCase() {}
 
 void ManagerTest::getTasksTest()
 {
-  std::cout << "Start Test" << std::endl;
+  //std::cout << "Start Test" << std::endl;
   manager::TaskManager tasks(
     1,
     10,".",
@@ -82,7 +82,7 @@ void ManagerTest::getTasksTest()
           toExecute[4].taskId == 24);
   QVERIFY(toExecute[5].pageNumber == 2 && toExecute[5].toExecute == "25" &&
           toExecute[5].taskId == 25);
-  std::cout << "Start Test1" << std::endl;
+ // std::cout << "Start Test1" << std::endl;
 }
 
 void ManagerTest::removeTasksTest()
@@ -113,7 +113,7 @@ void ManagerTest::addResults()
   results.addResult({manager::Result(manager::Task(0, 1, 10, "10"), "5")});
 
   auto t = results.getResults();
-  std::cout << t << std::endl;
+  //std::cout << t << std::endl;
 
   QVERIFY(
     results.getResults() ==

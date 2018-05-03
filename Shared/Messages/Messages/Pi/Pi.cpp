@@ -13,7 +13,7 @@ manager::Pi::Pi()
     m_lastCom(std::chrono::steady_clock::now()),
     m_tasks()
 {
-  std::cout << "danger" << std::endl;
+//  std::cout << "danger" << std::endl;
 }
 
 manager::Pi::Pi(std::string ip,
@@ -49,7 +49,7 @@ manager::Pi::Pi(const Pi& pi)
 
 manager::Pi::~Pi()
 {
-  std::cout << "pi deconstructed" << std::endl;
+ // std::cout << "pi deconstructed" << std::endl;
   // I don't think i need to do anything here yet
 }
 

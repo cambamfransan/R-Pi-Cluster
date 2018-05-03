@@ -146,7 +146,7 @@ std::vector<manager::Pi> manager::PiServerManager::getCurrentState()
   std::vector<manager::Pi> forReturn;
   for(const auto& pi : m_pis)
   {
-    std::cout << "id: " << pi.first << std::endl;
+   // std::cout << "id: " << pi.first << std::endl;
     forReturn.push_back(pi.second->makeCopy());
   }
   return forReturn;

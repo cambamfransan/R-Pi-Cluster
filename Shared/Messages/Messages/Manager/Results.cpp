@@ -85,7 +85,7 @@ std::vector<std::pair<int, std::string>> manager::ResultsManager::getResultsVect
   {
     int loc = file.find_last_of("/");
     std::string ids = file.substr(loc+1, file.size()-4);
-    std::cout << std::stoi(ids) << std::endl;
+    //std::cout << std::stoi(ids) << std::endl;
     std::ifstream input(file);
     results.emplace_back(std::stoi(ids), std::string(std::istreambuf_iterator<char>(input),
                    std::istreambuf_iterator<char>()));

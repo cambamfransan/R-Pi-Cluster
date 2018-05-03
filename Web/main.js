@@ -21,7 +21,7 @@ var nextConvId = 1;
 
 var client = new net.Socket();
 client.connect(process.argv[2], '127.0.0.1', function() {
-    console.log('Connected');
+  //  console.log('Connected');
     client.write(JSON.stringify({
       convId: '0',
       msg: 'Hello, server! Love, Client.'
@@ -31,7 +31,7 @@ client.connect(process.argv[2], '127.0.0.1', function() {
 client.on('data', function(data) {
     var msgs = data.toString();
     var msg;
-    console.log("received data" + mySockets.length);
+    //console.log("received data" + mySockets.length);
     while (msgs) {
         var index = msgs.indexOf("~");
         if(index == -1)index = msgs.length;
@@ -44,9 +44,9 @@ client.on('data', function(data) {
                 client.write(JSON.stringify({MsgType:'HeartbeatAck', convId: temp.convId}) + '~');
                 break;
             case 'AddJobAck':
-                console.log("received AddJobAck" + mySockets.length);
+               // console.log("received AddJobAck" + mySockets.length);
                 for(var i = 0; i < mySockets.length; i++) {
-                    console.log('Emitting' + temp.JobId);
+                 //   console.log('Emitting' + temp.JobId);
                     mySockets[i].emit('AddJobAck', temp);
                 }
                   localData.jobs[JSON.stringify(temp.JobId)] = temp;
@@ -72,17 +72,17 @@ client.on('data', function(data) {
               delete localData.clients[JSON.stringify(temp.clientId)];
               break;
             default:
-              console.log("bad message received");
+              //console.log("bad message received");
         }
     }
 });
 
 client.on("error", function(err) {
-    console.log(err.stack)
+    //console.log(err.stack)
 });
 
 client.on('close', function() {
-    console.log('Connection closed');
+    //console.log('Connection closed');
 });
 
 serverMain.listen(process.env.PORT || 8080);
@@ -95,26 +95,26 @@ ioMain.sockets.on('connection', function(socket) {
             case 'AddJob':
                 data.convId = nextConvId++;
                 client.write(JSON.stringify(data) + '~');
-                console.log("Adding Job");
+                //console.log("Adding Job");
                 break;
             case 'RequestIp':
                 socket.emit('RequestIpAck', localData.loc);
                 break;
             case 'RequestCurrentJobs':
-                console.log('requesting current jobs');
+                //console.log('requesting current jobs');
                 socket.emit('RequestCurrentJobsAck', localData.jobs);
                 break;
             case 'RequestCurrentClients':
-                console.log('requesting current clients');
+                //console.log('requesting current clients');
                 socket.emit('RequestCurrentClientsAck', localData.clients);
                 break;
           default:
-            console.log('cannot handle msgtype: ' + data.MsgType);
+            //console.log('cannot handle msgtype: ' + data.MsgType);
         }
     });
     socket.on('disconnect', function(){
         mySockets.splice(mySockets.indexOf(socket), 1);
-        console.log('disconnnected');
+        //console.log('disconnnected');
     });
 });
 

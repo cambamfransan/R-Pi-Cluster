@@ -79,7 +79,7 @@ void manager::TaskManager::populateFields(std::string tasksList)
 
 manager::TaskManager::~TaskManager()
 {
-  std::cout << "deleted file" << std::endl;
+ // std::cout << "deleted file" << std::endl;
   // I should remove the files here
   for (size_t i = 0; i < m_taskFiles.size(); i++)
     remove(m_taskFiles[i].pageName.c_str());
