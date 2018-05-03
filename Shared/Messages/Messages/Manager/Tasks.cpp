@@ -126,9 +126,10 @@ std::vector<manager::Task> manager::TaskManager::getNextTasks(int howManyTasks)
   return forReturn;
 }
 
-bool manager::TaskManager::removeFromResults(Task task)
+bool manager::TaskManager::removeFromTasks(Task task)
 {
   std::string nextFile(m_database + std::to_string(task.pageNumber) + ".txt");
+  Logger::info("removing from: " + nextFile);
 
   std::ifstream input(nextFile);
   if (!input){
@@ -140,7 +141,9 @@ bool manager::TaskManager::removeFromResults(Task task)
 
   auto spot = str.find(task.toExecute);
   if (spot == std::string::npos) return false;
+  Logger::info("spot is not the end");
   str.erase(spot, task.toExecute.size()+1);
+  Logger::info("Whats left: " + str);
 
   if(str.empty())
   {
@@ -165,12 +168,12 @@ int manager::TaskManager::getTotal()
   return m_total;
 }
 
-bool manager::TaskManager::removeFromResults(std::vector<Task> tasks)
+bool manager::TaskManager::removeFromTasks(std::vector<Task> tasks)
 {
 //can be more efficient
   for(const auto& task : tasks)
   {
-    removeFromResults(task);
+    removeFromTasks(task);
   }
 
 }

@@ -44,9 +44,9 @@ struct TaskFile
 
     std::vector<Task> getNextTasks(int howManyTasks);
 
-    bool removeFromResults(Task task);
+    bool removeFromTasks(Task task);
 
-    bool removeFromResults(std::vector<Task> task);
+    bool removeFromTasks(std::vector<Task> task);
 
     int getSize();
 

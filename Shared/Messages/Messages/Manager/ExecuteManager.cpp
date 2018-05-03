@@ -141,5 +141,6 @@ void manager::ExecuteManager::addResults(int id, std::vector<Result> results)
   {
     m_jobs[id]->removeTask(res.first);
   }
+  Logger::info("Removed Tasks");
 }
 
