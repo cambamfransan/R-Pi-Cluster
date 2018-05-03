@@ -3,6 +3,7 @@ Distributed self healing super computer
 
 Sample Programs:
 https://github.com/cambamfransan/RPiCalc
+https://github.com/cambamfransan/PhiCalc
 
 # Install Instructions
 

@@ -38,7 +38,7 @@ void UDPSender::readPendingDatagrams()
 {
   while (m_pSocket->hasPendingDatagrams())
   {
-    std::cout << "received bytes" << std::endl;
+   // std::cout << "received bytes" << std::endl;
     QByteArray datagram;
     QHostAddress host;
     quint16 port;

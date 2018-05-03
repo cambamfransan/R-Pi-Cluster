@@ -39,7 +39,7 @@ json::JSONParser::JSONParser(const rapidjson::Document& doc)
     m_jsonMap["/"] = std::to_string(doc.GetInt64());
     break;
   default:
-    std::cout << "Bad things..." << std::endl;
+    //std::cout << "Bad things..." << std::endl;
     break;
   }
 }
@@ -74,7 +74,7 @@ void json::JSONParser::convertJSONArray(const rapidjson::Value& arr,
       m_jsonMap[path + "/" + std::to_string(i)] = std::to_string(v.GetInt64());
       break;
     default:
-      std::cout << "Error in Array" << std::endl;
+      //std::cout << "Error in Array" << std::endl;
       break;
     }
     i++;
@@ -110,7 +110,7 @@ void json::JSONParser::convertJSONObject(const rapidjson::Value& obj,
       m_jsonMap[path + "/" + m.name.GetString()] = std::to_string(m.value.GetInt64());
       break;
     default:
-      std::cout << "Error in Object" << std::endl;
+      //std::cout << "Error in Object" << std::endl;
       break;
     }
   }

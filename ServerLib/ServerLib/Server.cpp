@@ -125,7 +125,7 @@ void Server::sendToWeb(const std::string& msg,
 
 void Server::newConnection(int id)
 {
-  std::cout << "Adding Connection" << std::endl;
+  //std::cout << "Adding Connection" << std::endl;
   {
     //(*m_clientIds)[id] = std::chrono::steady_clock::now();
   }
@@ -147,7 +147,7 @@ void Server::newConnection(int id)
 void Server::newWebConnection()
 {
   connectedToWeb = true;
-  std::cout << "Adding Web Connection" << std::endl;
+  //std::cout << "Adding Web Connection" << std::endl;
 }
 
 void Server::clicked(std::string msg)
@@ -292,8 +292,8 @@ void Server::lostConnection(int id)
 
 void Server::lostConnectionWeb()
 {
-  std::cout << "erasedWeb" << std::endl;
-  std::cout << "erasedWeb successful" << std::endl;
+//  std::cout << "erasedWeb" << std::endl;
+//  std::cout << "erasedWeb successful" << std::endl;
 }
 
 void Server::sendTimedMsgs()
@@ -306,7 +306,7 @@ void Server::sendTimedMsgs()
   m_pServerManager->sendUpdates();
   //}
 
-  // m_pServerManager->removeUnresponsive(); //TODO
+  m_pServerManager->removeUnresponsive(); //TODO
 
   // Resend Msgs
   /*  {

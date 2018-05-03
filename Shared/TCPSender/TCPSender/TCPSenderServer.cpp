@@ -27,7 +27,7 @@ TCPSenderServer::TCPSenderServer()
     {
       if (ip.toString().toStdString().find("169.254.") == std::string::npos)
       {
-        std::cout << ip.toString().toStdString() << std::endl;
+        //std::cout << ip.toString().toStdString() << std::endl;
         ipAddress = ip;
         break;
       }
@@ -166,5 +166,5 @@ void TCPSenderServer::disconnected()
     //m_pSockets.erase(itr); // TODO
     emit lostConnection(id);
   }
-  std::cout << "exit function" << std::endl;
+  //std::cout << "exit function" << std::endl;
 }

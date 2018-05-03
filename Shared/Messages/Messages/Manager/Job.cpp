@@ -156,12 +156,12 @@ std::string manager::Job::getBldLoc()
 
 bool manager::Job::removeTasks(std::vector<Task> tasks)
 {
-  m_taskManager.removeFromResults(tasks);
+  m_taskManager.removeFromTasks(tasks);
 }
 
 bool manager::Job::removeTask(Task task)
 {
-  m_taskManager.removeFromResults(task);
+  m_taskManager.removeFromTasks(task);
 }
 
 std::vector<std::pair<int, std::string>> manager::Job::getResults()

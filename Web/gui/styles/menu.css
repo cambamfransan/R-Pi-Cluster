@@ -37,6 +37,7 @@ img, span {
 }
 .error {
     color: #FF1D25;
+	visibility: hidden;
 }
 #frame {
     background: url('../images/wallpaper.jpg') no-repeat;

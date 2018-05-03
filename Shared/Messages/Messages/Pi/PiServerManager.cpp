@@ -91,7 +91,7 @@ void manager::PiServerManager::removeUnresponsive()
     std::lock_guard<std::mutex> lock(m_pisMutex);
     for (const auto& pi : m_pis)
     {
-      if (pi.second->getlastCom() + std::chrono::seconds(5) <
+      if (pi.second->getlastCom() + std::chrono::seconds(15) <
           std::chrono::steady_clock::now())
       {
         toDelete.push_back(pi.first);
@@ -146,7 +146,7 @@ std::vector<manager::Pi> manager::PiServerManager::getCurrentState()
   std::vector<manager::Pi> forReturn;
   for(const auto& pi : m_pis)
   {
-    std::cout << "id: " << pi.first << std::endl;
+   // std::cout << "id: " << pi.first << std::endl;
     forReturn.push_back(pi.second->makeCopy());
   }
   return forReturn;
