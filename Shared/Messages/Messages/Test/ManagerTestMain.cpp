@@ -93,13 +93,13 @@ void ManagerTest::removeTasksTest()
     std::string("..//..//..//..//..//R-Pi-Cluster//Shared//"
                 "Messages//Messages//Test//TasksList.txt"));
 
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 0, "0")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 5, "5")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 0, 9, "9")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 1, 10, "10")));
-  QVERIFY(tasks.removeFromResults(manager::Task(0, 2, 21, "21")));
-  QVERIFY(!tasks.removeFromResults(manager::Task(0, 2, 22, "21")));
-  QVERIFY(!tasks.removeFromResults(manager::Task(0, 1, 23, "0")));
+  QVERIFY(tasks.removeFromTasks(manager::Task(0, 0, 0, "0")));
+  QVERIFY(tasks.removeFromTasks(manager::Task(0, 0, 5, "5")));
+  QVERIFY(tasks.removeFromTasks(manager::Task(0, 0, 9, "9")));
+  QVERIFY(tasks.removeFromTasks(manager::Task(0, 1, 10, "10")));
+  QVERIFY(tasks.removeFromTasks(manager::Task(0, 2, 21, "21")));
+  QVERIFY(!tasks.removeFromTasks(manager::Task(0, 2, 22, "21")));
+  QVERIFY(!tasks.removeFromTasks(manager::Task(0, 1, 23, "0")));
 }
 
 void ManagerTest::addResults()
